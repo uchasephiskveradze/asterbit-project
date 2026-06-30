@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, effect, inject, input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
+import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostDetailsStore } from '../../store/post-details.store';
 
@@ -16,11 +18,32 @@ export class PostDetailsPage {
   public readonly id = input.required<string>();
   public readonly store = inject(PostDetailsStore);
 
+  private readonly dialog = inject(MatDialog);
+
   public constructor() {
     effect(() => {
       const id = this.id();
       if (id) {
         this.store.loadPost(id);
+      }
+    });
+  }
+
+  public openDeleteDialog(): void {
+    const post = this.store.post();
+    if (!post || this.store.deleting()) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DeletePostDialogComponent, {
+      data: { postTitle: post.title },
+      panelClass: 'delete-post-dialog-panel',
+      autoFocus: 'dialog',
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.store.deletePost(post.id);
       }
     });
   }

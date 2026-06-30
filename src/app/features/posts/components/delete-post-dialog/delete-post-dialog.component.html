@@ -1,0 +1,18 @@
+<div class="delete-post-dialog" role="dialog" aria-labelledby="delete-post-dialog-title">
+  <div class="delete-post-dialog__icon-wrap" aria-hidden="true">
+    <span class="material-symbols-outlined delete-post-dialog__icon">delete_forever</span>
+  </div>
+
+  <h2 id="delete-post-dialog-title" class="delete-post-dialog__title">Delete post?</h2>
+
+  <p class="delete-post-dialog__message">
+    Are you sure you want to delete
+    <span class="delete-post-dialog__post-title">{{ data.postTitle }}</span
+    >? This action cannot be undone.
+  </p>
+
+  <div class="delete-post-dialog__actions">
+    <button type="button" class="delete-post-dialog__cancel" mat-dialog-close>Cancel</button>
+    <button type="button" class="delete-post-dialog__confirm" (click)="confirm()">Delete</button>
+  </div>
+</div>

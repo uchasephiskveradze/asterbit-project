@@ -17,9 +17,15 @@
         <button
           class="post-details-page__action post-details-page__action--danger"
           type="button"
+          [disabled]="store.deleting()"
+          (click)="openDeleteDialog()"
         >
           <span class="material-symbols-outlined">delete</span>
-          Delete
+          @if (store.deleting()) {
+            Deleting...
+          } @else {
+            Delete
+          }
         </button>
       </div>
     }
