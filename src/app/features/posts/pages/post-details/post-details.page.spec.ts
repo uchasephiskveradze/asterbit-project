@@ -46,4 +46,16 @@ describe('PostDetailsPage', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should return to my posts when opened from that page', () => {
+    fixture.componentRef.setInput('from', 'my-posts');
+    fixture.componentRef.setInput('tab', 'under-review');
+    fixture.detectChanges();
+
+    expect(component.backNavigation()).toEqual({
+      link: ['/posts/my'],
+      queryParams: { tab: 'under-review' },
+      label: 'Back to My Posts',
+    });
+  });
 });

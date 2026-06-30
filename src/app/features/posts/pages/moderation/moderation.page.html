@@ -24,7 +24,11 @@
         <article class="moderation-page__card">
           <div class="moderation-page__card-body">
             <div class="moderation-page__card-heading">
-              <a class="moderation-page__card-title" [routerLink]="['/posts', post.id]">{{ post.title }}</a>
+              <a
+                class="moderation-page__card-title"
+                [routerLink]="['/posts', post.id]"
+                [queryParams]="{ from: 'moderation' }"
+              >{{ post.title }}</a>
               @if (reason) {
                 <span
                   class="moderation-page__badge"

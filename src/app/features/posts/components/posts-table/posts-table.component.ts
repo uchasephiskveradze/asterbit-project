@@ -1,9 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Post } from '../../models/post.model';
+import {
+  getPostDetailsQueryParams,
+  PostNavigationSource,
+} from '../../utils/post-navigation.utils';
 
 @Component({
   selector: 'app-posts-table',
@@ -18,6 +22,12 @@ export class PostsTableComponent {
   public readonly showAdminActions = input(true);
   public readonly enableOwnerEdit = input(false);
   public readonly ownerId = input<string | null>(null);
+  public readonly detailsFrom = input<PostNavigationSource>();
+  public readonly detailsTab = input<string | null>(null);
+
+  public readonly detailsQueryParams = computed(() =>
+    getPostDetailsQueryParams(this.detailsFrom(), this.detailsTab()),
+  );
 
   public canOwnerEdit(post: Post): boolean {
     const ownerId = this.ownerId();

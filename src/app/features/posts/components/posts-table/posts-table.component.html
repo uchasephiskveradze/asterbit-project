@@ -12,7 +12,11 @@
       @for (post of posts(); track post.id) {
         <tr class="posts-table__row">
           <td class="posts-table__cell">
-            <a class="posts-table__title-link" [routerLink]="['/posts', post.id]">
+            <a
+              class="posts-table__title-link"
+              [routerLink]="['/posts', post.id]"
+              [queryParams]="detailsQueryParams()"
+            >
               <span class="posts-table__title">{{ post.title }}</span>
               <span class="posts-table__description">{{ post.description }}</span>
             </a>
@@ -27,6 +31,7 @@
             <a
               class="posts-table__action"
               [routerLink]="['/posts', post.id]"
+              [queryParams]="detailsQueryParams()"
               aria-label="View post"
             >
               <span class="material-symbols-outlined">visibility</span>

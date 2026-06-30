@@ -13,6 +13,10 @@ import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { PostStatusLabelPipe } from '../../../../shared/pipes/post-status-label.pipe';
 import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-revision.utils';
+import {
+  getPostBackNavigation,
+  PostNavigationSource,
+} from '../../utils/post-navigation.utils';
 
 @Component({
   selector: 'app-post-details-page',
@@ -23,6 +27,8 @@ import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-
 })
 export class PostDetailsPage {
   public readonly id = input.required<string>();
+  public readonly from = input<PostNavigationSource>();
+  public readonly tab = input<string>();
   public readonly resolvedPost = input.required<PostResolverResult>();
 
   public readonly store = inject(PostDetailsStore);
@@ -31,6 +37,10 @@ export class PostDetailsPage {
   private readonly access = inject(PostsPermissionService);
   private readonly dialog = inject(MatDialog);
   private readonly injector = inject(Injector);
+
+  public readonly backNavigation = computed(() =>
+    getPostBackNavigation(this.from(), { tab: this.tab() }),
+  );
 
   public readonly canEdit = computed(() => {
     const post = this.store.post();

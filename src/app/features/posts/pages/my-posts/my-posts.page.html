@@ -42,6 +42,8 @@
         [showAdminActions]="false"
         [enableOwnerEdit]="showOwnerEdit()"
         [ownerId]="auth.currentUser()?.id ?? null"
+        detailsFrom="my-posts"
+        [detailsTab]="store.activeTab()"
       />
     </div>
   }

@@ -3,9 +3,13 @@
   @let errorMessage = store.error();
 
   <div class="post-details-page__toolbar">
-    <a class="post-details-page__back" routerLink="/posts">
+    <a
+      class="post-details-page__back"
+      [routerLink]="backNavigation().link"
+      [queryParams]="backNavigation().queryParams"
+    >
       <span class="material-symbols-outlined">arrow_back</span>
-      Back to Posts
+      {{ backNavigation().label }}
     </a>
 
     @if (post) {
@@ -62,7 +66,13 @@
       <p class="post-details-page__not-found-text">
         The post you are looking for does not exist or may have been removed.
       </p>
-      <a class="post-details-page__not-found-link" routerLink="/posts">Return to Posts</a>
+      <a
+        class="post-details-page__not-found-link"
+        [routerLink]="backNavigation().link"
+        [queryParams]="backNavigation().queryParams"
+      >
+        {{ backNavigation().label }}
+      </a>
     </div>
   } @else if (post) {
     @let previousVersion = post.previousVersion;
