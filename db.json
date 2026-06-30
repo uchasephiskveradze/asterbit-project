@@ -1,0 +1,100 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "The Future of Content Management",
+      "author": "Sarah Jenkins",
+      "description": "Strategic insights into how modern teams manage editorial workflows at scale.",
+      "content": "Content management has evolved from simple publishing into a strategic capability for product-led organizations. Teams need tools that reduce friction while preserving quality, consistency, and speed across channels.",
+      "createdAt": "2024-10-24T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "10 UX Principles for Accessible Interfaces",
+      "author": "Marcus Chen",
+      "description": "A practical guide to building interfaces that remain clear, inclusive, and efficient.",
+      "content": "Accessibility is not a checklist item added at the end of delivery. It is a design discipline that improves usability for everyone. This article outlines ten principles teams can apply immediately to raise the quality of their product experience.",
+      "createdAt": "2024-10-22T14:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Scalable Architecture for Growing Products",
+      "author": "Elena Rodriguez",
+      "description": "How to structure frontend applications so they stay maintainable as features grow.",
+      "content": "Scalability is often discussed in backend terms, but frontend architecture matters just as much. Feature-based structure, strong typing, and clear boundaries between UI and data access help teams ship safely as complexity increases.",
+      "createdAt": "2024-10-19T09:15:00.000Z"
+    },
+    {
+      "id": 4,
+      "title": "Optimizing Editorial Workflows",
+      "author": "Sarah Jenkins",
+      "description": "Reducing handoffs and context switching in content operations teams.",
+      "content": "Editorial teams lose time when tools force unnecessary steps between drafting, review, and publication. A focused management interface should make the happy path obvious and keep destructive actions clearly separated from everyday tasks.",
+      "createdAt": "2024-10-15T16:45:00.000Z"
+    },
+    {
+      "id": 5,
+      "title": "Writing Better Technical Blog Posts",
+      "author": "James Wilson",
+      "description": "Techniques for turning complex topics into posts that are useful and easy to scan.",
+      "content": "Strong technical writing balances depth with readability. Readers should understand the problem, the approach, and the outcome without wading through unnecessary jargon. Structure, examples, and concise explanations make posts more effective.",
+      "createdAt": "2024-10-12T11:20:00.000Z"
+    },
+    {
+      "id": 6,
+      "title": "Corporate Modernism in Product UI",
+      "author": "Alex Rivera",
+      "description": "Why calm, structured interfaces help users focus on the work that matters.",
+      "content": "Corporate modernism prioritizes clarity over decoration. When interfaces fade into the background, users can concentrate on content and decisions. Consistent spacing, typography, and action hierarchy are key to achieving that effect.",
+      "createdAt": "2024-10-08T08:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "title": "Reactive Forms in Real Applications",
+      "author": "Marcus Chen",
+      "description": "Patterns for validation, error handling, and reusable form composition.",
+      "content": "Reactive forms shine when business rules are non-trivial. Explicit control over validation state, value changes, and submission flow makes complex forms easier to reason about than template-driven alternatives in many enterprise scenarios.",
+      "createdAt": "2024-10-05T13:10:00.000Z"
+    },
+    {
+      "id": 8,
+      "title": "Signals and State in Angular Apps",
+      "author": "Elena Rodriguez",
+      "description": "Combining signals with services and HTTP for predictable UI updates.",
+      "content": "Signals provide a straightforward way to express derived UI state. When integrated carefully with services and asynchronous data sources, they can simplify component logic while preserving a clear data flow across the application.",
+      "createdAt": "2024-10-01T17:40:00.000Z"
+    },
+    {
+      "id": 9,
+      "title": "Designing Empty and Error States",
+      "author": "James Wilson",
+      "description": "Why supporting states are essential for trustworthy admin experiences.",
+      "content": "Empty, loading, and error states are part of the product experience, not afterthoughts. They should explain what happened, reduce uncertainty, and offer a clear next action so users can recover without frustration.",
+      "createdAt": "2024-09-28T10:55:00.000Z"
+    },
+    {
+      "id": 10,
+      "title": "Building a Maintainable Blog Admin",
+      "author": "Alex Rivera",
+      "description": "A focused CRUD application can still demonstrate strong engineering practices.",
+      "content": "A blog management system may look simple on the surface, but it is an excellent context for practicing routing, forms, API integration, state handling, and user feedback patterns that apply to much larger products.",
+      "createdAt": "2024-09-25T15:25:00.000Z"
+    },
+    {
+      "id": 11,
+      "title": "Pagination and Search UX Patterns",
+      "author": "Sarah Jenkins",
+      "description": "Making large content collections easy to browse without overwhelming the interface.",
+      "content": "Search and pagination should work together to help users find content quickly. Debounced search, stable sorting, and clear result counts reduce cognitive load and make list-heavy applications feel more responsive.",
+      "createdAt": "2024-09-20T12:00:00.000Z"
+    },
+    {
+      "id": 12,
+      "title": "Mock APIs for Frontend Development",
+      "author": "Marcus Chen",
+      "description": "Using json-server to unblock UI work before the real backend is ready.",
+      "content": "Mock APIs let frontend teams iterate on real HTTP flows early. Tools like json-server are especially useful for CRUD assignments and prototypes where the goal is to validate interaction design and client-side architecture.",
+      "createdAt": "2024-09-18T09:30:00.000Z"
+    }
+  ]
+}
