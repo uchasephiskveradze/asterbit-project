@@ -1,0 +1,86 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+
+  &__card {
+    @include card-shell;
+    width: 100%;
+    max-width: 24rem;
+    padding: 2rem;
+  }
+
+  &__header {
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-family-headline;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $color-slate-900;
+  }
+
+  &__subtitle {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: $color-secondary;
+  }
+
+  &__error {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: $radius-md;
+    background: $color-error-container;
+    color: $color-on-error-container;
+    font-size: 0.875rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-slate-900;
+  }
+
+  &__control {
+    @include form-control;
+  }
+
+  &__submit {
+    @include primary-button;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__hint {
+    margin: 1.25rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: $color-secondary;
+    text-align: center;
+  }
+}

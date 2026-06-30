@@ -1,0 +1,39 @@
+<section class="my-posts-page">
+  <header class="my-posts-page__header">
+    <div class="my-posts-page__intro">
+      <h1 class="my-posts-page__title">My Posts</h1>
+      <p class="my-posts-page__subtitle">Track submissions under review, approved, and rejected.</p>
+    </div>
+
+    <a class="my-posts-page__action" routerLink="/posts/new">
+      <span class="material-symbols-outlined">add</span>
+      New Post
+    </a>
+  </header>
+
+  <nav class="my-posts-page__tabs" aria-label="Post status tabs">
+    @for (tab of tabs; track tab) {
+      <a
+        class="my-posts-page__tab"
+        [class.my-posts-page__tab--active]="store.activeTab() === tab"
+        [routerLink]="['/posts/my']"
+        [queryParams]="{ tab }"
+        [attr.aria-current]="store.activeTab() === tab ? 'page' : null"
+      >
+        {{ tabLabels[tab] }}
+      </a>
+    }
+  </nav>
+
+  @if (store.loading()) {
+    <app-posts-loading-state />
+  } @else if (store.error()) {
+    <app-posts-error-state [message]="store.error()!" (retry)="store.loadPosts()" />
+  } @else if (isEmpty()) {
+    <app-posts-empty-state variant="no-posts" />
+  } @else {
+    <div class="my-posts-page__content">
+      <app-posts-table [posts]="store.filteredPosts()" [showAdminActions]="false" />
+    </div>
+  }
+</section>

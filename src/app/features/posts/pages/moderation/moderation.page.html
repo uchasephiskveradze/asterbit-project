@@ -1,0 +1,52 @@
+<section class="moderation-page">
+  <header class="moderation-page__header">
+    <h1 class="moderation-page__title">Moderation</h1>
+    <p class="moderation-page__subtitle">Review pending posts submitted by users.</p>
+  </header>
+
+  @if (store.error()) {
+    <p class="moderation-page__banner" role="alert">{{ store.error() }}</p>
+  }
+
+  @if (store.loading()) {
+    <app-posts-loading-state />
+  } @else if (store.error() && isEmpty()) {
+    <app-posts-error-state [message]="store.error()!" (retry)="store.loadPosts()" />
+  } @else if (isEmpty()) {
+    <app-posts-empty-state variant="no-posts" />
+  } @else {
+    <div class="moderation-page__list">
+      @for (post of store.pendingPosts(); track post.id) {
+        <article class="moderation-page__card">
+          <div class="moderation-page__card-body">
+            <a class="moderation-page__title" [routerLink]="['/posts', post.id]">{{ post.title }}</a>
+            <p class="moderation-page__description">{{ post.description }}</p>
+            <p class="moderation-page__meta">
+              <span>{{ post.author }}</span>
+              <span>{{ post.createdAt | date: 'MMM d, y' }}</span>
+            </p>
+          </div>
+
+          <div class="moderation-page__actions">
+            <button
+              class="moderation-page__approve"
+              type="button"
+              [disabled]="store.actingOnId() === post.id"
+              (click)="approve(post.id)"
+            >
+              Approve
+            </button>
+            <button
+              class="moderation-page__reject"
+              type="button"
+              [disabled]="store.actingOnId() === post.id"
+              (click)="reject(post.id)"
+            >
+              Reject
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

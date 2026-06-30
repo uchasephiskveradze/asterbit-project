@@ -22,6 +22,7 @@ describe('postResolver', () => {
     description: 'A post loaded through the route resolver.',
     content: 'a'.repeat(100),
     createdAt: '2026-01-01T00:00:00.000Z',
+    status: 'approved',
   };
 
   const createRoute = (id: string | null): ActivatedRouteSnapshot =>

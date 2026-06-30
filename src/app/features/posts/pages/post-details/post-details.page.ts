@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, effect, inject, Injector, input } from '@angular/core';
+import { Component, computed, effect, inject, Injector, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
+import { IsAdminDirective } from '../../../../core/auth/directives/is-admin.directive';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
@@ -10,7 +11,7 @@ import { PostDetailsStore } from '../../store/post-details.store';
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, PostsErrorStateComponent],
+  imports: [DatePipe, RouterLink, PostsErrorStateComponent, IsAdminDirective],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',

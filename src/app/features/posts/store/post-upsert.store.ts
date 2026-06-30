@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/auth.service';
 import { PostFormValue } from '../components/post-form/types/post-form.types';
 import { PostsApiService } from '../data-access/posts-api.service';
 import { CreatePostDto } from '../models/create-post.dto';
@@ -14,6 +15,7 @@ import { UpdatePostDto } from '../models/update-post.dto';
 @Injectable()
 export class PostUpsertStore {
   private readonly api = inject(PostsApiService);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -42,15 +44,42 @@ export class PostUpsertStore {
   }
 
   public createPost(value: PostFormValue): void {
-    this.persist(() => this.api.createPost(value as CreatePostDto));
+    const user = this.auth.currentUser();
+    if (!user) {
+      return;
+    }
+
+    const payload: CreatePostDto = {
+      ...value,
+      author: user.name,
+      status: this.auth.isAdmin() ? 'approved' : 'pending',
+      submittedBy: user.id,
+    };
+
+    this.persist(() => this.api.createPost(payload), (post) => {
+      if (this.auth.isAdmin()) {
+        void this.router.navigate(['/posts', post.id]);
+        return;
+      }
+
+      void this.router.navigate(['/posts/my'], {
+        queryParams: { tab: 'under-review' },
+      });
+    });
   }
 
   public updatePost(id: string, value: PostFormValue): void {
     const payload: UpdatePostDto = { ...value };
-    this.persist(() => this.api.updatePost(id, payload));
+    this.persist(
+      () => this.api.updatePost(id, payload),
+      (post) => void this.router.navigate(['/posts', post.id]),
+    );
   }
 
-  private persist(request: () => ReturnType<PostsApiService['createPost']>): void {
+  private persist(
+    request: () => ReturnType<PostsApiService['createPost']>,
+    onSuccess: (post: Post) => void,
+  ): void {
     this.saving.set(true);
     this.error.set(null);
 
@@ -65,7 +94,7 @@ export class PostUpsertStore {
       )
       .subscribe((post) => {
         if (post) {
-          void this.router.navigate(['/posts', post.id]);
+          onSuccess(post);
         }
       });
   }

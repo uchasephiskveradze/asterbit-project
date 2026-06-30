@@ -24,6 +24,8 @@ import { POST_FORM_VALIDATION } from './post-form.validation';
 })
 export class PostFormComponent {
   public readonly post = input<Post | null>(null);
+  public readonly hideAuthor = input(false);
+  public readonly authorDisplayName = input('');
   public readonly submitting = input(false);
   public readonly submitLabel = input('Save Post');
 
@@ -79,6 +81,12 @@ export class PostFormComponent {
           description: value.description,
           content: value.content,
         });
+      }
+    });
+
+    effect(() => {
+      if (this.hideAuthor()) {
+        this.form.controls.author.setValue(this.authorDisplayName());
       }
     });
   }

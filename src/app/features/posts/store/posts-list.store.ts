@@ -3,12 +3,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, tap } from 'rxjs';
 
 import { PostsApiService } from '../data-access/posts-api.service';
+import { PostAccessService } from '../data-access/post-access.service';
 import { Post } from '../models/post.model';
 import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 
 @Injectable()
 export class PostsListStore {
   private readonly api = inject(PostsApiService);
+  private readonly access = inject(PostAccessService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchInput$ = new Subject<string>();
 
@@ -25,7 +27,7 @@ export class PostsListStore {
 
   public readonly filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
-    let result = this.posts();
+    let result = this.posts().filter((post) => this.access.isPubliclyListed(post));
 
     if (query) {
       result = result.filter((post) => post.title.toLowerCase().includes(query));

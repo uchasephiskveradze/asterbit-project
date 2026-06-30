@@ -29,34 +29,36 @@
       }
     </div>
 
-    <div class="post-form__field">
-      <div class="post-form__label-row">
-        <label class="post-form__label" for="post-author">Author Name</label>
-        @if (showCounter('author')) {
-          <span
-            class="post-form__counter"
-            [class.post-form__counter--invalid]="isInvalid('author')"
-          >
-            {{ getLength('author') }} / {{ validation.author.maxLength }}
-          </span>
+    @if (!hideAuthor()) {
+      <div class="post-form__field">
+        <div class="post-form__label-row">
+          <label class="post-form__label" for="post-author">Author Name</label>
+          @if (showCounter('author')) {
+            <span
+              class="post-form__counter"
+              [class.post-form__counter--invalid]="isInvalid('author')"
+            >
+              {{ getLength('author') }} / {{ validation.author.maxLength }}
+            </span>
+          }
+        </div>
+        <input
+          id="post-author"
+          class="post-form__control"
+          [class.post-form__control--invalid]="isInvalid('author')"
+          type="text"
+          formControlName="author"
+          placeholder="John Doe"
+          autocomplete="name"
+          [attr.maxlength]="validation.author.maxLength"
+          (focus)="onFieldFocus('author')"
+          (blur)="onFieldBlur('author')"
+        />
+        @if (isInvalid('author')) {
+          <p class="post-form__error">{{ getError('author') }}</p>
         }
       </div>
-      <input
-        id="post-author"
-        class="post-form__control"
-        [class.post-form__control--invalid]="isInvalid('author')"
-        type="text"
-        formControlName="author"
-        placeholder="John Doe"
-        autocomplete="name"
-        [attr.maxlength]="validation.author.maxLength"
-        (focus)="onFieldFocus('author')"
-        (blur)="onFieldBlur('author')"
-      />
-      @if (isInvalid('author')) {
-        <p class="post-form__error">{{ getError('author') }}</p>
-      }
-    </div>
+    }
 
     <div class="post-form__field">
       <div class="post-form__label-row">

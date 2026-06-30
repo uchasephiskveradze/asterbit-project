@@ -7,10 +7,34 @@
           <a class="layout__nav-link" routerLink="/posts" routerLinkActive="layout__nav-link--active">
             Posts
           </a>
+          @if (auth.isAuthenticated()) {
+            <a
+              class="layout__nav-link"
+              routerLink="/posts/my"
+              routerLinkActive="layout__nav-link--active"
+            >
+              My Posts
+            </a>
+            <a
+              *appIsAdmin
+              class="layout__nav-link"
+              routerLink="/posts/moderation"
+              routerLinkActive="layout__nav-link--active"
+            >
+              Moderation
+            </a>
+          }
         </nav>
       </div>
 
-      <a class="layout__cta" routerLink="/posts/new">Create Post</a>
+      <div class="layout__actions">
+        @if (auth.isAuthenticated()) {
+          <a class="layout__cta" routerLink="/posts/new">Create Post</a>
+          <button class="layout__auth-link" type="button" (click)="auth.logout()">Logout</button>
+        } @else {
+          <a class="layout__cta" routerLink="/login">Login</a>
+        }
+      </div>
     </div>
   </header>
 

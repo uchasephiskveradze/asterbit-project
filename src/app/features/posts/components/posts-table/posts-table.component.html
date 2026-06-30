@@ -31,14 +31,17 @@
             >
               <span class="material-symbols-outlined">visibility</span>
             </a>
-            <a
-              class="posts-table__action"
-              [routerLink]="['/posts', post.id, 'edit']"
-              [queryParams]="{ from: 'list' }"
-              aria-label="Edit post"
-            >
-              <span class="material-symbols-outlined">edit</span>
-            </a>
+            @if (showAdminActions()) {
+              <a
+                *appIsAdmin
+                class="posts-table__action"
+                [routerLink]="['/posts', post.id, 'edit']"
+                [queryParams]="{ from: 'list' }"
+                aria-label="Edit post"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </a>
+            }
           </td>
         </tr>
       }

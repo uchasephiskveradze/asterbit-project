@@ -43,6 +43,8 @@
       <div class="post-upsert-page__form">
         <app-post-form
           [post]="store.post()"
+          [hideAuthor]="hideAuthorField()"
+          [authorDisplayName]="auth.currentUser()?.name ?? ''"
           [submitting]="store.saving()"
           [submitLabel]="submitLabel()"
           (formSubmit)="onSubmit($event)"

@@ -35,6 +35,7 @@ describe('PostDetailsPage', () => {
         description: 'A'.repeat(20),
         content: 'B'.repeat(100),
         createdAt: '2026-01-01T00:00:00.000Z',
+        status: 'approved',
       },
       notFound: false,
       error: null,

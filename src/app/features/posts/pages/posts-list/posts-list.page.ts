@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsFiltersComponent } from '../../components/posts-filters/posts-filters.component';
@@ -30,6 +31,7 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
 })
 export class PostsListPage implements OnInit {
   public readonly store = inject(PostsListStore);
+  public readonly auth = inject(AuthService);
 
   public readonly viewState = computed<PostsListViewState>(() => {
     if (this.store.loading()) {

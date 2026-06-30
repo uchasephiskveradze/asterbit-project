@@ -6,7 +6,7 @@
     </a>
 
     @if (store.post(); as post) {
-      <div class="post-details-page__actions">
+      <div *appIsAdmin class="post-details-page__actions">
         <a
           class="post-details-page__action post-details-page__action--secondary"
           [routerLink]="['/posts', post.id, 'edit']"

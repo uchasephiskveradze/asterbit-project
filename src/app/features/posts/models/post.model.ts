@@ -1,3 +1,5 @@
+import { PostStatus } from './post-status.model';
+
 export interface Post {
   id: string;
   title: string;
@@ -5,4 +7,6 @@ export interface Post {
   description: string;
   content: string;
   createdAt: string;
+  status: PostStatus;
+  submittedBy?: string;
 }

@@ -1,0 +1,69 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.my-posts-page {
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-family-headline;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $color-slate-900;
+  }
+
+  &__subtitle {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    color: $color-secondary;
+  }
+
+  &__action {
+    @include primary-button;
+  }
+
+  &__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__tab {
+    padding: 0.5rem 1rem;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-md;
+    background: $color-surface-lowest;
+    color: $color-secondary;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      background: $color-surface-container-low;
+    }
+
+    &--active {
+      border-color: $color-primary;
+      background: $color-primary-glow;
+      color: $color-primary;
+    }
+  }
+
+  &__content {
+    @include card-shell;
+    overflow: hidden;
+  }
+}

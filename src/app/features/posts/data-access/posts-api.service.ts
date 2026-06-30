@@ -5,10 +5,12 @@ import { map, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
+import { PostStatus, isPostStatus } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
 
 type PostResponse = Omit<Post, 'id'> & {
   id: string | number;
+  status?: string;
 };
 
 @Injectable({
@@ -45,15 +47,23 @@ export class PostsApiService {
       .pipe(map((post) => this.normalizePost(post)));
   }
 
+  public updatePostStatus(id: string, status: PostStatus): Observable<Post> {
+    return this.updatePost(id, { status });
+  }
+
   public deletePost(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`);
   }
 
   private normalizePost(post: PostResponse): Post {
+    const status = post.status && isPostStatus(post.status) ? post.status : 'approved';
+
     return {
       ...post,
       id: String(post.id),
       createdAt: post.createdAt ?? new Date().toISOString(),
+      status,
+      submittedBy: post.submittedBy ? String(post.submittedBy) : undefined,
     };
   }
 }
