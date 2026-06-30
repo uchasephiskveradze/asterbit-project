@@ -14,23 +14,25 @@
           >
             Posts
           </a>
-          <a
-            *appIsAuthenticated
-            class="layout__nav-link"
-            routerLink="/posts/my"
-            routerLinkActive="layout__nav-link--active"
-            [routerLinkActiveOptions]="{ exact: false }"
-          >
-            My Posts
-          </a>
-          <a
-            *appIsAdmin
-            class="layout__nav-link"
-            routerLink="/posts/moderation"
-            routerLinkActive="layout__nav-link--active"
-          >
-            Moderation
-          </a>
+          @if (auth.isAuthenticated()) {
+            <a
+              class="layout__nav-link"
+              routerLink="/posts/my"
+              routerLinkActive="layout__nav-link--active"
+              [routerLinkActiveOptions]="{ exact: false }"
+            >
+              My Posts
+            </a>
+          }
+          @if (auth.isAdmin()) {
+            <a
+              class="layout__nav-link"
+              routerLink="/posts/moderation"
+              routerLinkActive="layout__nav-link--active"
+            >
+              Moderation
+            </a>
+          }
         </nav>
       </div>
 
