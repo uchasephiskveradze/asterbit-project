@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { Post } from '../../models/post.model';
 import { PostFormComponent } from './post-form.component';
 import { POST_FORM_VALIDATION } from './post-form.validation';
 
@@ -79,5 +80,37 @@ describe('PostFormComponent', () => {
 
     component.onFieldBlur('title');
     expect(component.showCounter('title')).toBe(false);
+  });
+
+  it('should patch edit values only when the post id changes', () => {
+    const patchSpy = vi.spyOn(component.form, 'patchValue');
+    const post: Post = {
+      id: '1',
+      title: 'Original title',
+      author: 'Jane Doe',
+      description: 'a'.repeat(POST_FORM_VALIDATION.description.minLength),
+      content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength),
+      createdAt: '2026-01-01T00:00:00.000Z',
+      status: 'approved',
+    };
+
+    fixture.componentRef.setInput('post', post);
+    fixture.detectChanges();
+    expect(patchSpy).toHaveBeenCalledTimes(1);
+
+    fixture.componentRef.setInput('post', {
+      ...post,
+      title: 'Updated title',
+    });
+    fixture.detectChanges();
+    expect(patchSpy).toHaveBeenCalledTimes(1);
+
+    fixture.componentRef.setInput('post', {
+      ...post,
+      id: '2',
+      title: 'Different post',
+    });
+    fixture.detectChanges();
+    expect(patchSpy).toHaveBeenCalledTimes(2);
   });
 });
