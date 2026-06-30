@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 
@@ -8,7 +10,7 @@ import { DeletePostDialogData } from './types/delete-post-dialog.types';
 
 @Component({
   selector: 'app-delete-post-dialog',
-  imports: [MatDialogClose],
+  imports: [MatDialogClose, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './delete-post-dialog.component.html',
   styleUrl: './delete-post-dialog.component.scss',
 })

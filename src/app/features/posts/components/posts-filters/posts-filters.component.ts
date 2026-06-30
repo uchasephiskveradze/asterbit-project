@@ -8,13 +8,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { distinctUntilChanged } from 'rxjs';
 
 import { PostDateSort } from '../../store/posts-list.types';
 
 @Component({
   selector: 'app-posts-filters',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MatProgressSpinnerModule],
   templateUrl: './posts-filters.component.html',
   styleUrl: './posts-filters.component.scss',
 })

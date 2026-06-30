@@ -17,21 +17,27 @@
 
   <div class="delete-post-dialog__actions">
     <button
+      mat-stroked-button
       type="button"
-      class="delete-post-dialog__cancel"
       mat-dialog-close
       [disabled]="store.deleting()"
     >
       Cancel
     </button>
     <button
+      mat-flat-button
+      color="warn"
       type="button"
       class="delete-post-dialog__confirm"
       [disabled]="store.deleting()"
       (click)="confirm()"
     >
       @if (store.deleting()) {
-        <span class="delete-post-dialog__spinner" aria-hidden="true"></span>
+        <mat-progress-spinner
+          class="delete-post-dialog__spinner"
+          mode="indeterminate"
+          diameter="18"
+        />
         Deleting...
       } @else {
         Delete

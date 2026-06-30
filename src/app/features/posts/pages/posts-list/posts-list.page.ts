@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
@@ -15,6 +16,7 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
   selector: 'app-posts-list-page',
   imports: [
     RouterLink,
+    MatProgressSpinnerModule,
     PostsFiltersComponent,
     PostsTableComponent,
     PostsPaginationComponent,

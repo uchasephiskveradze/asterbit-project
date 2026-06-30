@@ -44,7 +44,7 @@ npm test        # unit tests (Vitest)
 
 | Library | Purpose |
 |---------|---------|
-| Angular Material | Dialog (delete confirmation), theming |
+| Angular Material | `MatDialog`, `MatButton`, `MatProgressSpinner` (custom-styled filters/table keep Stitch UI) |
 | RxJS | HTTP streams, operators in signal stores |
 | json-server | Mock REST API (`db.json`) |
 | Vitest | Unit testing |

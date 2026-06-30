@@ -56,23 +56,13 @@
     gap: 0.75rem;
   }
 
-  &__cancel {
-    @include secondary-button;
-    cursor: pointer;
-  }
-
   &__confirm {
-    @include danger-button;
-
-    &:disabled {
-      opacity: 0.85;
-      cursor: not-allowed;
-    }
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   &__spinner {
-    @include inline-spinner(0.875rem);
-    border-top-color: $color-on-primary;
-    border-color: rgba(255, 255, 255, 0.35);
+    --mdc-circular-progress-active-indicator-color: currentColor;
   }
 }

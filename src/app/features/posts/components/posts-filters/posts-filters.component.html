@@ -1,14 +1,16 @@
 <div class="posts-filters">
   <div class="posts-filters__search">
-    @if (filtering()) {
-      <span
-        class="posts-filters__search-spinner"
-        aria-hidden="true"
-        role="presentation"
-      ></span>
-    } @else {
-      <span class="material-symbols-outlined posts-filters__search-icon">search</span>
-    }
+    <span class="posts-filters__search-leading" aria-hidden="true">
+      @if (filtering()) {
+        <mat-progress-spinner
+          class="posts-filters__search-spinner"
+          mode="indeterminate"
+          diameter="18"
+        />
+      } @else {
+        <span class="material-symbols-outlined posts-filters__search-icon">search</span>
+      }
+    </span>
     <input
       class="posts-filters__search-input"
       type="search"
@@ -20,13 +22,18 @@
 
   <div class="posts-filters__sort">
     <span class="posts-filters__sort-label">Sort by:</span>
-    <select
-      class="posts-filters__sort-select"
-      [formControl]="sortControl"
-      aria-label="Sort posts by date"
-    >
-      <option value="desc">Newest first</option>
-      <option value="asc">Oldest first</option>
-    </select>
+    <div class="posts-filters__sort-control">
+      <select
+        class="posts-filters__sort-select"
+        [formControl]="sortControl"
+        aria-label="Sort posts by date"
+      >
+        <option value="desc">Newest first</option>
+        <option value="asc">Oldest first</option>
+      </select>
+      <span class="material-symbols-outlined posts-filters__sort-icon" aria-hidden="true">
+        expand_more
+      </span>
+    </div>
   </div>
 </div>
