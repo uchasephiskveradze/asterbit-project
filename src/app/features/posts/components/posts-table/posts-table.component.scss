@@ -1,0 +1,98 @@
+@use 'palette' as *;
+
+.posts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  &__scroll {
+    overflow-x: auto;
+  }
+
+  &__head-row {
+    background: $color-surface-container-low;
+    border-bottom: 1px solid $color-border-subtle;
+  }
+
+  &__head-cell {
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $color-slate-700;
+
+    &--actions {
+      text-align: right;
+    }
+  }
+
+  &__row {
+    border-bottom: 1px solid $color-border-subtle;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: $color-surface;
+    }
+  }
+
+  &__cell {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+
+    &--actions {
+      text-align: right;
+      white-space: nowrap;
+    }
+  }
+
+  &__title-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &__title {
+    display: block;
+    font-family: $font-family-headline;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-slate-900;
+  }
+
+  &__description {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: $color-secondary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 28rem;
+  }
+
+  &__author,
+  &__date {
+    font-size: 0.875rem;
+    color: $color-slate-700;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: $radius-sm;
+    color: $color-secondary;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $color-primary;
+    }
+
+    & + & {
+      margin-left: 0.25rem;
+    }
+  }
+}

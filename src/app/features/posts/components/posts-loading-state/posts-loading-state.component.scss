@@ -1,0 +1,118 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.posts-loading-state {
+  &__skeleton {
+    @include skeleton-shimmer;
+  }
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__skeleton--title {
+    width: 12rem;
+    height: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__skeleton--subtitle {
+    width: 20rem;
+    height: 1.25rem;
+  }
+
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__skeleton--search {
+    width: 16rem;
+    height: 2.5rem;
+  }
+
+  &__skeleton--sort {
+    width: 10rem;
+    height: 2.5rem;
+  }
+
+  &__table {
+    background: $color-surface-lowest;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-lg;
+    overflow: hidden;
+  }
+
+  &__table-head {
+    display: none;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: $color-surface-container-low;
+    border-bottom: 1px solid $color-border-subtle;
+
+    @media (min-width: 768px) {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 0.5fr;
+    }
+  }
+
+  &__skeleton--cell {
+    height: 1rem;
+  }
+
+  &__row {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $color-border-subtle;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 2fr 1fr 1fr 0.5fr;
+      align-items: center;
+    }
+  }
+
+  &__row-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__skeleton--avatar {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+  }
+
+  &__row-text {
+    flex: 1;
+  }
+
+  &__skeleton--line {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__skeleton--short {
+    width: 70%;
+    margin-bottom: 0;
+  }
+
+  &__skeleton--author {
+    height: 1rem;
+    width: 6rem;
+  }
+
+  &__skeleton--date {
+    height: 1rem;
+    width: 5rem;
+  }
+
+  &__skeleton--actions {
+    height: 1.5rem;
+    width: 3rem;
+    justify-self: end;
+  }
+}

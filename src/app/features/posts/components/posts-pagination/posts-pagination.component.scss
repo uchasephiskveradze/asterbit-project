@@ -1,0 +1,70 @@
+@use 'palette' as *;
+
+.posts-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: $color-surface-container-low;
+  border-top: 1px solid $color-border-subtle;
+
+  &__summary {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: $color-secondary;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__nav,
+  &__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.25rem;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    font-family: $font-family-body;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: $color-slate-700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  &__nav {
+    &:hover:not(:disabled) {
+      background: $color-surface-container;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  &__page {
+    &:hover:not(&--active) {
+      background: $color-surface-container;
+    }
+
+    &--active {
+      background: $color-primary;
+      color: $color-on-primary;
+    }
+  }
+
+  &__ellipsis {
+    padding: 0 0.25rem;
+    color: $color-secondary;
+  }
+}

@@ -1,0 +1,46 @@
+<div class="posts-table__scroll">
+  <table class="posts-table">
+    <thead class="posts-table__head">
+      <tr class="posts-table__head-row">
+        <th class="posts-table__head-cell">Title</th>
+        <th class="posts-table__head-cell">Author</th>
+        <th class="posts-table__head-cell">Date</th>
+        <th class="posts-table__head-cell posts-table__head-cell--actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="posts-table__body">
+      @for (post of posts(); track post.id) {
+        <tr class="posts-table__row">
+          <td class="posts-table__cell">
+            <a class="posts-table__title-link" [routerLink]="['/posts', post.id]">
+              <span class="posts-table__title">{{ post.title }}</span>
+              <span class="posts-table__description">{{ post.description }}</span>
+            </a>
+          </td>
+          <td class="posts-table__cell">
+            <span class="posts-table__author">{{ post.author }}</span>
+          </td>
+          <td class="posts-table__cell">
+            <span class="posts-table__date">{{ post.createdAt | date: 'MMM d, y' }}</span>
+          </td>
+          <td class="posts-table__cell posts-table__cell--actions">
+            <a
+              class="posts-table__action"
+              [routerLink]="['/posts', post.id]"
+              aria-label="View post"
+            >
+              <span class="material-symbols-outlined">visibility</span>
+            </a>
+            <a
+              class="posts-table__action"
+              [routerLink]="['/posts', post.id, 'edit']"
+              aria-label="Edit post"
+            >
+              <span class="material-symbols-outlined">edit</span>
+            </a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

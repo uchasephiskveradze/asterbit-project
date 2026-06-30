@@ -1,0 +1,83 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.posts-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1rem;
+  max-width: 40rem;
+  margin: 0 auto;
+
+  &__visual {
+    position: relative;
+    width: 100%;
+    height: 16rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, $color-primary-glow, transparent);
+    border-radius: $radius-full;
+    filter: blur(48px);
+    transform: scale(0.75);
+  }
+
+  &__icon-wrap {
+    position: relative;
+    padding: 2.5rem;
+    background: $color-surface-lowest;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-full;
+    box-shadow: $shadow-sm;
+  }
+
+  &__icon {
+    font-size: 5rem;
+    color: $color-secondary;
+    opacity: 0.3;
+  }
+
+  &__badge {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background: $color-primary;
+    color: $color-on-primary;
+    border-radius: $radius-md;
+    box-shadow: $shadow-badge;
+  }
+
+  &__title {
+    margin: 0 0 0.75rem;
+    font-family: $font-family-headline;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-on-surface;
+  }
+
+  &__text {
+    margin: 0 0 1.5rem;
+    max-width: 25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: $color-secondary;
+  }
+
+  &__cta {
+    @include primary-button;
+    gap: 0.75rem;
+    padding: 0.75rem 2rem;
+    box-shadow: $shadow-sm;
+  }
+}

@@ -1,0 +1,13 @@
+<div class="posts-error-state" role="alert">
+  <div class="posts-error-state__icon-wrap" aria-hidden="true">
+    <span class="material-symbols-outlined posts-error-state__icon">error_outline</span>
+  </div>
+
+  <h2 class="posts-error-state__title">Something went wrong</h2>
+  <p class="posts-error-state__message">{{ message() }}</p>
+
+  <button type="button" class="posts-error-state__retry" (click)="retry.emit()">
+    <span class="material-symbols-outlined">refresh</span>
+    Try again
+  </button>
+</div>

@@ -1,64 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
+import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { PostsFiltersComponent } from '../../components/posts-filters/posts-filters.component';
+import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
+import { PostsPaginationComponent } from '../../components/posts-pagination/posts-pagination.component';
+import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
+import { PostsListStore } from '../../store/posts-list.store';
 
 @Component({
   selector: 'app-posts-list-page',
-  imports: [RouterLink],
-  template: `
-    <section class="page">
-      <header class="page__header">
-        <div>
-          <h1 class="page__title">Posts</h1>
-          <p class="page__subtitle">Browse and manage blog posts.</p>
-        </div>
-        <a class="page__action" routerLink="/posts/new">Create Post</a>
-      </header>
-
-      <p class="page__placeholder">Posts list will be implemented here.</p>
-    </section>
-  `,
-  styles: `
-    .page__header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .page__title {
-      margin: 0;
-      font-family: Manrope, sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .page__subtitle {
-      margin: 0.5rem 0 0;
-      color: #505f76;
-    }
-
-    .page__action {
-      display: inline-flex;
-      padding: 0.625rem 1.25rem;
-      border-radius: 0.5rem;
-      background: #1e40af;
-      color: #fff;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .page__placeholder {
-      margin: 0;
-      padding: 2rem;
-      border: 1px dashed #e2e8f0;
-      border-radius: 0.75rem;
-      background: #fff;
-      color: #505f76;
-      text-align: center;
-    }
-  `,
+  imports: [
+    RouterLink,
+    PostsFiltersComponent,
+    PostsTableComponent,
+    PostsPaginationComponent,
+    PostsLoadingStateComponent,
+    PostsEmptyStateComponent,
+    PostsErrorStateComponent,
+  ],
+  providers: [PostsListStore],
+  templateUrl: './posts-list.page.html',
+  styleUrl: './posts-list.page.scss',
 })
-export class PostsListPage {}
+export class PostsListPage implements OnInit {
+  readonly store = inject(PostsListStore);
+
+  ngOnInit(): void {
+    this.store.loadPosts();
+  }
+}

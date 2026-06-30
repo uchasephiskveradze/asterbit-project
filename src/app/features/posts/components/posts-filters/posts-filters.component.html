@@ -1,0 +1,24 @@
+<div class="posts-filters">
+  <div class="posts-filters__search">
+    <span class="material-symbols-outlined posts-filters__search-icon">search</span>
+    <input
+      class="posts-filters__search-input"
+      type="search"
+      placeholder="Search posts..."
+      [formControl]="searchControl"
+      aria-label="Search posts by title"
+    />
+  </div>
+
+  <div class="posts-filters__sort">
+    <span class="posts-filters__sort-label">Sort by:</span>
+    <select
+      class="posts-filters__sort-select"
+      [formControl]="sortControl"
+      aria-label="Sort posts by date"
+    >
+      <option value="desc">Newest first</option>
+      <option value="asc">Oldest first</option>
+    </select>
+  </div>
+</div>

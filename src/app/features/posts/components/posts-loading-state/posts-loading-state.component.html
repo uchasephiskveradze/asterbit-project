@@ -1,0 +1,36 @@
+<div class="posts-loading-state" aria-busy="true" aria-label="Loading posts">
+  <div class="posts-loading-state__header">
+    <div class="posts-loading-state__skeleton posts-loading-state__skeleton--title"></div>
+    <div class="posts-loading-state__skeleton posts-loading-state__skeleton--subtitle"></div>
+  </div>
+
+  <div class="posts-loading-state__filters">
+    <div class="posts-loading-state__skeleton posts-loading-state__skeleton--search"></div>
+    <div class="posts-loading-state__skeleton posts-loading-state__skeleton--sort"></div>
+  </div>
+
+  <div class="posts-loading-state__table">
+    <div class="posts-loading-state__table-head">
+      @for (column of columns; track column) {
+        <div class="posts-loading-state__skeleton posts-loading-state__skeleton--cell"></div>
+      }
+    </div>
+
+    @for (row of rows; track row) {
+      <div class="posts-loading-state__row">
+        <div class="posts-loading-state__row-main">
+          <div class="posts-loading-state__skeleton posts-loading-state__skeleton--avatar"></div>
+          <div class="posts-loading-state__row-text">
+            <div class="posts-loading-state__skeleton posts-loading-state__skeleton--line"></div>
+            <div
+              class="posts-loading-state__skeleton posts-loading-state__skeleton--line posts-loading-state__skeleton--short"
+            ></div>
+          </div>
+        </div>
+        <div class="posts-loading-state__skeleton posts-loading-state__skeleton--author"></div>
+        <div class="posts-loading-state__skeleton posts-loading-state__skeleton--date"></div>
+        <div class="posts-loading-state__skeleton posts-loading-state__skeleton--actions"></div>
+      </div>
+    }
+  </div>
+</div>
