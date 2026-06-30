@@ -16,6 +16,7 @@
     <div class="moderation-page__list">
       @for (post of store.pendingPosts(); track post.id) {
         @let reason = post.pendingReason;
+        @let isEdited = reason === pendingReason.edited;
 
         <article class="moderation-page__card">
           <div class="moderation-page__card-body">
@@ -25,23 +26,21 @@
                 [routerLink]="['/posts', post.id]"
                 [queryParams]="{ from: 'moderation' }"
               >{{ post.title }}</a>
-              @if (reason) {
-                <span
-                  class="moderation-page__badge"
-                  [class.moderation-page__badge--edited]="reason === 'edited'"
-                >
-                  @if (reason === 'edited') {
-                    <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
-                      edit_note
-                    </span>
-                  } @else {
-                    <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
-                      fiber_new
-                    </span>
-                  }
-                  {{ pendingReasonLabels[reason] }}
-                </span>
-              }
+              <span
+                class="moderation-page__badge"
+                [class.moderation-page__badge--edited]="isEdited"
+              >
+                @if (isEdited) {
+                  <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
+                    edit_note
+                  </span>
+                } @else if (reason === pendingReason.new) {
+                  <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
+                    fiber_new
+                  </span>
+                }
+                {{ getPendingReasonLabel(reason) }}
+              </span>
             </div>
             <p class="moderation-page__description">{{ post.description | truncate: 140 }}</p>
             <p class="moderation-page__meta">

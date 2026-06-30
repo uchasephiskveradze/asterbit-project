@@ -69,8 +69,8 @@
               <div
                 class="posts-list-page__scroll-sentinel"
                 appInfiniteScroll
-                [appInfiniteScrollDisabled]="isFiltering"
-                (appInfiniteScrollReached)="store.loadMore()"
+                [disabled]="isFiltering"
+                (reached)="store.loadMore()"
               >
                 <mat-progress-spinner mode="indeterminate" diameter="28" />
                 <span>Showing {{ rangeEnd }} of {{ totalItems }} posts</span>

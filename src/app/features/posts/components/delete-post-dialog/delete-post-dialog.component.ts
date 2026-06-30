@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { take } from 'rxjs';
 
 import { navigateSafely } from '../../../../core/router/navigate.util';
 
@@ -30,17 +29,14 @@ export class DeletePostDialogComponent {
 
     this.dialogRef.disableClose = true;
 
-    this.store
-      .deletePost(this.data.postId)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-          navigateSafely(this.router, ['/posts']);
-        },
-        complete: () => {
-          this.dialogRef.disableClose = false;
-        },
-      });
+    this.store.deletePost(this.data.postId).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+        navigateSafely(this.router, ['/posts']);
+      },
+      complete: () => {
+        this.dialogRef.disableClose = false;
+      },
+    });
   }
 }

@@ -6,10 +6,21 @@ export type PostBackNavigation = {
   label: string;
 };
 
+export function isPostNavigationSource(value: string | null | undefined): value is PostNavigationSource {
+  return value === 'list' || value === 'my-posts' || value === 'moderation';
+}
+
 export function getPostBackNavigation(
-  from: PostNavigationSource | undefined,
+  from: string | null | undefined,
   options?: { tab?: string | null },
 ): PostBackNavigation {
+  if (!isPostNavigationSource(from) || from === 'list') {
+    return {
+      link: ['/posts'],
+      label: 'Back to Posts',
+    };
+  }
+
   switch (from) {
     case 'my-posts':
       return {
@@ -21,11 +32,6 @@ export function getPostBackNavigation(
       return {
         link: ['/posts/moderation'],
         label: 'Back to Moderation',
-      };
-    default:
-      return {
-        link: ['/posts'],
-        label: 'Back to Posts',
       };
   }
 }
