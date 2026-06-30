@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, tap } from 'rxjs';
+import { catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { PostAccessService } from '../data-access/post-access.service';
@@ -16,6 +16,8 @@ export class PostsListStore {
   private readonly viewStorage = inject(PostsListViewStorageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchInput$ = new Subject<string>();
+  private readonly sortOrder$ = new Subject<PostDateSort>();
+  private readonly page$ = new Subject<number>();
 
   public readonly pageSize = POSTS_PAGE_SIZE;
 
@@ -104,20 +106,42 @@ export class PostsListStore {
   );
 
   public constructor() {
-    this.searchInput$
-      .pipe(
+    combineLatest([
+      this.searchInput$.pipe(
         tap((query) => {
           this.filtering.set(query !== this.searchQuery());
         }),
-        debounceTime(200),
+        debounceTime(300),
         distinctUntilChanged(),
+        startWith(this.searchInput()),
+      ),
+      this.sortOrder$.pipe(startWith(this.sortOrder())),
+      this.page$.pipe(startWith(this.currentPage())),
+    ])
+      .pipe(
+        switchMap(([query, sort, page]) =>
+          of({ query, sort, page }).pipe(
+            tap(({ query, sort, page }) => {
+              const queryChanged = query !== this.searchQuery();
+              const sortChanged = sort !== this.sortOrder();
+
+              this.searchQuery.set(query);
+              this.sortOrder.set(sort);
+
+              if (queryChanged || sortChanged) {
+                this.currentPage.set(1);
+                this.visibleCount.set(this.pageSize);
+              } else {
+                this.currentPage.set(page);
+              }
+
+              this.filtering.set(false);
+            }),
+          ),
+        ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((query) => {
-        this.searchQuery.set(query);
-        this.resetListPosition();
-        this.filtering.set(false);
-      });
+      .subscribe();
   }
 
   public loadPosts(force = false): void {
@@ -138,6 +162,7 @@ export class PostsListStore {
       .subscribe((posts) => {
         this.posts.set(posts);
         this.resetListPosition();
+        this.page$.next(1);
       });
   }
 
@@ -153,8 +178,11 @@ export class PostsListStore {
   }
 
   public setSortOrder(order: PostDateSort): void {
-    this.sortOrder.set(order);
-    this.resetListPosition();
+    if (this.sortOrder() === order) {
+      return;
+    }
+
+    this.sortOrder$.next(order);
   }
 
   public setViewMode(mode: PostsListViewMode): void {
@@ -165,11 +193,17 @@ export class PostsListStore {
     this.viewMode.set(mode);
     this.viewStorage.write(mode);
     this.resetListPosition();
+    this.page$.next(1);
   }
 
   public setPage(page: number): void {
     const nextPage = Math.min(Math.max(1, page), this.totalPages());
-    this.currentPage.set(nextPage);
+
+    if (nextPage === this.currentPage()) {
+      return;
+    }
+
+    this.page$.next(nextPage);
   }
 
   public loadMore(): void {
