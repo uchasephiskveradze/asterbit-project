@@ -36,4 +36,38 @@
       </span>
     </div>
   </div>
+
+  <div
+    class="posts-filters__view-mode"
+    role="group"
+    aria-label="Posts list display mode"
+  >
+    <span class="posts-filters__view-mode-label">View:</span>
+    <div class="posts-filters__view-mode-options">
+      <button
+        type="button"
+        class="posts-filters__view-mode-option"
+        [class.posts-filters__view-mode-option--active]="viewMode() === 'pagination'"
+        [attr.aria-pressed]="viewMode() === 'pagination'"
+        (click)="selectViewMode('pagination')"
+      >
+        <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
+          view_list
+        </span>
+        Pages
+      </button>
+      <button
+        type="button"
+        class="posts-filters__view-mode-option"
+        [class.posts-filters__view-mode-option--active]="viewMode() === 'infinite-scroll'"
+        [attr.aria-pressed]="viewMode() === 'infinite-scroll'"
+        (click)="selectViewMode('infinite-scroll')"
+      >
+        <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
+          unfold_more
+        </span>
+        Infinite scroll
+      </button>
+    </div>
+  </div>
 </div>

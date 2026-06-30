@@ -8,6 +8,7 @@ import { PostsEmptyStateComponent } from '../../components/posts-empty-state/pos
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsFiltersComponent } from '../../components/posts-filters/posts-filters.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
+import { PostsPaginationComponent } from '../../components/posts-pagination/posts-pagination.component';
 import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
 import { PostsListStore } from '../../store/posts-list.store';
 
@@ -20,6 +21,7 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
     MatProgressSpinnerModule,
     InfiniteScrollDirective,
     PostsFiltersComponent,
+    PostsPaginationComponent,
     PostsTableComponent,
     PostsLoadingStateComponent,
     PostsEmptyStateComponent,

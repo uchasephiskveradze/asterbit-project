@@ -29,8 +29,10 @@
           [searchQuery]="store.searchInput()"
           [sortOrder]="store.sortOrder()"
           [filtering]="store.filtering()"
+          [viewMode]="store.viewMode()"
           (searchChange)="store.setSearchInput($event)"
           (sortChange)="store.setSortOrder($event)"
+          (viewModeChange)="store.setViewMode($event)"
         />
       </div>
 
@@ -44,20 +46,33 @@
             </div>
           }
 
-          <app-posts-table [posts]="store.visiblePosts()" />
+          <app-posts-table [posts]="store.displayedPosts()" />
 
-          @if (store.hasMorePosts()) {
-            <div
-              class="posts-list-page__scroll-sentinel"
-              appInfiniteScroll
-              [appInfiniteScrollDisabled]="store.filtering()"
-              (appInfiniteScrollReached)="store.loadMore()"
-            >
-              <mat-progress-spinner mode="indeterminate" diameter="28" />
-              <span>Loading more posts...</span>
-            </div>
-          } @else if (store.visiblePosts().length > 0) {
-            <p class="posts-list-page__end">Showing all {{ store.totalItems() }} posts</p>
+          @if (store.totalItems() > 0) {
+            @if (store.isPaginationMode()) {
+              <app-posts-pagination
+                [currentPage]="store.currentPage()"
+                [totalPages]="store.totalPages()"
+                [totalItems]="store.totalItems()"
+                [rangeStart]="store.rangeStart()"
+                [rangeEnd]="store.rangeEnd()"
+                (pageChange)="store.setPage($event)"
+              />
+            } @else if (store.hasMorePosts()) {
+              <div
+                class="posts-list-page__scroll-sentinel"
+                appInfiniteScroll
+                [appInfiniteScrollDisabled]="store.filtering()"
+                (appInfiniteScrollReached)="store.loadMore()"
+              >
+                <mat-progress-spinner mode="indeterminate" diameter="28" />
+                <span>Showing {{ store.rangeEnd() }} of {{ store.totalItems() }} posts</span>
+              </div>
+            } @else {
+              <p class="posts-list-page__end">
+                Showing all {{ store.totalItems() }} posts
+              </p>
+            }
           }
         </div>
       }

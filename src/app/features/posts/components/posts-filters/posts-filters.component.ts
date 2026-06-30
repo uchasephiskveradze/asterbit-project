@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { distinctUntilChanged } from 'rxjs';
 
 import { PostDateSort } from '../../store/posts-list.types';
+import { PostsListViewMode } from '../../models/posts-list-view-mode.model';
 
 @Component({
   selector: 'app-posts-filters',
@@ -23,9 +24,11 @@ export class PostsFiltersComponent {
   public readonly searchQuery = input('');
   public readonly sortOrder = input<PostDateSort>('desc');
   public readonly filtering = input(false);
+  public readonly viewMode = input<PostsListViewMode>('pagination');
 
   public readonly searchChange = output<string>();
   public readonly sortChange = output<PostDateSort>();
+  public readonly viewModeChange = output<PostsListViewMode>();
 
   public readonly searchControl = new FormControl('', { nonNullable: true });
   public readonly sortControl = new FormControl<PostDateSort>('desc', {
@@ -56,5 +59,9 @@ export class PostsFiltersComponent {
     this.sortControl.valueChanges
       .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.sortChange.emit(value));
+  }
+
+  public selectViewMode(mode: PostsListViewMode): void {
+    this.viewModeChange.emit(mode);
   }
 }

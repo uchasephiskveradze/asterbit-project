@@ -4,13 +4,16 @@ import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, 
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { PostAccessService } from '../data-access/post-access.service';
+import { PostsListViewStorageService } from '../data-access/posts-list-view-storage.service';
 import { Post } from '../models/post.model';
+import { PostsListViewMode } from '../models/posts-list-view-mode.model';
 import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 
 @Injectable()
 export class PostsListStore {
   private readonly api = inject(PostsApiService);
   private readonly access = inject(PostAccessService);
+  private readonly viewStorage = inject(PostsListViewStorageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchInput$ = new Subject<string>();
 
@@ -23,6 +26,8 @@ export class PostsListStore {
   public readonly searchInput = signal('');
   public readonly searchQuery = signal('');
   public readonly sortOrder = signal<PostDateSort>('desc');
+  public readonly viewMode = signal<PostsListViewMode>(this.viewStorage.read());
+  public readonly currentPage = signal(1);
   public readonly visibleCount = signal(POSTS_PAGE_SIZE);
 
   public readonly filteredPosts = computed(() => {
@@ -44,13 +49,46 @@ export class PostsListStore {
 
   public readonly totalItems = computed(() => this.filteredPosts().length);
 
-  public readonly visiblePosts = computed(() =>
-    this.filteredPosts().slice(0, this.visibleCount()),
+  public readonly isPaginationMode = computed(() => this.viewMode() === 'pagination');
+
+  public readonly isInfiniteScrollMode = computed(() => this.viewMode() === 'infinite-scroll');
+
+  public readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.totalItems() / this.pageSize)),
   );
 
+  public readonly displayedPosts = computed(() => {
+    if (this.isPaginationMode()) {
+      const start = (this.currentPage() - 1) * this.pageSize;
+      return this.filteredPosts().slice(start, start + this.pageSize);
+    }
+
+    return this.filteredPosts().slice(0, this.visibleCount());
+  });
+
   public readonly hasMorePosts = computed(
-    () => this.visibleCount() < this.filteredPosts().length,
+    () => this.isInfiniteScrollMode() && this.visibleCount() < this.filteredPosts().length,
   );
+
+  public readonly rangeStart = computed(() => {
+    if (this.totalItems() === 0) {
+      return 0;
+    }
+
+    if (this.isPaginationMode()) {
+      return (this.currentPage() - 1) * this.pageSize + 1;
+    }
+
+    return 1;
+  });
+
+  public readonly rangeEnd = computed(() => {
+    if (this.isPaginationMode()) {
+      return Math.min(this.currentPage() * this.pageSize, this.totalItems());
+    }
+
+    return Math.min(this.visibleCount(), this.totalItems());
+  });
 
   public readonly isEmpty = computed(
     () => !this.loading() && !this.error() && this.posts().length === 0,
@@ -77,7 +115,7 @@ export class PostsListStore {
       )
       .subscribe((query) => {
         this.searchQuery.set(query);
-        this.resetVisibleCount();
+        this.resetListPosition();
         this.filtering.set(false);
       });
   }
@@ -99,7 +137,7 @@ export class PostsListStore {
       )
       .subscribe((posts) => {
         this.posts.set(posts);
-        this.resetVisibleCount();
+        this.resetListPosition();
       });
   }
 
@@ -116,7 +154,22 @@ export class PostsListStore {
 
   public setSortOrder(order: PostDateSort): void {
     this.sortOrder.set(order);
-    this.resetVisibleCount();
+    this.resetListPosition();
+  }
+
+  public setViewMode(mode: PostsListViewMode): void {
+    if (this.viewMode() === mode) {
+      return;
+    }
+
+    this.viewMode.set(mode);
+    this.viewStorage.write(mode);
+    this.resetListPosition();
+  }
+
+  public setPage(page: number): void {
+    const nextPage = Math.min(Math.max(1, page), this.totalPages());
+    this.currentPage.set(nextPage);
   }
 
   public loadMore(): void {
@@ -133,7 +186,8 @@ export class PostsListStore {
     this.loadPosts(true);
   }
 
-  private resetVisibleCount(): void {
+  private resetListPosition(): void {
+    this.currentPage.set(1);
     this.visibleCount.set(this.pageSize);
   }
 }

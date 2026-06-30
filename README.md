@@ -1,6 +1,6 @@
 # Blog Management System
 
-Angular SPA for managing blog posts with role-based access, moderation workflow, and full CRUD (list, view, create, edit, delete) plus search, sorting, and infinite scroll.
+Angular SPA for managing blog posts with role-based access, moderation workflow, and full CRUD (list, view, create, edit, delete) plus search, sorting, and pagination.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Material 
 
 ### Posts (all logged-in users)
 
-- Browse **approved** posts with debounced search, date sort, and pagination
+- Browse **approved** posts with debounced search, date sort, and pagination or infinite scroll (user preference)
 - View post details
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
@@ -120,7 +120,7 @@ Signal stores per feature area (not NgRx):
 
 | Store | Responsibility |
 |-------|----------------|
-| **PostsListStore** | Fetch, debounced search, sort, infinite scroll batching (approved only) |
+| **PostsListStore** | Fetch, debounced search, sort, pagination or infinite scroll (user preference) |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
 | **MyPostsStore** | User's posts filtered by tab |
@@ -163,7 +163,8 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | **Unit Tests** | Guards, access rules, pipes, theme, revision utils, components |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session + theme preference |
-| **Infinite Scroll** | Posts list loads more via `IntersectionObserver` |
+| **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
+| **Incremental loading** | `appInfiniteScroll` directive when infinite scroll mode is selected |
 | **Authentication** | Mock login with roles (`user` / `admin`) |
 
 ### Intentionally not used
