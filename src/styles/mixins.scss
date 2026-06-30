@@ -52,6 +52,36 @@
   }
 }
 
+@mixin form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid $color-border-subtle;
+  border-radius: $radius-md;
+  background: $color-surface-lowest;
+  font-family: $font-family-body;
+  font-size: 1rem;
+  color: $color-on-surface;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &::placeholder {
+    color: $color-outline;
+  }
+
+  &:focus {
+    @include focus-ring;
+  }
+
+  &--invalid {
+    border-color: $color-error-red;
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
+    }
+  }
+}
+
 @mixin primary-button {
   display: inline-flex;
   align-items: center;
