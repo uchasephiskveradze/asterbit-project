@@ -5,6 +5,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 
+import { navigateSafely } from '../../../../core/router/navigate.util';
+
 import { PostDetailsStore } from '../../store/post-details.store';
 import { DeletePostDialogData } from './types/delete-post-dialog.types';
 
@@ -34,7 +36,7 @@ export class DeletePostDialogComponent {
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
-          void this.router.navigate(['/posts']);
+          navigateSafely(this.router, ['/posts']);
         },
         complete: () => {
           this.dialogRef.disableClose = false;

@@ -4,6 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 
+import { navigateSafely } from '../../../core/router/navigate.util';
+
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostFormValue } from '../components/post-form/types/post-form.types';
 import { PostsApiService } from '../services/posts-api.service';
@@ -83,11 +85,11 @@ export class PostUpsertStore {
 
     this.persist(() => this.api.createPost(payload), (post) => {
       if (this.auth.isAdmin()) {
-        void this.router.navigate(['/posts', post.id]);
+        navigateSafely(this.router, ['/posts', post.id]);
         return;
       }
 
-      void this.router.navigate(['/posts/my'], {
+      navigateSafely(this.router, ['/posts/my'], {
         queryParams: { tab: 'under-review' },
       });
     });
@@ -121,13 +123,13 @@ export class PostUpsertStore {
       () => this.api.updatePost(id, payload),
       (post) => {
         if (isOwnerResubmit) {
-          void this.router.navigate(['/posts/my'], {
+          navigateSafely(this.router, ['/posts/my'], {
             queryParams: { tab: 'under-review' },
           });
           return;
         }
 
-        void this.router.navigate(['/posts', post.id]);
+        navigateSafely(this.router, ['/posts', post.id]);
       },
     );
   }
