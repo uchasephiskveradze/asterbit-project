@@ -14,12 +14,12 @@ export class PostDetailsStore {
 
   private lastId: string | null = null;
 
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly notFound = signal(false);
-  readonly post = signal<Post | null>(null);
+  public readonly loading = signal(false);
+  public readonly error = signal<string | null>(null);
+  public readonly notFound = signal(false);
+  public readonly post = signal<Post | null>(null);
 
-  constructor() {
+  public constructor() {
     this.loadRequest$
       .pipe(
         tap((id) => {
@@ -52,11 +52,11 @@ export class PostDetailsStore {
       });
   }
 
-  loadPost(id: string): void {
+  public loadPost(id: string): void {
     this.loadRequest$.next(id);
   }
 
-  retry(): void {
+  public retry(): void {
     if (this.lastId) {
       this.loadPost(this.lastId);
     }

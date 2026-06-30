@@ -25,9 +25,9 @@ import { PostsListStore } from '../../store/posts-list.store';
   styleUrl: './posts-list.page.scss',
 })
 export class PostsListPage implements OnInit {
-  readonly store = inject(PostsListStore);
+  public readonly store = inject(PostsListStore);
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.store.loadPosts();
   }
 }

@@ -11,16 +11,16 @@ export class PostsListStore {
   private readonly api = inject(PostsApiService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly pageSize = POSTS_PAGE_SIZE;
+  public readonly pageSize = POSTS_PAGE_SIZE;
 
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly posts = signal<Post[]>([]);
-  readonly searchQuery = signal('');
-  readonly sortOrder = signal<PostDateSort>('desc');
-  readonly currentPage = signal(1);
+  public readonly loading = signal(false);
+  public readonly error = signal<string | null>(null);
+  public readonly posts = signal<Post[]>([]);
+  public readonly searchQuery = signal('');
+  public readonly sortOrder = signal<PostDateSort>('desc');
+  public readonly currentPage = signal(1);
 
-  readonly filteredPosts = computed(() => {
+  public readonly filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     let result = this.posts();
 
@@ -37,30 +37,30 @@ export class PostsListStore {
     });
   });
 
-  readonly totalItems = computed(() => this.filteredPosts().length);
+  public readonly totalItems = computed(() => this.filteredPosts().length);
 
-  readonly totalPages = computed(() =>
+  public readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.totalItems() / this.pageSize)),
   );
 
-  readonly paginatedPosts = computed(() => {
+  public readonly paginatedPosts = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
     return this.filteredPosts().slice(start, start + this.pageSize);
   });
 
-  readonly rangeStart = computed(() =>
+  public readonly rangeStart = computed(() =>
     this.totalItems() === 0 ? 0 : (this.currentPage() - 1) * this.pageSize + 1,
   );
 
-  readonly rangeEnd = computed(() =>
+  public readonly rangeEnd = computed(() =>
     Math.min(this.currentPage() * this.pageSize, this.totalItems()),
   );
 
-  readonly isEmpty = computed(
+  public readonly isEmpty = computed(
     () => !this.loading() && !this.error() && this.posts().length === 0,
   );
 
-  readonly isEmptySearch = computed(
+  public readonly isEmptySearch = computed(
     () =>
       !this.loading() &&
       !this.error() &&
@@ -68,7 +68,7 @@ export class PostsListStore {
       this.filteredPosts().length === 0,
   );
 
-  loadPosts(): void {
+  public loadPosts(): void {
     this.loading.set(true);
     this.error.set(null);
 
@@ -89,22 +89,22 @@ export class PostsListStore {
       });
   }
 
-  setSearchQuery(query: string): void {
+  public setSearchQuery(query: string): void {
     this.searchQuery.set(query);
     this.currentPage.set(1);
   }
 
-  setSortOrder(order: PostDateSort): void {
+  public setSortOrder(order: PostDateSort): void {
     this.sortOrder.set(order);
     this.currentPage.set(1);
   }
 
-  setPage(page: number): void {
+  public setPage(page: number): void {
     const nextPage = Math.min(Math.max(page, 1), this.totalPages());
     this.currentPage.set(nextPage);
   }
 
-  retry(): void {
+  public retry(): void {
     this.loadPosts();
   }
 }

@@ -6,6 +6,6 @@ import { Component, input, output } from '@angular/core';
   styleUrl: './posts-error-state.component.scss',
 })
 export class PostsErrorStateComponent {
-  readonly message = input('Unable to load posts. Please try again.');
-  readonly retry = output<void>();
+  public readonly message = input('Unable to load posts. Please try again.');
+  public readonly retry = output<void>();
 }

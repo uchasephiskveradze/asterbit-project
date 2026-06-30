@@ -18,19 +18,19 @@ export class PostsApiService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
-  getPosts(): Observable<Post[]> {
+  public getPosts(): Observable<Post[]> {
     return this.http
       .get<PostResponse[]>(`${this.apiBaseUrl}/posts`)
       .pipe(map((posts) => posts.map((post) => this.normalizePost(post))));
   }
 
-  getPostById(id: number | string): Observable<Post> {
+  public getPostById(id: number | string): Observable<Post> {
     return this.http
       .get<PostResponse>(`${this.apiBaseUrl}/posts/${id}`)
       .pipe(map((post) => this.normalizePost(post)));
   }
 
-  createPost(payload: CreatePostDto): Observable<Post> {
+  public createPost(payload: CreatePostDto): Observable<Post> {
     return this.http
       .post<PostResponse>(`${this.apiBaseUrl}/posts`, {
         ...payload,
@@ -39,13 +39,13 @@ export class PostsApiService {
       .pipe(map((post) => this.normalizePost(post)));
   }
 
-  updatePost(id: number | string, payload: UpdatePostDto): Observable<Post> {
+  public updatePost(id: number | string, payload: UpdatePostDto): Observable<Post> {
     return this.http
       .patch<PostResponse>(`${this.apiBaseUrl}/posts/${id}`, payload)
       .pipe(map((post) => this.normalizePost(post)));
   }
 
-  deletePost(id: number | string): Observable<void> {
+  public deletePost(id: number | string): Observable<void> {
     return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`);
   }
 

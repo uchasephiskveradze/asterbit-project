@@ -10,5 +10,5 @@ export type PostsEmptyVariant = 'no-posts' | 'no-results';
   styleUrl: './posts-empty-state.component.scss',
 })
 export class PostsEmptyStateComponent {
-  readonly variant = input<PostsEmptyVariant>('no-posts');
+  public readonly variant = input<PostsEmptyVariant>('no-posts');
 }

@@ -11,5 +11,5 @@ import { Post } from '../../models/post.model';
   styleUrl: './posts-table.component.scss',
 })
 export class PostsTableComponent {
-  readonly posts = input.required<Post[]>();
+  public readonly posts = input.required<Post[]>();
 }

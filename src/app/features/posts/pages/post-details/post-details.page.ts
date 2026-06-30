@@ -13,10 +13,10 @@ import { PostDetailsStore } from '../../store/post-details.store';
   styleUrl: './post-details.page.scss',
 })
 export class PostDetailsPage {
-  readonly id = input.required<string>();
-  readonly store = inject(PostDetailsStore);
+  public readonly id = input.required<string>();
+  public readonly store = inject(PostDetailsStore);
 
-  constructor() {
+  public constructor() {
     effect(() => {
       const id = this.id();
       if (id) {

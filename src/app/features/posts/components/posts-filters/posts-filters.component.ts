@@ -19,20 +19,20 @@ import { PostDateSort } from '../../store/posts-list.types';
   styleUrl: './posts-filters.component.scss',
 })
 export class PostsFiltersComponent {
-  readonly searchQuery = input('');
-  readonly sortOrder = input<PostDateSort>('desc');
+  public readonly searchQuery = input('');
+  public readonly sortOrder = input<PostDateSort>('desc');
 
-  readonly searchChange = output<string>();
-  readonly sortChange = output<PostDateSort>();
+  public readonly searchChange = output<string>();
+  public readonly sortChange = output<PostDateSort>();
 
-  readonly searchControl = new FormControl('', { nonNullable: true });
-  readonly sortControl = new FormControl<PostDateSort>('desc', {
+  public readonly searchControl = new FormControl('', { nonNullable: true });
+  public readonly sortControl = new FormControl<PostDateSort>('desc', {
     nonNullable: true,
   });
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor() {
+  public constructor() {
     effect(() => {
       const query = this.searchQuery();
       if (this.searchControl.value !== query) {

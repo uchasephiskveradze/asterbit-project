@@ -6,15 +6,15 @@ import { Component, computed, input, output } from '@angular/core';
   styleUrl: './posts-pagination.component.scss',
 })
 export class PostsPaginationComponent {
-  readonly currentPage = input.required<number>();
-  readonly totalPages = input.required<number>();
-  readonly totalItems = input.required<number>();
-  readonly rangeStart = input.required<number>();
-  readonly rangeEnd = input.required<number>();
+  public readonly currentPage = input.required<number>();
+  public readonly totalPages = input.required<number>();
+  public readonly totalItems = input.required<number>();
+  public readonly rangeStart = input.required<number>();
+  public readonly rangeEnd = input.required<number>();
 
-  readonly pageChange = output<number>();
+  public readonly pageChange = output<number>();
 
-  readonly visiblePages = computed(() =>
+  public readonly visiblePages = computed(() =>
     this.buildVisiblePages(this.currentPage(), this.totalPages()),
   );
 

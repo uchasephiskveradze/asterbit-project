@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   styleUrl: './posts-loading-state.component.scss',
 })
 export class PostsLoadingStateComponent {
-  readonly columns = [1, 2, 3, 4];
-  readonly rows = [1, 2, 3, 4, 5];
+  public readonly columns = [1, 2, 3, 4];
+  public readonly rows = [1, 2, 3, 4, 5];
 }
