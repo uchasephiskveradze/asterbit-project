@@ -1,0 +1,29 @@
+<section class="post-upsert-page">
+  <header class="post-upsert-page__header">
+    <div class="post-upsert-page__intro">
+      <h1 class="post-upsert-page__title">{{ pageTitle() }}</h1>
+      <p class="post-upsert-page__subtitle">{{ pageSubtitle() }}</p>
+    </div>
+    <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
+  </header>
+
+  @if (store.error()) {
+    <div class="post-upsert-page__error" role="alert">{{ store.error() }}</div>
+  }
+
+  @if (isEditMode() && store.loading()) {
+    <div class="post-upsert-page__loading" aria-busy="true" aria-label="Loading post">
+      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--title"></div>
+      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--field"></div>
+      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--field"></div>
+      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--area"></div>
+    </div>
+  } @else {
+    <app-post-form
+      [post]="store.post()"
+      [submitting]="store.saving()"
+      [submitLabel]="submitLabel()"
+      (formSubmit)="onSubmit($event)"
+    />
+  }
+</section>
