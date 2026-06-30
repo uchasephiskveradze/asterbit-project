@@ -1,6 +1,14 @@
 <div class="posts-filters">
   <div class="posts-filters__search">
-    <span class="material-symbols-outlined posts-filters__search-icon">search</span>
+    @if (filtering()) {
+      <span
+        class="posts-filters__search-spinner"
+        aria-hidden="true"
+        role="presentation"
+      ></span>
+    } @else {
+      <span class="material-symbols-outlined posts-filters__search-icon">search</span>
+    }
     <input
       class="posts-filters__search-input"
       type="search"

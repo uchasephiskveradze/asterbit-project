@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, of, Subject, tap } from 'rxjs';
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { Post } from '../models/post.model';
@@ -10,12 +10,15 @@ import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 export class PostsListStore {
   private readonly api = inject(PostsApiService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly searchInput$ = new Subject<string>();
 
   public readonly pageSize = POSTS_PAGE_SIZE;
 
   public readonly loading = signal(false);
+  public readonly filtering = signal(false);
   public readonly error = signal<string | null>(null);
   public readonly posts = signal<Post[]>([]);
+  public readonly searchInput = signal('');
   public readonly searchQuery = signal('');
   public readonly sortOrder = signal<PostDateSort>('desc');
   public readonly currentPage = signal(1);
@@ -63,10 +66,28 @@ export class PostsListStore {
   public readonly isEmptySearch = computed(
     () =>
       !this.loading() &&
+      !this.filtering() &&
       !this.error() &&
       this.posts().length > 0 &&
       this.filteredPosts().length === 0,
   );
+
+  public constructor() {
+    this.searchInput$
+      .pipe(
+        tap((query) => {
+          this.filtering.set(query !== this.searchQuery());
+        }),
+        debounceTime(200),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((query) => {
+        this.searchQuery.set(query);
+        this.currentPage.set(1);
+        this.filtering.set(false);
+      });
+  }
 
   public loadPosts(): void {
     this.loading.set(true);
@@ -89,9 +110,15 @@ export class PostsListStore {
       });
   }
 
-  public setSearchQuery(query: string): void {
-    this.searchQuery.set(query);
-    this.currentPage.set(1);
+  public setSearchInput(query: string): void {
+    this.searchInput.set(query);
+
+    if (query === this.searchQuery()) {
+      this.filtering.set(false);
+      return;
+    }
+
+    this.searchInput$.next(query);
   }
 
   public setSortOrder(order: PostDateSort): void {

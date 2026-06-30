@@ -44,7 +44,23 @@
 
   &__content {
     @include card-shell;
+    position: relative;
     overflow: hidden;
+  }
+
+  &__filtering-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+  }
+
+  &__filtering-spinner {
+    @include inline-spinner(1.5rem, 3px);
   }
 
   &__fab {

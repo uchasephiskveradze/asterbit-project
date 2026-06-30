@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 
 import { PostDateSort } from '../../store/posts-list.types';
 
@@ -21,6 +21,7 @@ import { PostDateSort } from '../../store/posts-list.types';
 export class PostsFiltersComponent {
   public readonly searchQuery = input('');
   public readonly sortOrder = input<PostDateSort>('desc');
+  public readonly filtering = input(false);
 
   public readonly searchChange = output<string>();
   public readonly sortChange = output<PostDateSort>();
@@ -48,11 +49,7 @@ export class PostsFiltersComponent {
     });
 
     this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.searchChange.emit(value));
 
     this.sortControl.valueChanges

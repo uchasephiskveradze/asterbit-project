@@ -105,6 +105,21 @@
   word-break: break-word;
 }
 
+@mixin inline-spinner($size: 1rem, $border-width: 2px) {
+  width: $size;
+  height: $size;
+  border: $border-width solid $color-border-subtle;
+  border-top-color: $color-primary;
+  border-radius: $radius-full;
+  animation: inline-spinner-rotate 0.65s linear infinite;
+}
+
+@keyframes inline-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @mixin skeleton-shimmer {
   @keyframes shimmer {
     0% {

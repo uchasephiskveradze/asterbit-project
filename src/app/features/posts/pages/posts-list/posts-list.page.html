@@ -22,9 +22,10 @@
   } @else {
     <div class="posts-list-page__controls">
       <app-posts-filters
-        [searchQuery]="store.searchQuery()"
+        [searchQuery]="store.searchInput()"
         [sortOrder]="store.sortOrder()"
-        (searchChange)="store.setSearchQuery($event)"
+        [filtering]="store.filtering()"
+        (searchChange)="store.setSearchInput($event)"
         (sortChange)="store.setSortOrder($event)"
       />
     </div>
@@ -33,6 +34,12 @@
       <app-posts-empty-state variant="no-results" />
     } @else {
       <div class="posts-list-page__content">
+        @if (store.filtering()) {
+          <div class="posts-list-page__filtering-overlay" aria-busy="true" aria-live="polite">
+            <span class="posts-list-page__filtering-spinner"></span>
+          </div>
+        }
+
         <app-posts-table [posts]="store.paginatedPosts()" />
         <app-posts-pagination
           [currentPage]="store.currentPage()"
