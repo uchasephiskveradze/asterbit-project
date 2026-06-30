@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsStore } from '../../store/post-details.store';
 
 @Component({
@@ -16,6 +17,8 @@ import { PostDetailsStore } from '../../store/post-details.store';
 })
 export class PostDetailsPage {
   public readonly id = input.required<string>();
+  public readonly resolvedPost = input.required<PostResolverResult>();
+
   public readonly store = inject(PostDetailsStore);
 
   private readonly dialog = inject(MatDialog);
@@ -24,8 +27,10 @@ export class PostDetailsPage {
   public constructor() {
     effect(() => {
       const id = this.id();
-      if (id) {
-        this.store.loadPost(id);
+      const resolvedPost = this.resolvedPost();
+
+      if (id && resolvedPost) {
+        this.store.applyResolverResult(id, resolvedPost);
       }
     });
   }

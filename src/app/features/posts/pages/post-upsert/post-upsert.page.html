@@ -1,29 +1,53 @@
 <section class="post-upsert-page">
-  <header class="post-upsert-page__header">
-    <div class="post-upsert-page__intro">
-      <h1 class="post-upsert-page__title">{{ pageTitle() }}</h1>
-      <p class="post-upsert-page__subtitle">{{ pageSubtitle() }}</p>
+  @if (isEditMode() && store.notFound()) {
+    <div class="post-upsert-page__not-found">
+      <h2 class="post-upsert-page__not-found-title">Post not found</h2>
+      <p class="post-upsert-page__not-found-text">
+        The post you are trying to edit does not exist or may have been removed.
+      </p>
+      <div class="post-upsert-page__not-found-actions">
+        <button
+          class="post-upsert-page__not-found-action post-upsert-page__not-found-action--secondary"
+          type="button"
+          (click)="reloadPage()"
+        >
+          Reload page
+        </button>
+        <a
+          class="post-upsert-page__not-found-action post-upsert-page__not-found-action--primary"
+          routerLink="/posts"
+        >
+          Back to Posts
+        </a>
+      </div>
     </div>
-    <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
-  </header>
-
-  @if (store.error()) {
-    <div class="post-upsert-page__error" role="alert">{{ store.error() }}</div>
-  }
-
-  @if (isEditMode() && store.loading()) {
-    <div class="post-upsert-page__loading" aria-busy="true" aria-label="Loading post">
-      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--title"></div>
-      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--field"></div>
-      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--field"></div>
-      <div class="post-upsert-page__skeleton post-upsert-page__skeleton--area"></div>
+  } @else if (isEditMode() && store.error() && !store.post()) {
+    <div class="post-upsert-page__load-error">
+      <app-posts-error-state [message]="store.error()!" (retry)="reloadPage()" />
+      <a class="post-upsert-page__back-link" routerLink="/posts">Back to Posts</a>
     </div>
   } @else {
-    <app-post-form
-      [post]="store.post()"
-      [submitting]="store.saving()"
-      [submitLabel]="submitLabel()"
-      (formSubmit)="onSubmit($event)"
-    />
+    <header class="post-upsert-page__header">
+      <div class="post-upsert-page__intro">
+        <h1 class="post-upsert-page__title">{{ pageTitle() }}</h1>
+        <p class="post-upsert-page__subtitle">{{ pageSubtitle() }}</p>
+      </div>
+      <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
+    </header>
+
+    @if (store.error() && !isEditMode()) {
+      <div class="post-upsert-page__error" role="alert">{{ store.error() }}</div>
+    }
+
+    @if (showForm()) {
+      <div class="post-upsert-page__form">
+        <app-post-form
+          [post]="store.post()"
+          [submitting]="store.saving()"
+          [submitLabel]="submitLabel()"
+          (formSubmit)="onSubmit($event)"
+        />
+      </div>
+    }
   }
 </section>

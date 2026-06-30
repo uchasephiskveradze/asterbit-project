@@ -5,6 +5,7 @@ import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } 
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { Post } from '../models/post.model';
+import { PostResolverResult } from '../models/post-resolver-result.model';
 
 @Injectable()
 export class PostDetailsStore {
@@ -55,6 +56,14 @@ export class PostDetailsStore {
 
   public loadPost(id: string): void {
     this.loadRequest$.next(id);
+  }
+
+  public applyResolverResult(id: string, result: PostResolverResult): void {
+    this.lastId = id;
+    this.loading.set(false);
+    this.error.set(result.error);
+    this.notFound.set(result.notFound);
+    this.post.set(result.post);
   }
 
   public retry(): void {

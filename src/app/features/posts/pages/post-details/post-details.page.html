@@ -10,6 +10,7 @@
         <a
           class="post-details-page__action post-details-page__action--secondary"
           [routerLink]="['/posts', post.id, 'edit']"
+          [queryParams]="{ from: 'details' }"
         >
           <span class="material-symbols-outlined">edit</span>
           Edit Post

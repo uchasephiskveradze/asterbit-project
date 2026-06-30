@@ -29,4 +29,24 @@ describe('PostUpsertPage', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should return to posts list when canceling create flow', () => {
+    expect(component.cancelLink()).toBe('/posts');
+  });
+
+  it('should return to posts list when edit was opened from list', () => {
+    fixture.componentRef.setInput('id', 'abc123');
+    fixture.componentRef.setInput('from', 'list');
+    fixture.detectChanges();
+
+    expect(component.cancelLink()).toBe('/posts');
+  });
+
+  it('should return to post details when edit was opened from details', () => {
+    fixture.componentRef.setInput('id', 'abc123');
+    fixture.componentRef.setInput('from', 'details');
+    fixture.detectChanges();
+
+    expect(component.cancelLink()).toBe('/posts/abc123');
+  });
 });

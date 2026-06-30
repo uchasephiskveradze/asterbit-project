@@ -3,6 +3,7 @@
 
 .post-upsert-page {
   max-width: 45rem;
+  margin: 0 auto;
 
   &__header {
     display: flex;
@@ -39,6 +40,10 @@
     }
   }
 
+  &__form {
+    width: 100%;
+  }
+
   &__error {
     margin-bottom: 1rem;
     padding: 0.75rem 1rem;
@@ -48,28 +53,58 @@
     font-size: 0.875rem;
   }
 
-  &__loading {
-    @include card-shell;
-    padding: 1.5rem;
+  &__not-found,
+  &__load-error {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 1rem;
   }
 
-  &__skeleton {
-    @include skeleton-shimmer;
+  &__not-found-title {
+    margin: 0 0 0.5rem;
+    font-family: $font-family-headline;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-on-surface;
+  }
 
-    &--title {
-      width: 50%;
-      height: 2rem;
+  &__not-found-text {
+    margin: 0 0 1.5rem;
+    max-width: 28rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: $color-secondary;
+  }
+
+  &__not-found-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  &__not-found-action {
+    &--primary {
+      @include primary-button;
     }
 
-    &--field {
-      height: 3rem;
+    &--secondary {
+      @include secondary-button;
     }
+  }
 
-    &--area {
-      height: 12rem;
+  &__back-link {
+    margin-top: 1rem;
+    color: $color-secondary;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $color-primary;
     }
   }
 }

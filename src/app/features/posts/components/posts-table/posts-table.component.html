@@ -34,6 +34,7 @@
             <a
               class="posts-table__action"
               [routerLink]="['/posts', post.id, 'edit']"
+              [queryParams]="{ from: 'list' }"
               aria-label="Edit post"
             >
               <span class="material-symbols-outlined">edit</span>
