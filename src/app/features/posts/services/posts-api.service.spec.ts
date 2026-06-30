@@ -134,6 +134,23 @@ describe('PostsApiService', () => {
     await expect(cachedPromise).resolves.toEqual([...mockPosts, createdPost]);
   });
 
+  it('should default unknown post statuses to pending', async () => {
+    const promise = firstValueFrom(service.getPosts());
+    httpMock.expectOne('/api/posts').flush([
+      {
+        ...mockPosts[0],
+        status: 'draft',
+      },
+    ]);
+
+    await expect(promise).resolves.toEqual([
+      {
+        ...mockPosts[0],
+        status: 'pending',
+      },
+    ]);
+  });
+
   it('should remove a post from the cache after deletePost', async () => {
     const listPromise = firstValueFrom(service.getPosts());
     httpMock.expectOne('/api/posts').flush(mockPosts);

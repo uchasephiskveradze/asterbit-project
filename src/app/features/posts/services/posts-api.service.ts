@@ -155,7 +155,7 @@ export class PostsApiService {
   }
 
   private normalizePost(post: PostResponse): Post {
-    const status = post.status && isPostStatus(post.status) ? post.status : 'approved';
+    const status = post.status && isPostStatus(post.status) ? post.status : 'pending';
     const pendingReason = this.normalizePendingReason(post.pendingReason);
 
     return {
