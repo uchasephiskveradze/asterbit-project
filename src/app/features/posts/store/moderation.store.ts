@@ -61,17 +61,6 @@ export class ModerationStore {
         }
 
         this.posts.update((items) => items.map((item) => (item.id === post.id ? post : item)));
-        this.reloadPosts();
       });
-  }
-
-  private reloadPosts(): void {
-    this.api
-      .getPosts({ force: true })
-      .pipe(
-        catchError(() => of(this.posts())),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((posts) => this.posts.set(posts));
   }
 }

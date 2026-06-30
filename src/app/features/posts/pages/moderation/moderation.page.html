@@ -6,13 +6,9 @@
     <p class="moderation-page__subtitle">Review pending posts submitted by users.</p>
   </header>
 
-  @if (errorMessage) {
-    <p class="moderation-page__banner" role="alert">{{ errorMessage }}</p>
-  }
-
   @if (store.loading()) {
     <app-posts-loading-state />
-  } @else if (errorMessage && isEmpty()) {
+  } @else if (errorMessage) {
     <app-posts-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
   } @else if (isEmpty()) {
     <app-posts-empty-state variant="no-posts" />

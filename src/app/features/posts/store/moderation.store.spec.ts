@@ -67,12 +67,14 @@ describe('ModerationStore', () => {
     expect(failingStore.error()).toBe('Unable to load moderation queue. Please try again.');
   });
 
-  it('should refresh the queue after moderation succeeds', async () => {
+  it('should update local state after moderation succeeds', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
     store.moderatePost('1', 'approved');
 
     await vi.waitFor(() => expect(api.updatePostStatus).toHaveBeenCalledWith('1', 'approved'));
-    expect(api.getPosts).toHaveBeenCalledWith({ force: true });
+
+    expect(store.posts().find((post) => post.id === '1')?.status).toBe('approved');
+    expect(api.getPosts).toHaveBeenCalledTimes(1);
   });
 });
