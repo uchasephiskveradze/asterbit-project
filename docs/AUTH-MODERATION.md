@@ -4,15 +4,15 @@
 
 | Role | Permissions |
 |------|-------------|
-| **Guest** | View approved posts (Posts list + details), login |
-| **User** | Guest + submit posts (pending), My Posts tabs |
+| **Guest** | Login only — must sign in before accessing the app |
+| **User** | View approved posts, submit posts (pending), edit own approved posts (re-review), My Posts tabs |
 | **Admin** | User + auto-approved creates, edit/delete any post, Moderation queue |
 
 ## Navigation
 
 | Link | Who | Route |
 |------|-----|-------|
-| Posts | Everyone | `/posts` — approved posts only |
+| Posts | Logged-in | `/posts` — approved posts only |
 | My Posts | Logged-in | `/posts/my` — own posts by tab |
 | Moderation | Admin only | `/posts/moderation` — all users' pending posts |
 | Login / Logout | Guest / logged-in | `/login` |
@@ -35,6 +35,11 @@
 - **User** create → `status: pending`
 - **Admin** create → `status: approved` (auto)
 
+## Edit rules
+
+- **Admin** can edit any post; changes stay approved
+- **User** can edit only their own `approved` posts; save sets `status: pending` for admin re-review
+
 ## Moderation (admin)
 
 - Approve → `status: approved` → visible on public Posts
@@ -48,6 +53,6 @@
 ## Technical
 
 - Mock auth: `AuthService` (signals) + `localStorage`
-- Guards: `authGuard`, `adminGuard`
+- Guards: `authGuard`, `adminGuard`, `postEditGuard`
 - HTTP interceptor: session header (demo)
 - json-server — no real JWT backend

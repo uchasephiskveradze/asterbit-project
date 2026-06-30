@@ -17,7 +17,7 @@ import { PostUpsertStore } from '../../store/post-upsert.store';
 })
 export class PostUpsertPage {
   public readonly id = input<string>();
-  public readonly from = input<'list' | 'details'>();
+  public readonly from = input<'list' | 'details' | 'my-posts'>();
   public readonly resolvedPost = input<PostResolverResult>();
 
   public readonly auth = inject(AuthService);
@@ -25,6 +25,13 @@ export class PostUpsertPage {
 
   public readonly isEditMode = computed(() => this.id() !== undefined);
   public readonly hideAuthorField = computed(() => !this.isEditMode());
+  public readonly isOwnerResubmit = computed(
+    () =>
+      this.isEditMode() &&
+      !this.auth.isAdmin() &&
+      this.store.post()?.status === 'approved' &&
+      this.store.post()?.submittedBy === this.auth.currentUser()?.id,
+  );
 
   public readonly pageTitle = computed(() => {
     if (this.isEditMode()) {
@@ -35,6 +42,10 @@ export class PostUpsertPage {
   });
 
   public readonly pageSubtitle = computed(() => {
+    if (this.isOwnerResubmit()) {
+      return 'Your changes will be reviewed by an admin before the post is published again.';
+    }
+
     if (this.isEditMode()) {
       return 'Update your post and save changes.';
     }
@@ -45,6 +56,10 @@ export class PostUpsertPage {
   });
 
   public readonly submitLabel = computed(() => {
+    if (this.isOwnerResubmit()) {
+      return 'Submit for Review';
+    }
+
     if (this.isEditMode()) {
       return 'Update Post';
     }
@@ -54,6 +69,10 @@ export class PostUpsertPage {
   public readonly cancelLink = computed(() => {
     if (!this.isEditMode()) {
       return '/posts';
+    }
+
+    if (this.from() === 'my-posts') {
+      return '/posts/my';
     }
 
     return this.from() === 'list' ? '/posts' : `/posts/${this.id()}`;

@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { adminGuard } from '../../core/auth/guards/admin.guard';
 import { authGuard } from '../../core/auth/guards/auth.guard';
-import { guestGuard } from '../../core/auth/guards/guest.guard';
+import { postEditGuard } from '../../core/auth/guards/post-edit.guard';
 
 import { postResolver } from './resolvers/post.resolver';
 
@@ -31,7 +31,7 @@ export const POSTS_ROUTES: Routes = [
   },
   {
     path: ':id/edit',
-    canActivate: [adminGuard],
+    canActivate: [authGuard, postEditGuard],
     loadComponent: () =>
       import('./pages/post-upsert/post-upsert.page').then((m) => m.PostUpsertPage),
     resolve: {

@@ -33,7 +33,12 @@
     <app-posts-empty-state variant="no-posts" />
   } @else {
     <div class="my-posts-page__content">
-      <app-posts-table [posts]="store.filteredPosts()" [showAdminActions]="false" />
+      <app-posts-table
+        [posts]="store.filteredPosts()"
+        [showAdminActions]="false"
+        [enableOwnerEdit]="showOwnerEdit()"
+        [ownerId]="auth.currentUser()?.id ?? null"
+      />
     </div>
   }
 </section>

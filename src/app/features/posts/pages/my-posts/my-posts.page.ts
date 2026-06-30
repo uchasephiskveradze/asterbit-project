@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
@@ -23,6 +24,7 @@ import { MyPostsStore } from '../../store/my-posts.store';
 })
 export class MyPostsPage implements OnInit {
   public readonly store = inject(MyPostsStore);
+  public readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
 
   public readonly tabs = MY_POSTS_TABS;
@@ -31,6 +33,8 @@ export class MyPostsPage implements OnInit {
   public readonly isEmpty = computed(
     () => !this.store.loading() && !this.store.error() && this.store.filteredPosts().length === 0,
   );
+
+  public readonly showOwnerEdit = computed(() => this.store.activeTab() === 'approved');
 
   public ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {

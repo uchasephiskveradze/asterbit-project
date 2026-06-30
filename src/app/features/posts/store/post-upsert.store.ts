@@ -69,10 +69,33 @@ export class PostUpsertStore {
   }
 
   public updatePost(id: string, value: PostFormValue): void {
+    const user = this.auth.currentUser();
+    const existingPost = this.post();
+
+    if (!user) {
+      return;
+    }
+
     const payload: UpdatePostDto = { ...value };
+    const isOwnerResubmit =
+      !this.auth.isAdmin() && existingPost?.submittedBy === user.id && existingPost.status === 'approved';
+
+    if (isOwnerResubmit) {
+      payload.status = 'pending';
+    }
+
     this.persist(
       () => this.api.updatePost(id, payload),
-      (post) => void this.router.navigate(['/posts', post.id]),
+      (post) => {
+        if (isOwnerResubmit) {
+          void this.router.navigate(['/posts/my'], {
+            queryParams: { tab: 'under-review' },
+          });
+          return;
+        }
+
+        void this.router.navigate(['/posts', post.id]);
+      },
     );
   }
 

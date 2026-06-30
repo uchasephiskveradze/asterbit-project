@@ -26,4 +26,16 @@ export class PostAccessService {
   public isPubliclyListed(post: Post): boolean {
     return post.status === 'approved';
   }
+
+  public canEditPost(post: Post, user: AuthUser | null): boolean {
+    if (!user) {
+      return false;
+    }
+
+    if (user.role === 'admin') {
+      return true;
+    }
+
+    return post.submittedBy === user.id && post.status === 'approved';
+  }
 }

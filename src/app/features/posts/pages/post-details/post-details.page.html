@@ -6,25 +6,31 @@
     </a>
 
     @if (store.post(); as post) {
-      <div *appIsAdmin class="post-details-page__actions">
-        <a
-          class="post-details-page__action post-details-page__action--secondary"
-          [routerLink]="['/posts', post.id, 'edit']"
-          [queryParams]="{ from: 'details' }"
-        >
-          <span class="material-symbols-outlined">edit</span>
-          Edit Post
-        </a>
-        <button
-          class="post-details-page__action post-details-page__action--danger"
-          type="button"
-          [disabled]="store.deleting()"
-          (click)="openDeleteDialog()"
-        >
-          <span class="material-symbols-outlined">delete</span>
-          Delete
-        </button>
-      </div>
+      @if (canEdit() || canDelete()) {
+        <div class="post-details-page__actions">
+          @if (canEdit()) {
+            <a
+              class="post-details-page__action post-details-page__action--secondary"
+              [routerLink]="['/posts', post.id, 'edit']"
+              [queryParams]="{ from: 'details' }"
+            >
+              <span class="material-symbols-outlined">edit</span>
+              Edit Post
+            </a>
+          }
+          @if (canDelete()) {
+            <button
+              class="post-details-page__action post-details-page__action--danger"
+              type="button"
+              [disabled]="store.deleting()"
+              (click)="openDeleteDialog()"
+            >
+              <span class="material-symbols-outlined">delete</span>
+              Delete
+            </button>
+          }
+        </div>
+      }
     }
   </div>
 

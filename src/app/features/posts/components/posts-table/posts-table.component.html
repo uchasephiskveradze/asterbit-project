@@ -41,6 +41,15 @@
               >
                 <span class="material-symbols-outlined">edit</span>
               </a>
+            } @else if (canOwnerEdit(post)) {
+              <a
+                class="posts-table__action"
+                [routerLink]="['/posts', post.id, 'edit']"
+                [queryParams]="{ from: 'my-posts' }"
+                aria-label="Edit post"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </a>
             }
           </td>
         </tr>

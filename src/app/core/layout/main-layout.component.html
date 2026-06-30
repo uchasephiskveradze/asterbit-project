@@ -4,7 +4,12 @@
       <div class="layout__brand-group">
         <a class="layout__brand" routerLink="/posts">Blog Management</a>
         <nav class="layout__nav" aria-label="Main navigation">
-          <a class="layout__nav-link" routerLink="/posts" routerLinkActive="layout__nav-link--active">
+          <a
+            class="layout__nav-link"
+            routerLink="/posts"
+            routerLinkActive="layout__nav-link--active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
             Posts
           </a>
           @if (auth.isAuthenticated()) {
@@ -12,6 +17,7 @@
               class="layout__nav-link"
               routerLink="/posts/my"
               routerLinkActive="layout__nav-link--active"
+              [routerLinkActiveOptions]="{ exact: false }"
             >
               My Posts
             </a>
