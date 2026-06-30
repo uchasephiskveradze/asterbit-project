@@ -1,0 +1,33 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+
+import { API_BASE_URL } from '../../../../core/config/api.config';
+import { PostDetailsPage } from './post-details.page';
+
+describe('PostDetailsPage', () => {
+  let component: PostDetailsPage;
+  let fixture: ComponentFixture<PostDetailsPage>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PostDetailsPage],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: '/api' },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PostDetailsPage);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('id', '1');
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

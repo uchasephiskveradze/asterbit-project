@@ -1,0 +1,68 @@
+<section class="post-details-page">
+  <div class="post-details-page__toolbar">
+    <a class="post-details-page__back" routerLink="/posts">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back to Posts
+    </a>
+
+    @if (store.post(); as post) {
+      <div class="post-details-page__actions">
+        <a
+          class="post-details-page__action post-details-page__action--secondary"
+          [routerLink]="['/posts', post.id, 'edit']"
+        >
+          <span class="material-symbols-outlined">edit</span>
+          Edit Post
+        </a>
+        <button
+          class="post-details-page__action post-details-page__action--danger"
+          type="button"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          Delete
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (store.loading()) {
+    <div class="post-details-page__loading" aria-busy="true" aria-label="Loading post">
+      <div class="post-details-page__skeleton post-details-page__skeleton--title"></div>
+      <div class="post-details-page__skeleton post-details-page__skeleton--meta"></div>
+      <div class="post-details-page__skeleton post-details-page__skeleton--line"></div>
+      <div class="post-details-page__skeleton post-details-page__skeleton--line"></div>
+      <div
+        class="post-details-page__skeleton post-details-page__skeleton--line post-details-page__skeleton--short"
+      ></div>
+    </div>
+  } @else if (store.error()) {
+    <app-posts-error-state [message]="store.error()!" (retry)="store.retry()" />
+  } @else if (store.notFound()) {
+    <div class="post-details-page__not-found">
+      <h2 class="post-details-page__not-found-title">Post not found</h2>
+      <p class="post-details-page__not-found-text">
+        The post you are looking for does not exist or may have been removed.
+      </p>
+      <a class="post-details-page__not-found-link" routerLink="/posts">Return to Posts</a>
+    </div>
+  } @else if (store.post(); as post) {
+    <article class="post-details-page__article">
+      <header class="post-details-page__header">
+        <h1 class="post-details-page__title">{{ post.title }}</h1>
+
+        <div class="post-details-page__meta">
+          <div class="post-details-page__meta-author">
+            <span class="post-details-page__author">{{ post.author }}</span>
+            <span class="post-details-page__date">{{
+              post.createdAt | date: 'MMMM d, y'
+            }}</span>
+          </div>
+        </div>
+      </header>
+
+      <p class="post-details-page__description">{{ post.description }}</p>
+
+      <div class="post-details-page__content">{{ post.content }}</div>
+    </article>
+  }
+</section>
