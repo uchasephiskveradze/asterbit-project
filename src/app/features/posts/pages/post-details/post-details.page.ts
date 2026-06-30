@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, Injector, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
@@ -19,6 +19,7 @@ export class PostDetailsPage {
   public readonly store = inject(PostDetailsStore);
 
   private readonly dialog = inject(MatDialog);
+  private readonly injector = inject(Injector);
 
   public constructor() {
     effect(() => {
@@ -35,16 +36,14 @@ export class PostDetailsPage {
       return;
     }
 
-    const dialogRef = this.dialog.open(DeletePostDialogComponent, {
-      data: { postTitle: post.title },
+    this.dialog.open(DeletePostDialogComponent, {
+      data: { postId: post.id, postTitle: post.title },
       panelClass: 'delete-post-dialog-panel',
       autoFocus: 'dialog',
-    });
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.store.deletePost(post.id);
-      }
+      injector: Injector.create({
+        parent: this.injector,
+        providers: [{ provide: PostDetailsStore, useValue: this.store }],
+      }),
     });
   }
 }

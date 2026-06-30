@@ -1,6 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { take } from 'rxjs';
 
+import { PostDetailsStore } from '../../store/post-details.store';
 import { DeletePostDialogData } from './types/delete-post-dialog.types';
 
 @Component({
@@ -11,10 +14,29 @@ import { DeletePostDialogData } from './types/delete-post-dialog.types';
 })
 export class DeletePostDialogComponent {
   public readonly data = inject<DeletePostDialogData>(MAT_DIALOG_DATA);
+  public readonly store = inject(PostDetailsStore);
 
   private readonly dialogRef = inject(MatDialogRef<DeletePostDialogComponent, boolean>);
+  private readonly router = inject(Router);
 
   public confirm(): void {
-    this.dialogRef.close(true);
+    if (this.store.deleting()) {
+      return;
+    }
+
+    this.dialogRef.disableClose = true;
+
+    this.store
+      .deletePost(this.data.postId)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+          void this.router.navigate(['/posts']);
+        },
+        complete: () => {
+          this.dialogRef.disableClose = false;
+        },
+      });
   }
 }

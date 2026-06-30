@@ -1,8 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { catchError, EMPTY, finalize, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } from 'rxjs';
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { Post } from '../models/post.model';
@@ -10,7 +9,6 @@ import { Post } from '../models/post.model';
 @Injectable()
 export class PostDetailsStore {
   private readonly api = inject(PostsApiService);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly loadRequest$ = new Subject<string>();
 
@@ -65,22 +63,16 @@ export class PostDetailsStore {
     }
   }
 
-  public deletePost(id: string): void {
+  public deletePost(id: string): Observable<void> {
     this.deleting.set(true);
     this.error.set(null);
 
-    this.api
-      .deletePost(id)
-      .pipe(
-        catchError(() => {
-          this.error.set('Unable to delete post. Please try again.');
-          return EMPTY;
-        }),
-        finalize(() => this.deleting.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        void this.router.navigate(['/posts']);
-      });
+    return this.api.deletePost(id).pipe(
+      catchError(() => {
+        this.error.set('Unable to delete post. Please try again.');
+        return EMPTY;
+      }),
+      finalize(() => this.deleting.set(false)),
+    );
   }
 }

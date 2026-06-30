@@ -11,8 +11,31 @@
     >? This action cannot be undone.
   </p>
 
+  @if (store.error()) {
+    <p class="delete-post-dialog__error" role="alert">{{ store.error() }}</p>
+  }
+
   <div class="delete-post-dialog__actions">
-    <button type="button" class="delete-post-dialog__cancel" mat-dialog-close>Cancel</button>
-    <button type="button" class="delete-post-dialog__confirm" (click)="confirm()">Delete</button>
+    <button
+      type="button"
+      class="delete-post-dialog__cancel"
+      mat-dialog-close
+      [disabled]="store.deleting()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="delete-post-dialog__confirm"
+      [disabled]="store.deleting()"
+      (click)="confirm()"
+    >
+      @if (store.deleting()) {
+        <span class="delete-post-dialog__spinner" aria-hidden="true"></span>
+        Deleting...
+      } @else {
+        Delete
+      }
+    </button>
   </div>
 </div>

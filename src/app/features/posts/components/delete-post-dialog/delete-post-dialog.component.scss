@@ -36,6 +36,13 @@
     color: $color-secondary;
   }
 
+  &__error {
+    margin: -0.75rem 0 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: $color-error;
+  }
+
   &__post-title {
     font-weight: 600;
     color: $color-slate-900;
@@ -56,5 +63,16 @@
 
   &__confirm {
     @include danger-button;
+
+    &:disabled {
+      opacity: 0.85;
+      cursor: not-allowed;
+    }
+  }
+
+  &__spinner {
+    @include inline-spinner(0.875rem);
+    border-top-color: $color-on-primary;
+    border-color: rgba(255, 255, 255, 0.35);
   }
 }
