@@ -8,7 +8,7 @@ import { Post } from '../models/post.model';
 import { UpdatePostDto } from '../models/update-post.dto';
 
 type PostResponse = Omit<Post, 'id'> & {
-  id: number | string;
+  id: string | number;
 };
 
 @Injectable({
@@ -24,7 +24,7 @@ export class PostsApiService {
       .pipe(map((posts) => posts.map((post) => this.normalizePost(post))));
   }
 
-  public getPostById(id: number | string): Observable<Post> {
+  public getPostById(id: string): Observable<Post> {
     return this.http
       .get<PostResponse>(`${this.apiBaseUrl}/posts/${id}`)
       .pipe(map((post) => this.normalizePost(post)));
@@ -34,25 +34,26 @@ export class PostsApiService {
     return this.http
       .post<PostResponse>(`${this.apiBaseUrl}/posts`, {
         ...payload,
-        createdAt: payload.createdAt ?? new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       })
       .pipe(map((post) => this.normalizePost(post)));
   }
 
-  public updatePost(id: number | string, payload: UpdatePostDto): Observable<Post> {
+  public updatePost(id: string, payload: UpdatePostDto): Observable<Post> {
     return this.http
       .patch<PostResponse>(`${this.apiBaseUrl}/posts/${id}`, payload)
       .pipe(map((post) => this.normalizePost(post)));
   }
 
-  public deletePost(id: number | string): Observable<void> {
+  public deletePost(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`);
   }
 
   private normalizePost(post: PostResponse): Post {
     return {
       ...post,
-      id: Number(post.id),
+      id: String(post.id),
+      createdAt: post.createdAt ?? new Date().toISOString(),
     };
   }
 }

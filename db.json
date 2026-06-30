@@ -1,7 +1,7 @@
 {
   "posts": [
     {
-      "id": 1,
+      "id": "1",
       "title": "The Future of Content Management",
       "author": "Sarah Jenkins",
       "description": "Strategic insights into how modern teams manage editorial workflows at scale.",
@@ -9,7 +9,7 @@
       "createdAt": "2024-10-24T10:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "10 UX Principles for Accessible Interfaces",
       "author": "Marcus Chen",
       "description": "A practical guide to building interfaces that remain clear, inclusive, and efficient.",
@@ -17,7 +17,7 @@
       "createdAt": "2024-10-22T14:30:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Scalable Architecture for Growing Products",
       "author": "Elena Rodriguez",
       "description": "How to structure frontend applications so they stay maintainable as features grow.",
@@ -25,7 +25,7 @@
       "createdAt": "2024-10-19T09:15:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Optimizing Editorial Workflows",
       "author": "Sarah Jenkins",
       "description": "Reducing handoffs and context switching in content operations teams.",
@@ -33,7 +33,7 @@
       "createdAt": "2024-10-15T16:45:00.000Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Writing Better Technical Blog Posts",
       "author": "James Wilson",
       "description": "Techniques for turning complex topics into posts that are useful and easy to scan.",
@@ -41,7 +41,7 @@
       "createdAt": "2024-10-12T11:20:00.000Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "Corporate Modernism in Product UI",
       "author": "Alex Rivera",
       "description": "Why calm, structured interfaces help users focus on the work that matters.",
@@ -49,7 +49,7 @@
       "createdAt": "2024-10-08T08:00:00.000Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Reactive Forms in Real Applications",
       "author": "Marcus Chen",
       "description": "Patterns for validation, error handling, and reusable form composition.",
@@ -57,7 +57,7 @@
       "createdAt": "2024-10-05T13:10:00.000Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "Signals and State in Angular Apps",
       "author": "Elena Rodriguez",
       "description": "Combining signals with services and HTTP for predictable UI updates.",
@@ -65,7 +65,7 @@
       "createdAt": "2024-10-01T17:40:00.000Z"
     },
     {
-      "id": 9,
+      "id": "9",
       "title": "Designing Empty and Error States",
       "author": "James Wilson",
       "description": "Why supporting states are essential for trustworthy admin experiences.",
@@ -73,7 +73,7 @@
       "createdAt": "2024-09-28T10:55:00.000Z"
     },
     {
-      "id": 10,
+      "id": "10",
       "title": "Building a Maintainable Blog Admin",
       "author": "Alex Rivera",
       "description": "A focused CRUD application can still demonstrate strong engineering practices.",
@@ -81,7 +81,7 @@
       "createdAt": "2024-09-25T15:25:00.000Z"
     },
     {
-      "id": 11,
+      "id": "11",
       "title": "Pagination and Search UX Patterns",
       "author": "Sarah Jenkins",
       "description": "Making large content collections easy to browse without overwhelming the interface.",
@@ -89,12 +89,13 @@
       "createdAt": "2024-09-20T12:00:00.000Z"
     },
     {
-      "id": 12,
+      "id": "12",
       "title": "Mock APIs for Frontend Development",
       "author": "Marcus Chen",
       "description": "Using json-server to unblock UI work before the real backend is ready.",
       "content": "Mock APIs let frontend teams iterate on real HTTP flows early. Tools like json-server are especially useful for CRUD assignments and prototypes where the goal is to validate interaction design and client-side architecture.",
       "createdAt": "2024-09-18T09:30:00.000Z"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
