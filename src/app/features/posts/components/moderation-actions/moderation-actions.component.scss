@@ -1,0 +1,43 @@
+.moderation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  &__approve,
+  &__reject {
+    ::ng-deep .mdc-button__label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      line-height: 1;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    vertical-align: unset;
+  }
+
+  &__text {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  &__spinner {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+
+    --mdc-circular-progress-active-indicator-color: currentColor;
+  }
+}

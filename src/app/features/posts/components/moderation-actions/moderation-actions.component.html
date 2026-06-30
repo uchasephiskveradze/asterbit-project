@@ -1,0 +1,36 @@
+<div class="moderation-actions">
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    class="moderation-actions__approve"
+    [disabled]="disabled() || loading()"
+    (click)="approve.emit()"
+  >
+    @if (loading()) {
+      <mat-progress-spinner
+        class="moderation-actions__spinner"
+        mode="indeterminate"
+        diameter="18"
+      />
+    } @else {
+      <span class="material-symbols-outlined moderation-actions__icon" aria-hidden="true">
+        check_circle
+      </span>
+    }
+    <span class="moderation-actions__text">Approve</span>
+  </button>
+
+  <button
+    mat-stroked-button
+    type="button"
+    class="moderation-actions__reject"
+    [disabled]="disabled() || loading()"
+    (click)="reject.emit()"
+  >
+    <span class="material-symbols-outlined moderation-actions__icon" aria-hidden="true">
+      cancel
+    </span>
+    <span class="moderation-actions__text">Reject</span>
+  </button>
+</div>

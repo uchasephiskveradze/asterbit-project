@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
+import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
+import { PENDING_REASON_LABELS } from '../../models/post-status.model';
 import { ModerationStore } from '../../store/moderation.store';
 
 @Component({
@@ -15,6 +17,7 @@ import { ModerationStore } from '../../store/moderation.store';
     PostsLoadingStateComponent,
     PostsEmptyStateComponent,
     PostsErrorStateComponent,
+    ModerationActionsComponent,
   ],
   providers: [ModerationStore],
   templateUrl: './moderation.page.html',
@@ -22,6 +25,7 @@ import { ModerationStore } from '../../store/moderation.store';
 })
 export class ModerationPage {
   public readonly store = inject(ModerationStore);
+  public readonly pendingReasonLabels = PENDING_REASON_LABELS;
 
   public readonly isEmpty = computed(
     () => !this.store.loading() && !this.store.error() && this.store.pendingPosts().length === 0,

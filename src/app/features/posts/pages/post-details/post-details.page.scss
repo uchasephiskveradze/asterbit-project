@@ -37,27 +37,6 @@
       @include secondary-button;
     }
 
-    &--approve {
-      @include primary-button;
-      border: none;
-      cursor: pointer;
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    }
-
-    &--reject {
-      @include secondary-button;
-      cursor: pointer;
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    }
-
     &--danger {
       @include danger-button;
 

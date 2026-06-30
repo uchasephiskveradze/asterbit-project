@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
+import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostAccessService } from '../../data-access/post-access.service';
@@ -16,7 +17,7 @@ import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent],
+  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',

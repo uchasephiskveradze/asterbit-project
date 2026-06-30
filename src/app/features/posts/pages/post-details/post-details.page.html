@@ -9,22 +9,11 @@
       @if (canModerate() || canEdit() || canDelete()) {
         <div class="post-details-page__actions">
           @if (canModerate()) {
-            <button
-              class="post-details-page__action post-details-page__action--approve"
-              type="button"
-              [disabled]="store.moderating()"
-              (click)="approvePost()"
-            >
-              Approve
-            </button>
-            <button
-              class="post-details-page__action post-details-page__action--reject"
-              type="button"
-              [disabled]="store.moderating()"
-              (click)="rejectPost()"
-            >
-              Reject
-            </button>
+            <app-moderation-actions
+              [loading]="store.moderating()"
+              (approve)="approvePost()"
+              (reject)="rejectPost()"
+            />
           }
           @if (canEdit()) {
             <a

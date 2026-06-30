@@ -19,7 +19,26 @@
       @for (post of store.pendingPosts(); track post.id) {
         <article class="moderation-page__card">
           <div class="moderation-page__card-body">
-            <a class="moderation-page__title" [routerLink]="['/posts', post.id]">{{ post.title }}</a>
+            <div class="moderation-page__card-heading">
+              <a class="moderation-page__card-title" [routerLink]="['/posts', post.id]">{{ post.title }}</a>
+              @if (post.pendingReason; as reason) {
+                <span
+                  class="moderation-page__badge"
+                  [class.moderation-page__badge--edited]="reason === 'edited'"
+                >
+                  @if (reason === 'edited') {
+                    <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
+                      edit_note
+                    </span>
+                  } @else {
+                    <span class="material-symbols-outlined moderation-page__badge-icon" aria-hidden="true">
+                      fiber_new
+                    </span>
+                  }
+                  {{ pendingReasonLabels[reason] }}
+                </span>
+              }
+            </div>
             <p class="moderation-page__description">{{ post.description }}</p>
             <p class="moderation-page__meta">
               <span>{{ post.author }}</span>
@@ -27,24 +46,11 @@
             </p>
           </div>
 
-          <div class="moderation-page__actions">
-            <button
-              class="moderation-page__approve"
-              type="button"
-              [disabled]="store.actingOnId() === post.id"
-              (click)="approve(post.id)"
-            >
-              Approve
-            </button>
-            <button
-              class="moderation-page__reject"
-              type="button"
-              [disabled]="store.actingOnId() === post.id"
-              (click)="reject(post.id)"
-            >
-              Reject
-            </button>
-          </div>
+          <app-moderation-actions
+            [loading]="store.actingOnId() === post.id"
+            (approve)="approve(post.id)"
+            (reject)="reject(post.id)"
+          />
         </article>
       }
     </div>

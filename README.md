@@ -1,6 +1,6 @@
 # Blog Management System
 
-Angular SPA for managing blog posts: list, view, create, edit, and delete publications with search, sorting, and pagination.
+Angular SPA for managing blog posts with role-based access, moderation workflow, and full CRUD (list, view, create, edit, delete) plus search, sorting, and pagination.
 
 ## Requirements
 
@@ -27,7 +27,14 @@ In a second terminal, start the Angular dev server (proxies `/api` to the mock b
 npm start
 ```
 
-Open [http://localhost:4200](http://localhost:4200).
+Open [http://localhost:4200](http://localhost:4200). You will be redirected to **Login** — the app requires authentication.
+
+### Demo Accounts
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@blog.com` | `admin123` | Admin — moderate, edit/delete any post, auto-approved creates |
+| `user@blog.com` | `user123` | User — submit posts for review, edit own approved posts (re-review) |
 
 ### Other Scripts
 
@@ -44,10 +51,45 @@ npm test        # unit tests (Vitest)
 
 | Library | Purpose |
 |---------|---------|
-| Angular Material | `MatDialog`, `MatButton`, `MatProgressSpinner` (custom-styled filters/table keep Stitch UI) |
+| Angular Material | `MatDialog`, `MatButton`, `MatProgressSpinner` for dialogs and moderation actions |
 | RxJS | HTTP streams, operators in signal stores |
-| json-server | Mock REST API (`db.json`) |
+| json-server | Mock REST API (`db.json`) for posts and users |
 | Vitest | Unit testing |
+
+Custom Stitch-styled UI is used for lists, filters, forms, and layout. Material is applied selectively where it improves feedback (dialogs, spinners, moderation buttons).
+
+## Features
+
+### Posts (all logged-in users)
+
+- Browse **approved** posts with debounced search, date sort, and pagination
+- View post details
+- **Users** submit new posts → `pending` until admin approval
+- **Admins** create posts → immediately `approved`
+
+### My Posts (`/posts/my`)
+
+Tabs for the current user's submissions:
+
+- **Under Review** — `pending`
+- **Approved**
+- **Rejected**
+
+Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details.
+
+### Moderation (`/posts/moderation`, admin only)
+
+- Review pending submissions from all users
+- Approve or reject from the queue or directly on post details
+- **New submission** vs **Edited submission** badges on the queue
+
+### Auth
+
+- Mock login via `AuthService` (signals + `localStorage`)
+- Route guards: `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard`
+- HTTP interceptor attaches a demo bearer token
+
+See [docs/AUTH-MODERATION.md](docs/AUTH-MODERATION.md) for the full role and workflow spec.
 
 ## Architecture
 
@@ -55,34 +97,64 @@ Feature-based structure with lazy-loaded routes and signal stores.
 
 ```
 src/app/
-├── core/           # Layout, 404 page, API config
-└── features/posts/
-    ├── components/ # Reusable UI (table, filters, form, states)
-    ├── data-access/# PostsApiService (HttpClient CRUD)
-    ├── models/     # Post, DTOs, resolver types
-    ├── pages/      # Route-level pages (list, details, upsert)
-    ├── resolvers/  # postResolver — preload post before details/edit
-    └── store/      # Signal stores (list, details, upsert)
+├── core/
+│   ├── auth/           # AuthService, guards, interceptor, session storage
+│   ├── layout/         # Main shell with role-aware navigation
+│   ├── config/         # API base URL
+│   └── pages/          # 404
+├── features/
+│   ├── auth/pages/     # Login
+│   └── posts/
+│       ├── components/ # Table, filters, form, states, revision panel, moderation actions
+│       ├── data-access/  # PostsApiService, PostAccessService
+│       ├── models/       # Post, status, revision, DTOs
+│       ├── pages/        # List, details, upsert, my-posts, moderation
+│       ├── resolvers/    # postResolver — preload + access check
+│       ├── store/        # Signal stores per page/flow
+│       └── utils/        # Revision diff helpers
 ```
 
 ### State Management
 
-Signal stores per feature area, not NgRx:
+Signal stores per feature area (not NgRx):
 
-- **PostsListStore** — fetch, debounced search, sort, pagination
-- **PostDetailsStore** — resolved post data, delete flow, retry
-- **PostUpsertStore** — create/update, resolver seed for edit mode
+| Store | Responsibility |
+|-------|----------------|
+| **PostsListStore** | Fetch, debounced search, sort, pagination (approved only) |
+| **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
+| **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
+| **MyPostsStore** | User's posts filtered by tab |
+| **ModerationStore** | Admin pending queue, approve/reject |
 
 RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `tap`, and `finalize`.
 
 ### Routing
 
-- Lazy-loaded standalone routes under `/posts`
-- Route resolver preloads post data for details and edit pages
+| Route | Access | Description |
+|-------|--------|-------------|
+| `/login` | Guest only | Sign in |
+| `/posts` | Authenticated | Approved posts list |
+| `/posts/my` | Authenticated | Own posts by status tab |
+| `/posts/moderation` | Admin | Pending review queue |
+| `/posts/new` | Authenticated | Create / submit post |
+| `/posts/:id` | Authenticated | Post details (+ admin moderation on pending) |
+| `/posts/:id/edit` | Admin or post owner (approved) | Edit form |
+
+- Lazy-loaded standalone routes
+- Route resolver preloads post data and enforces view access
 - Component input binding for route params, query params, and resolved data
 
 ### Mock API
 
 - `npm run api` serves `db.json` at `http://localhost:3000`
 - Angular proxy (`proxy.conf.json`) maps `/api/*` → `http://localhost:3000/*`
+- Collections: `posts`, `users`
+- Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions)
 - Post IDs are server-generated strings (json-server v1)
+
+## Quick Test Flow
+
+1. Login as **user** → Create Post → check **My Posts → Under Review**
+2. Login as **admin** → **Moderation** → Approve
+3. Login as **user** → edit approved post → Submit for Review
+4. Login as **admin** → open post details → review diff → Approve or Reject

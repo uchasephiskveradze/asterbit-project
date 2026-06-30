@@ -22,6 +22,11 @@ export const POST_STATUS_LABELS: Record<PostStatus, string> = {
   rejected: 'Rejected',
 };
 
+export const PENDING_REASON_LABELS = {
+  new: 'New submission',
+  edited: 'Edited submission',
+} as const;
+
 export function isPostStatus(value: string): value is PostStatus {
   return value === 'pending' || value === 'approved' || value === 'rejected';
 }
