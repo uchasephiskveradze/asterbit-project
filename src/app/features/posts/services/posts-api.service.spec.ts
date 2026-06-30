@@ -129,7 +129,7 @@ describe('PostsApiService', () => {
     await createPromise;
 
     const cachedPromise = firstValueFrom(service.getPosts());
-    httpMock.expectNone('/api/posts');
+    httpMock.expectOne('/api/posts').flush([...mockPosts, createdPost]);
 
     await expect(cachedPromise).resolves.toEqual([...mockPosts, createdPost]);
   });
@@ -151,7 +151,7 @@ describe('PostsApiService', () => {
     ]);
   });
 
-  it('should remove a post from the cache after deletePost', async () => {
+  it('should invalidate the list cache after deletePost', async () => {
     const listPromise = firstValueFrom(service.getPosts());
     httpMock.expectOne('/api/posts').flush(mockPosts);
     await listPromise;
@@ -161,8 +161,60 @@ describe('PostsApiService', () => {
     await deletePromise;
 
     const cachedPromise = firstValueFrom(service.getPosts());
-    httpMock.expectNone('/api/posts');
+    httpMock.expectOne('/api/posts').flush([mockPosts[1]]);
 
     await expect(cachedPromise).resolves.toEqual([mockPosts[1]]);
+  });
+
+  it('should cache queried list requests separately', async () => {
+    const pendingQuery = { query: { status: 'pending' as const } };
+    const approvedQuery = { query: { status: 'approved' as const } };
+
+    const pendingPromise = firstValueFrom(service.getPosts(pendingQuery));
+    httpMock.expectOne((req) => req.params.get('status') === 'pending').flush([mockPosts[1]]);
+    await pendingPromise;
+
+    const approvedPromise = firstValueFrom(service.getPosts(approvedQuery));
+    httpMock.expectOne((req) => req.params.get('status') === 'approved').flush([mockPosts[0]]);
+    await approvedPromise;
+
+    const cachedPendingPromise = firstValueFrom(service.getPosts(pendingQuery));
+    const cachedApprovedPromise = firstValueFrom(service.getPosts(approvedQuery));
+    httpMock.expectNone('/api/posts');
+
+    await expect(cachedPendingPromise).resolves.toEqual([mockPosts[1]]);
+    await expect(cachedApprovedPromise).resolves.toEqual([mockPosts[0]]);
+  });
+
+  it('should use json-server v1 sort syntax for descending order', async () => {
+    const promise = firstValueFrom(
+      service.getPosts({
+        force: true,
+        query: { sort: 'createdAt', order: 'desc' },
+      }),
+    );
+    const request = httpMock.expectOne(
+      (req) => req.url === '/api/posts' && req.params.get('_sort') === '-createdAt',
+    );
+
+    expect(request.request.params.has('_order')).toBe(false);
+    request.flush(mockPosts);
+    await promise;
+  });
+
+  it('should use json-server v1 sort syntax for ascending order', async () => {
+    const promise = firstValueFrom(
+      service.getPosts({
+        force: true,
+        query: { sort: 'createdAt', order: 'asc' },
+      }),
+    );
+    const request = httpMock.expectOne(
+      (req) => req.url === '/api/posts' && req.params.get('_sort') === 'createdAt',
+    );
+
+    expect(request.request.params.has('_order')).toBe(false);
+    request.flush(mockPosts);
+    await promise;
   });
 });

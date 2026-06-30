@@ -8,12 +8,14 @@ import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
 import { PostResponse } from '../models/post-response.model';
 import { PostsListQuery } from '../models/posts-list-query.model';
-import { PostPendingReason } from '../models/post-revision.model';
+import { PostPendingReason, POST_PENDING_REASON } from '../models/post-revision.model';
 import { PostsRequestOptions } from '../models/posts-request-options.model';
-import { PostStatus, isPostStatus } from '../models/post-status.model';
+import { isPostStatus, POST_STATUS, PostStatus } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
+import { buildJsonServerSortParam } from '../utils/json-server-query.utils';
 
 const POST_BY_ID_CACHE_MAX_SIZE = 100;
+const ALL_POSTS_CACHE_KEY = '__all__';
 
 @Injectable({
   providedIn: 'root',
@@ -22,46 +24,46 @@ export class PostsApiService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
-  private listCache: Post[] | null = null;
-  private listInFlight: Observable<Post[]> | null = null;
+  private readonly listQueryCache = new Map<string, Post[]>();
+  private readonly listQueryInFlight = new Map<string, Observable<Post[]>>();
   private readonly postByIdCache = new LruCache<string, Post>(POST_BY_ID_CACHE_MAX_SIZE);
   private readonly postByIdInFlight = new Map<string, Observable<Post>>();
 
   public getPosts(options?: PostsRequestOptions): Observable<Post[]> {
     const force = options?.force ?? false;
-    const query = options?.query;
-    const hasQuery = query !== undefined;
+    const cacheKey = this.getListCacheKey(options?.query);
 
-    if (!hasQuery && !force && this.listCache !== null) {
-      return of(this.listCache);
-    }
+    if (!force) {
+      const cached = this.listQueryCache.get(cacheKey);
 
-    if (!hasQuery && !force && this.listInFlight) {
-      return this.listInFlight;
+      if (cached) {
+        return of(cached);
+      }
+
+      const inFlight = this.listQueryInFlight.get(cacheKey);
+
+      if (inFlight) {
+        return inFlight;
+      }
     }
 
     const request$ = this.http
       .get<PostResponse[]>(`${this.apiBaseUrl}/posts`, {
-        params: this.buildQueryParams(query),
+        params: this.buildQueryParams(options?.query),
       })
       .pipe(
         map((posts) => posts.map((post) => this.normalizePost(post))),
         tap((posts) => {
-          if (!hasQuery) {
-            this.seedListCache(posts);
-          }
+          this.listQueryCache.set(cacheKey, posts);
+          posts.forEach((post) => this.postByIdCache.set(post.id, post));
         }),
         shareReplay({ bufferSize: 1, refCount: true }),
         finalize(() => {
-          if (!hasQuery) {
-            this.listInFlight = null;
-          }
+          this.listQueryInFlight.delete(cacheKey);
         }),
       );
 
-    if (!hasQuery) {
-      this.listInFlight = request$;
-    }
+    this.listQueryInFlight.set(cacheKey, request$);
 
     return request$;
   }
@@ -76,7 +78,7 @@ export class PostsApiService {
         return of(cached);
       }
 
-      const fromList = this.listCache?.find((post) => post.id === id);
+      const fromList = this.findPostInListCaches(id);
 
       if (fromList) {
         return of(fromList);
@@ -110,21 +112,27 @@ export class PostsApiService {
       })
       .pipe(
         map((post) => this.normalizePost(post)),
-        tap((post) => this.upsertInCache(post)),
+        tap((post) => {
+          this.postByIdCache.set(post.id, post);
+          this.invalidateListCaches();
+        }),
       );
   }
 
   public updatePost(id: string, payload: UpdatePostDto): Observable<Post> {
     return this.http.patch<PostResponse>(`${this.apiBaseUrl}/posts/${id}`, payload).pipe(
       map((post) => this.normalizePost(post)),
-      tap((post) => this.upsertInCache(post)),
+      tap((post) => {
+        this.postByIdCache.set(post.id, post);
+        this.invalidateListCaches();
+      }),
     );
   }
 
   public updatePostStatus(id: string, status: PostStatus): Observable<Post> {
     const payload: UpdatePostDto = { status };
 
-    if (status === 'approved' || status === 'rejected') {
+    if (status === POST_STATUS.approved || status === POST_STATUS.rejected) {
       payload.previousVersion = null;
       payload.pendingReason = null;
     }
@@ -134,15 +142,40 @@ export class PostsApiService {
 
   public deletePost(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`).pipe(
-      tap(() => this.removeFromCache(id)),
+      tap(() => {
+        this.postByIdCache.delete(id);
+        this.invalidateListCaches();
+      }),
     );
   }
 
   public clearCache(): void {
-    this.listCache = null;
-    this.listInFlight = null;
+    this.invalidateListCaches();
     this.postByIdCache.clear();
     this.postByIdInFlight.clear();
+  }
+
+  private getListCacheKey(query?: PostsListQuery): string {
+    const params = this.buildQueryParams(query).toString();
+
+    return params || ALL_POSTS_CACHE_KEY;
+  }
+
+  private findPostInListCaches(id: string): Post | undefined {
+    for (const posts of this.listQueryCache.values()) {
+      const match = posts.find((post) => post.id === id);
+
+      if (match) {
+        return match;
+      }
+    }
+
+    return undefined;
+  }
+
+  private invalidateListCaches(): void {
+    this.listQueryCache.clear();
+    this.listQueryInFlight.clear();
   }
 
   private buildQueryParams(query?: PostsListQuery): HttpParams {
@@ -161,11 +194,7 @@ export class PostsApiService {
     }
 
     if (query.sort) {
-      params = params.set('_sort', query.sort);
-    }
-
-    if (query.order) {
-      params = params.set('_order', query.order);
+      params = params.set('_sort', buildJsonServerSortParam(query.sort, query.order));
     }
 
     if (query.page) {
@@ -179,38 +208,8 @@ export class PostsApiService {
     return params;
   }
 
-  private seedListCache(posts: Post[]): void {
-    this.listCache = posts;
-    posts.forEach((post) => this.postByIdCache.set(post.id, post));
-  }
-
-  private upsertInCache(post: Post): void {
-    this.postByIdCache.set(post.id, post);
-
-    if (this.listCache === null) {
-      return;
-    }
-
-    const index = this.listCache.findIndex((item) => item.id === post.id);
-
-    if (index === -1) {
-      this.listCache = [...this.listCache, post];
-      return;
-    }
-
-    this.listCache = this.listCache.map((item) => (item.id === post.id ? post : item));
-  }
-
-  private removeFromCache(id: string): void {
-    this.postByIdCache.delete(id);
-
-    if (this.listCache !== null) {
-      this.listCache = this.listCache.filter((post) => post.id !== id);
-    }
-  }
-
   private normalizePost(post: PostResponse): Post {
-    const status = post.status && isPostStatus(post.status) ? post.status : 'pending';
+    const status = post.status && isPostStatus(post.status) ? post.status : POST_STATUS.pending;
     const pendingReason = this.normalizePendingReason(post.pendingReason);
 
     return {
@@ -225,7 +224,7 @@ export class PostsApiService {
   }
 
   private normalizePendingReason(value: string | undefined): PostPendingReason | undefined {
-    if (value === 'new' || value === 'edited') {
+    if (value === POST_PENDING_REASON.new || value === POST_PENDING_REASON.edited) {
       return value;
     }
 
