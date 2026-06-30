@@ -31,9 +31,8 @@
             >
               <span class="material-symbols-outlined">visibility</span>
             </a>
-            @if (showAdminActions()) {
+            @if (showAdminActions() && auth.isAdmin()) {
               <a
-                *appIsAdmin
                 class="posts-table__action"
                 [routerLink]="['/posts', post.id, 'edit']"
                 [queryParams]="{ from: 'list' }"

@@ -1,17 +1,19 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { IsAdminDirective } from '../../../../core/auth/directives/is-admin.directive';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { Post } from '../../models/post.model';
 
 @Component({
   selector: 'app-posts-table',
-  imports: [DatePipe, RouterLink, IsAdminDirective],
+  imports: [DatePipe, RouterLink],
   templateUrl: './posts-table.component.html',
   styleUrl: './posts-table.component.scss',
 })
 export class PostsTableComponent {
+  protected readonly auth = inject(AuthService);
+
   public readonly posts = input.required<Post[]>();
   public readonly showAdminActions = input(true);
   public readonly enableOwnerEdit = input(false);
