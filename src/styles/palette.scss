@@ -1,0 +1,49 @@
+$palette-primary: #1e40af;
+$palette-secondary: #64748b;
+$palette-tertiary: #0ea5e9;
+$palette-neutral: #f8fafc;
+
+$color-primary: $palette-primary;
+$color-primary-container: $palette-primary;
+$color-on-primary: #ffffff;
+
+$color-background: $palette-neutral;
+$color-surface: $palette-neutral;
+$color-surface-lowest: #ffffff;
+$color-surface-container-low: #f1f5f9;
+$color-surface-container: #e2e8f0;
+
+$color-on-surface: #0f172a;
+$color-on-background: #0f172a;
+$color-secondary: $palette-secondary;
+$color-slate-700: #334155;
+$color-slate-900: #0f172a;
+$color-outline: #94a3b8;
+
+$color-tertiary: $palette-tertiary;
+
+$color-border-subtle: #e2e8f0;
+
+$color-error: #ba1a1a;
+$color-error-red: #dc2626;
+$color-error-container: #ffdad6;
+$color-on-error-container: #93000a;
+
+$color-skeleton-from: #f1f5f9;
+$color-skeleton-mid: #e2e8f0;
+
+$color-primary-focus-ring: rgba(30, 64, 175, 0.15);
+$color-primary-glow: rgba(30, 64, 175, 0.05);
+
+$shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.15);
+$shadow-badge: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+$font-family-body: Inter, sans-serif;
+$font-family-headline: Manrope, sans-serif;
+
+$radius-sm: 0.25rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-full: 9999px;

@@ -1,0 +1,54 @@
+@use 'palette' as *;
+
+@mixin focus-ring {
+  outline: none;
+  border-color: $color-primary-container;
+  box-shadow: 0 0 0 2px $color-primary-focus-ring;
+}
+
+@mixin card-shell {
+  background: $color-surface-lowest;
+  border: 1px solid $color-border-subtle;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-soft;
+}
+
+@mixin primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: $radius-md;
+  background: $color-primary-container;
+  color: $color-on-primary;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+@mixin skeleton-shimmer {
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  background: linear-gradient(
+    90deg,
+    $color-skeleton-from 25%,
+    $color-skeleton-mid 50%,
+    $color-skeleton-from 75%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: $radius-md;
+}

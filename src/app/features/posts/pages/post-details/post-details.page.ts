@@ -25,6 +25,8 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: `
+    @use 'palette' as *;
+
     .page__toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -35,7 +37,7 @@ import { RouterLink } from '@angular/router';
     }
 
     .page__back {
-      color: #505f76;
+      color: $color-secondary;
       font-weight: 600;
       text-decoration: none;
     }
@@ -51,46 +53,46 @@ import { RouterLink } from '@angular/router';
       align-items: center;
       padding: 0.5rem 1rem;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: $radius-md;
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
     }
 
     .page__action--secondary {
-      border: 1px solid #e2e8f0;
-      background: #fff;
-      color: #505f76;
+      border: 1px solid $color-border-subtle;
+      background: $color-surface-lowest;
+      color: $color-secondary;
     }
 
     .page__action--danger {
-      background: #dc2626;
-      color: #fff;
+      background: $color-error-red;
+      color: $color-on-primary;
     }
 
     .page__card {
       padding: 2rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 0.75rem;
-      background: #fff;
+      border: 1px solid $color-border-subtle;
+      border-radius: $radius-lg;
+      background: $color-surface-lowest;
     }
 
     .page__title {
       margin: 0;
-      font-family: Manrope, sans-serif;
+      font-family: $font-family-headline;
       font-size: 2rem;
-      color: #0f172a;
+      color: $color-slate-900;
     }
 
     .page__meta {
       margin: 0.75rem 0 1.5rem;
-      color: #505f76;
+      color: $color-secondary;
       font-size: 0.875rem;
     }
 
     .page__placeholder {
       margin: 0;
-      color: #505f76;
+      color: $color-secondary;
     }
   `,
 })

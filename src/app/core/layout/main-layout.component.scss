@@ -1,16 +1,18 @@
+@use 'palette' as *;
+
 :host {
   display: block;
   min-height: 100vh;
-  background: #f7f9fb;
-  color: #191c1e;
+  background: $color-background;
+  color: $color-on-surface;
 }
 
 .layout__header {
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 1px solid #e2e8f0;
-  background: #fff;
+  border-bottom: 1px solid $color-border-subtle;
+  background: $color-surface-lowest;
 }
 
 .layout__header-inner {
@@ -37,8 +39,8 @@
 }
 
 .layout__brand {
-  color: #00288e;
-  font-family: Manrope, sans-serif;
+  color: $color-primary;
+  font-family: $font-family-headline;
   font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
@@ -57,7 +59,7 @@
 }
 
 .layout__nav-link {
-  color: #505f76;
+  color: $color-secondary;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -65,17 +67,17 @@
 
 .layout__nav-link--active {
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid #00288e;
-  color: #00288e;
+  border-bottom: 2px solid $color-primary;
+  color: $color-primary;
 }
 
 .layout__cta {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1.25rem;
-  border-radius: 0.5rem;
-  background: #1e40af;
-  color: #fff;
+  border-radius: $radius-md;
+  background: $color-primary-container;
+  color: $color-on-primary;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;

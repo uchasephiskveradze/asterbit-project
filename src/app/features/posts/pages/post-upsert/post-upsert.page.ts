@@ -20,6 +20,8 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
   styles: `
+    @use 'palette' as *;
+
     .page__header {
       display: flex;
       flex-wrap: wrap;
@@ -31,33 +33,33 @@ import { RouterLink } from '@angular/router';
 
     .page__title {
       margin: 0;
-      font-family: Manrope, sans-serif;
+      font-family: $font-family-headline;
       font-size: 2rem;
       font-weight: 700;
-      color: #0f172a;
+      color: $color-slate-900;
     }
 
     .page__subtitle {
       margin: 0.5rem 0 0;
-      color: #505f76;
+      color: $color-secondary;
     }
 
     .page__cancel {
-      color: #505f76;
+      color: $color-secondary;
       font-weight: 600;
       text-decoration: none;
     }
 
     .page__card {
       padding: 2rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 0.75rem;
-      background: #fff;
+      border: 1px solid $color-border-subtle;
+      border-radius: $radius-lg;
+      background: $color-surface-lowest;
     }
 
     .page__placeholder {
       margin: 0;
-      color: #505f76;
+      color: $color-secondary;
     }
   `,
 })
