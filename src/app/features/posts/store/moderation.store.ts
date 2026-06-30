@@ -2,7 +2,7 @@ import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, finalize, of } from 'rxjs';
 
-import { PostsApiService } from '../data-access/posts-api.service';
+import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
 import { PostStatus } from '../models/post-status.model';
 

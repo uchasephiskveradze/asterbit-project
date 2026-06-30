@@ -36,6 +36,8 @@ Open [http://localhost:4200](http://localhost:4200). You will be redirected to *
 | `admin@blog.com` | `admin123` | Admin — moderate, edit/delete any post, auto-approved creates |
 | `user@blog.com` | `user123` | User — submit posts for review, edit own approved posts (re-review) |
 
+Demo passwords are validated in `AuthApiService` (not stored in `db.json`).
+
 ### Other Scripts
 
 ```bash
@@ -98,20 +100,31 @@ Feature-based structure with lazy-loaded routes and signal stores.
 ```
 src/app/
 ├── core/
-│   ├── auth/           # AuthService, guards, interceptor, session storage
-│   ├── layout/         # Main shell with role-aware navigation
-│   ├── config/         # API base URL
-│   └── pages/          # 404
+│   ├── auth/
+│   │   ├── data-access/   # AuthApiService (HTTP)
+│   │   ├── services/      # AuthService, AuthStorageService
+│   │   ├── guards/        # auth, admin, guest, postEdit
+│   │   ├── interceptors/  # authInterceptor
+│   │   ├── directives/    # *appIsAdmin, *appIsAuthenticated
+│   │   └── models/        # User, session, roles
+│   ├── errors/            # GlobalErrorHandler
+│   ├── http/              # httpErrorInterceptor
+│   ├── layout/            # Main shell with role-aware navigation
+│   ├── config/            # API base URL
+│   └── theme/             # Dark/light toggle
 ├── features/
-│   ├── auth/pages/     # Login
+│   ├── auth/pages/        # Login
 │   └── posts/
-│       ├── components/ # Table, filters, form, states, revision panel, moderation actions
-│       ├── data-access/  # PostsApiService, PostAccessService
-│       ├── models/       # Post, status, revision, DTOs
-│       ├── pages/        # List, details, upsert, my-posts, moderation
-│       ├── resolvers/    # postResolver — preload + access check
-│       ├── store/        # Signal stores per page/flow
-│       └── utils/        # Revision diff helpers
+│       ├── components/    # Table, filters, form, states, revision panel, moderation actions
+│       ├── models/        # Post, status, revision, DTOs, API wire types
+│       ├── services/      # PostsApiService, PostsPermissionService, PostsViewStorageService
+│       ├── pages/         # List, details, upsert, my-posts, moderation
+│       ├── resolvers/     # PostResolver service + route resolver fn
+│       ├── store/         # Signal stores per page/flow
+│       └── utils/         # Revision diff helpers
+└── shared/
+    ├── directives/        # appInfiniteScroll
+    └── pipes/             # postStatusLabel, truncate
 ```
 
 ### State Management
@@ -157,12 +170,13 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | Area | Implementation |
 |------|----------------|
 | **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard` |
-| **HTTP Interceptor** | `authInterceptor` — attaches demo bearer token |
+| **HTTP Interceptor** | `authInterceptor` (bearer token), `httpErrorInterceptor` (401 logout, error logging) |
+| **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `*appIsAdmin`, `*appIsAuthenticated`, `appInfiniteScroll` |
 | **Unit Tests** | Guards, access rules, pipes, theme, revision utils, components |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
-| **Local Storage** | Auth session + theme preference |
+| **Local Storage** | Auth session, theme preference, posts list view mode (`blog-auth-session`, `blog-app-theme`, `blog-posts-list-view-mode`) |
 | **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
 | **Incremental loading** | `appInfiniteScroll` directive when infinite scroll mode is selected |
 | **Authentication** | Mock login with roles (`user` / `admin`) |

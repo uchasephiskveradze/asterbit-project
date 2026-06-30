@@ -6,7 +6,7 @@ import { Post } from '../models/post.model';
 @Injectable({
   providedIn: 'root',
 })
-export class PostAccessService {
+export class PostsPermissionService {
   public canViewPost(post: Post, user: AuthUser | null): boolean {
     if (post.status === 'approved') {
       return true;

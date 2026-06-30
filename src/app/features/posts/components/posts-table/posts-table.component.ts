@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Post } from '../../models/post.model';
 
 @Component({

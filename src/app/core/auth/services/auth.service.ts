@@ -2,10 +2,10 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
-import { AuthApiService } from './data-access/auth-api.service';
+import { AuthApiService } from '../data-access/auth-api.service';
+import { AuthSession } from '../models/auth-session.model';
+import { AuthUser } from '../models/user.model';
 import { AuthStorageService } from './auth-storage.service';
-import { AuthSession } from './models/auth-session.model';
-import { AuthUser } from './models/user.model';
 
 @Injectable({
   providedIn: 'root',

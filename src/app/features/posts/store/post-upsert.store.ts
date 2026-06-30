@@ -4,9 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostFormValue } from '../components/post-form/types/post-form.types';
-import { PostsApiService } from '../data-access/posts-api.service';
+import { PostsApiService } from '../services/posts-api.service';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';

@@ -3,12 +3,12 @@ import { Component, computed, effect, inject, Injector, input } from '@angular/c
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
-import { PostAccessService } from '../../data-access/post-access.service';
+import { PostsPermissionService } from '../../services/posts-permission.service';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { PostStatusLabelPipe } from '../../../../shared/pipes/post-status-label.pipe';
@@ -28,7 +28,7 @@ export class PostDetailsPage {
   public readonly store = inject(PostDetailsStore);
 
   private readonly auth = inject(AuthService);
-  private readonly access = inject(PostAccessService);
+  private readonly access = inject(PostsPermissionService);
   private readonly dialog = inject(MatDialog);
   private readonly injector = inject(Injector);
 

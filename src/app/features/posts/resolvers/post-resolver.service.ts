@@ -3,9 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 
-import { AuthService } from '../../../core/auth/auth.service';
-import { PostsApiService } from '../data-access/posts-api.service';
-import { PostAccessService } from '../data-access/post-access.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { PostsApiService } from '../services/posts-api.service';
+import { PostsPermissionService } from '../services/posts-permission.service';
 import { PostResolverResult } from '../models/post-resolver-result.model';
 
 @Injectable({
@@ -14,7 +14,7 @@ import { PostResolverResult } from '../models/post-resolver-result.model';
 export class PostResolver {
   private readonly api = inject(PostsApiService);
   private readonly auth = inject(AuthService);
-  private readonly access = inject(PostAccessService);
+  private readonly access = inject(PostsPermissionService);
 
   public resolve(route: ActivatedRouteSnapshot): Observable<PostResolverResult> {
     const id = route.paramMap.get('id');

@@ -5,19 +5,11 @@ import { finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
+import { PostResponse } from '../models/post-response.model';
 import { PostPendingReason } from '../models/post-revision.model';
+import { PostsRequestOptions } from '../models/posts-request-options.model';
 import { PostStatus, isPostStatus } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
-
-type PostResponse = Omit<Post, 'id'> & {
-  id: string | number;
-  status?: string;
-  pendingReason?: string;
-};
-
-export type PostsRequestOptions = {
-  force?: boolean;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -185,4 +177,3 @@ export class PostsApiService {
     return undefined;
   }
 }
-

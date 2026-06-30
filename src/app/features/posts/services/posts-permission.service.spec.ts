@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 
 import { AuthUser } from '../../../core/auth/models/user.model';
 import { Post } from '../models/post.model';
-import { PostAccessService } from './post-access.service';
+import { PostsPermissionService } from './posts-permission.service';
 
-describe('PostAccessService', () => {
-  let service: PostAccessService;
+describe('PostsPermissionService', () => {
+  let service: PostsPermissionService;
 
   const approvedPost: Post = {
     id: '1',
@@ -40,7 +40,7 @@ describe('PostAccessService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PostAccessService);
+    service = TestBed.inject(PostsPermissionService);
   });
 
   it('should allow anyone to view approved posts', () => {

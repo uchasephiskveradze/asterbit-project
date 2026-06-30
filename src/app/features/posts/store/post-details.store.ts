@@ -3,7 +3,7 @@ import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } from 'rxjs';
 
-import { PostsApiService } from '../data-access/posts-api.service';
+import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
 import { PostStatus } from '../models/post-status.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';

@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { InfiniteScrollDirective } from '../../../../shared/directives/infinite-scroll.directive';
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';

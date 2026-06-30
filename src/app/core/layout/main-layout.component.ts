@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 import { IsAdminDirective } from '../auth/directives/is-admin.directive';
 import { IsAuthenticatedDirective } from '../auth/directives/is-authenticated.directive';
 import { ThemeService } from '../theme/theme.service';

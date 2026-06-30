@@ -2,8 +2,8 @@ import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, finalize, of } from 'rxjs';
 
-import { AuthService } from '../../../core/auth/auth.service';
-import { PostsApiService } from '../data-access/posts-api.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
 import {
   isMyPostsTab,

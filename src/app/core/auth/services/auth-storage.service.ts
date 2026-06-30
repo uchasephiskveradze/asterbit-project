@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH_STORAGE_KEY, AuthSession } from './models/auth-session.model';
+import { AUTH_STORAGE_KEY, AuthSession } from '../models/auth-session.model';
 
 @Injectable({
   providedIn: 'root',

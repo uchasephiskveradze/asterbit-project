@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';

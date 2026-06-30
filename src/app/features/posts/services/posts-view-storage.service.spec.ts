@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { POSTS_LIST_VIEW_MODE_KEY } from '../models/posts-list-view-mode.model';
-import { PostsListViewStorageService } from './posts-list-view-storage.service';
+import { PostsViewStorageService } from './posts-view-storage.service';
 
-describe('PostsListViewStorageService', () => {
-  let service: PostsListViewStorageService;
+describe('PostsViewStorageService', () => {
+  let service: PostsViewStorageService;
 
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PostsListViewStorageService);
+    service = TestBed.inject(PostsViewStorageService);
   });
 
   afterEach(() => {

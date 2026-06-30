@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { PostFormComponent } from '../../components/post-form/post-form.component';
 import { PostFormValue } from '../../components/post-form/types/post-form.types';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';

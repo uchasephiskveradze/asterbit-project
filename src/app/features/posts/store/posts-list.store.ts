@@ -2,9 +2,9 @@ import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
-import { PostsApiService } from '../data-access/posts-api.service';
-import { PostAccessService } from '../data-access/post-access.service';
-import { PostsListViewStorageService } from '../data-access/posts-list-view-storage.service';
+import { PostsApiService } from '../services/posts-api.service';
+import { PostsPermissionService } from '../services/posts-permission.service';
+import { PostsViewStorageService } from '../services/posts-view-storage.service';
 import { Post } from '../models/post.model';
 import { PostsListViewMode } from '../models/posts-list-view-mode.model';
 import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
@@ -12,8 +12,8 @@ import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 @Injectable()
 export class PostsListStore {
   private readonly api = inject(PostsApiService);
-  private readonly access = inject(PostAccessService);
-  private readonly viewStorage = inject(PostsListViewStorageService);
+  private readonly access = inject(PostsPermissionService);
+  private readonly viewStorage = inject(PostsViewStorageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchInput$ = new Subject<string>();
   private readonly sortOrder$ = new Subject<PostDateSort>();

@@ -1,6 +1,6 @@
 import { ErrorHandler, inject, Injectable } from '@angular/core';
 
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {

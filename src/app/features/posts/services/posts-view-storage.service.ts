@@ -10,7 +10,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class PostsListViewStorageService {
+export class PostsViewStorageService {
   public read(): PostsListViewMode {
     const value = localStorage.getItem(POSTS_LIST_VIEW_MODE_KEY);
     return isPostsListViewMode(value) ? value : DEFAULT_POSTS_LIST_VIEW_MODE;
