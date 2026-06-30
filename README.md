@@ -1,59 +1,88 @@
-# AsterbitTask
+# Blog Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.4.
+Angular SPA for managing blog posts: list, view, create, edit, and delete publications with search, sorting, and pagination.
 
-## Development server
+## Requirements
 
-To start a local development server, run:
+- Node.js 20+
+- npm 11+
 
-```bash
-ng serve
-```
+## Getting Started
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Install dependencies:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Start the mock API (json-server on port 3000):
 
 ```bash
-ng generate --help
+npm run api
 ```
 
-## Building
-
-To build the project run:
+In a second terminal, start the Angular dev server (proxies `/api` to the mock backend):
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open [http://localhost:4200](http://localhost:4200).
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Other Scripts
 
 ```bash
-ng test
+npm run build   # production build
+npm test        # unit tests (Vitest)
 ```
 
-## Running end-to-end tests
+## Angular Version
 
-For end-to-end (e2e) testing, run:
+**Angular 22** (standalone components, signals, new control flow)
 
-```bash
-ng e2e
+## Libraries
+
+| Library | Purpose |
+|---------|---------|
+| Angular Material | Dialog (delete confirmation), theming |
+| RxJS | HTTP streams, operators in signal stores |
+| json-server | Mock REST API (`db.json`) |
+| Vitest | Unit testing |
+
+## Architecture
+
+Feature-based structure with lazy-loaded routes and signal stores.
+
+```
+src/app/
+├── core/           # Layout, 404 page, API config
+└── features/posts/
+    ├── components/ # Reusable UI (table, filters, form, states)
+    ├── data-access/# PostsApiService (HttpClient CRUD)
+    ├── models/     # Post, DTOs, resolver types
+    ├── pages/      # Route-level pages (list, details, upsert)
+    ├── resolvers/  # postResolver — preload post before details/edit
+    └── store/      # Signal stores (list, details, upsert)
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### State Management
 
-## Additional Resources
+Signal stores per feature area, not NgRx:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **PostsListStore** — fetch, debounced search, sort, pagination
+- **PostDetailsStore** — resolved post data, delete flow, retry
+- **PostUpsertStore** — create/update, resolver seed for edit mode
+
+RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `tap`, and `finalize`.
+
+### Routing
+
+- Lazy-loaded standalone routes under `/posts`
+- Route resolver preloads post data for details and edit pages
+- Component input binding for route params, query params, and resolved data
+
+### Mock API
+
+- `npm run api` serves `db.json` at `http://localhost:3000`
+- Angular proxy (`proxy.conf.json`) maps `/api/*` → `http://localhost:3000/*`
+- Post IDs are server-generated strings (json-server v1)
