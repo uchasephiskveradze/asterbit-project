@@ -5,11 +5,11 @@
 
 @include mat.core();
 
-html {
+@mixin app-material-theme($theme-type) {
   @include mat.theme(
     (
       color: (
-        theme-type: light,
+        theme-type: $theme-type,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
@@ -20,6 +20,34 @@ html {
       density: 0,
     )
   );
+}
+
+html {
+  @include app-material-theme(light);
+
+  &[data-theme='dark'] {
+    @include app-material-theme(dark);
+
+    .mat-mdc-outlined-button:not(.mat-mdc-button-disabled) {
+      --mdc-outlined-button-label-text-color: var(--app-text);
+      --mdc-outlined-button-outline-color: var(--app-border);
+    }
+
+    .mat-mdc-unelevated-button.mat-primary:not(.mat-mdc-button-disabled),
+    .mat-mdc-raised-button.mat-primary:not(.mat-mdc-button-disabled) {
+      --mdc-filled-button-container-color: var(--app-primary);
+      --mdc-filled-button-label-text-color: var(--app-on-primary);
+    }
+
+    .mat-mdc-unelevated-button.mat-warn:not(.mat-mdc-button-disabled),
+    .mat-mdc-raised-button.mat-warn:not(.mat-mdc-button-disabled) {
+      --mdc-filled-button-label-text-color: #ffffff;
+    }
+
+    .mat-mdc-button:not(.mat-mdc-button-disabled) {
+      --mdc-text-button-label-text-color: var(--app-text);
+    }
+  }
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap");
