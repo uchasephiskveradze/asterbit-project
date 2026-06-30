@@ -1,15 +1,19 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 
+import { LruCache } from '../../../core/utils/lru-cache';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
 import { PostResponse } from '../models/post-response.model';
+import { PostsListQuery } from '../models/posts-list-query.model';
 import { PostPendingReason } from '../models/post-revision.model';
 import { PostsRequestOptions } from '../models/posts-request-options.model';
 import { PostStatus, isPostStatus } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
+
+const POST_BY_ID_CACHE_MAX_SIZE = 100;
 
 @Injectable({
   providedIn: 'root',
@@ -20,32 +24,45 @@ export class PostsApiService {
 
   private listCache: Post[] | null = null;
   private listInFlight: Observable<Post[]> | null = null;
-  private readonly postByIdCache = new Map<string, Post>();
+  private readonly postByIdCache = new LruCache<string, Post>(POST_BY_ID_CACHE_MAX_SIZE);
   private readonly postByIdInFlight = new Map<string, Observable<Post>>();
 
   public getPosts(options?: PostsRequestOptions): Observable<Post[]> {
     const force = options?.force ?? false;
+    const query = options?.query;
+    const hasQuery = query !== undefined;
 
-    if (!force && this.listCache !== null) {
+    if (!hasQuery && !force && this.listCache !== null) {
       return of(this.listCache);
     }
 
-    if (!force && this.listInFlight) {
+    if (!hasQuery && !force && this.listInFlight) {
       return this.listInFlight;
     }
 
     const request$ = this.http
-      .get<PostResponse[]>(`${this.apiBaseUrl}/posts`)
+      .get<PostResponse[]>(`${this.apiBaseUrl}/posts`, {
+        params: this.buildQueryParams(query),
+      })
       .pipe(
         map((posts) => posts.map((post) => this.normalizePost(post))),
-        tap((posts) => this.seedListCache(posts)),
+        tap((posts) => {
+          if (!hasQuery) {
+            this.seedListCache(posts);
+          }
+        }),
         shareReplay({ bufferSize: 1, refCount: true }),
         finalize(() => {
-          this.listInFlight = null;
+          if (!hasQuery) {
+            this.listInFlight = null;
+          }
         }),
       );
 
-    this.listInFlight = request$;
+    if (!hasQuery) {
+      this.listInFlight = request$;
+    }
+
     return request$;
   }
 
@@ -54,16 +71,19 @@ export class PostsApiService {
 
     if (!force) {
       const cached = this.postByIdCache.get(id);
+
       if (cached) {
         return of(cached);
       }
 
       const fromList = this.listCache?.find((post) => post.id === id);
+
       if (fromList) {
         return of(fromList);
       }
 
       const inFlight = this.postByIdInFlight.get(id);
+
       if (inFlight) {
         return inFlight;
       }
@@ -125,6 +145,40 @@ export class PostsApiService {
     this.postByIdInFlight.clear();
   }
 
+  private buildQueryParams(query?: PostsListQuery): HttpParams {
+    let params = new HttpParams();
+
+    if (!query) {
+      return params;
+    }
+
+    if (query.status) {
+      params = params.set('status', query.status);
+    }
+
+    if (query.titleLike) {
+      params = params.set('title_like', query.titleLike);
+    }
+
+    if (query.sort) {
+      params = params.set('_sort', query.sort);
+    }
+
+    if (query.order) {
+      params = params.set('_order', query.order);
+    }
+
+    if (query.page) {
+      params = params.set('_page', String(query.page));
+    }
+
+    if (query.limit) {
+      params = params.set('_limit', String(query.limit));
+    }
+
+    return params;
+  }
+
   private seedListCache(posts: Post[]): void {
     this.listCache = posts;
     posts.forEach((post) => this.postByIdCache.set(post.id, post));
@@ -138,6 +192,7 @@ export class PostsApiService {
     }
 
     const index = this.listCache.findIndex((item) => item.id === post.id);
+
     if (index === -1) {
       this.listCache = [...this.listCache, post];
       return;
