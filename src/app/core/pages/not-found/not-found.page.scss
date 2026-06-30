@@ -1,0 +1,49 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.not-found-page {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 32rem;
+    text-align: center;
+  }
+
+  &__badge {
+    display: inline-flex;
+    margin: 0 0 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: $radius-full;
+    background: $color-error-container;
+    color: $color-on-error-container;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0 0 0.5rem;
+    font-family: $font-family-headline;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $color-slate-900;
+  }
+
+  &__text {
+    margin: 0 0 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: $color-secondary;
+  }
+
+  &__action {
+    @include primary-button;
+  }
+}
