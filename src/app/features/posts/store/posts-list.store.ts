@@ -82,12 +82,12 @@ export class PostsListStore {
       });
   }
 
-  public loadPosts(): void {
+  public loadPosts(force = false): void {
     this.loading.set(true);
     this.error.set(null);
 
     this.api
-      .getPosts()
+      .getPosts(force ? { force: true } : undefined)
       .pipe(
         tap(() => this.error.set(null)),
         catchError(() => {
@@ -130,7 +130,7 @@ export class PostsListStore {
   }
 
   public retry(): void {
-    this.loadPosts();
+    this.loadPosts(true);
   }
 
   private resetVisibleCount(): void {

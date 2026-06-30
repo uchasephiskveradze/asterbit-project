@@ -12,7 +12,7 @@ import { PostResolverResult } from '../models/post-resolver-result.model';
 export class PostDetailsStore {
   private readonly api = inject(PostsApiService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly loadRequest$ = new Subject<string>();
+  private readonly loadRequest$ = new Subject<{ id: string; force?: boolean }>();
 
   private lastId: string | null = null;
 
@@ -26,15 +26,15 @@ export class PostDetailsStore {
   public constructor() {
     this.loadRequest$
       .pipe(
-        tap((id) => {
+        tap(({ id }) => {
           this.lastId = id;
           this.loading.set(true);
           this.error.set(null);
           this.notFound.set(false);
           this.post.set(null);
         }),
-        switchMap((id) =>
-          this.api.getPostById(id).pipe(
+        switchMap(({ id, force }) =>
+          this.api.getPostById(id, force ? { force: true } : undefined).pipe(
             catchError((err: HttpErrorResponse) => {
               if (err.status === 404) {
                 this.notFound.set(true);
@@ -56,8 +56,8 @@ export class PostDetailsStore {
       });
   }
 
-  public loadPost(id: string): void {
-    this.loadRequest$.next(id);
+  public loadPost(id: string, options?: { force?: boolean }): void {
+    this.loadRequest$.next({ id, force: options?.force });
   }
 
   public applyResolverResult(id: string, result: PostResolverResult): void {
@@ -70,7 +70,7 @@ export class PostDetailsStore {
 
   public retry(): void {
     if (this.lastId) {
-      this.loadPost(this.lastId);
+      this.loadPost(this.lastId, { force: true });
     }
   }
 
