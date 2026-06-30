@@ -1,4 +1,6 @@
 <section class="login-page">
+  @let isLoading = loading();
+
   <div class="login-page__card">
     <header class="login-page__header">
       <h1 class="login-page__title">Sign in</h1>
@@ -34,8 +36,8 @@
         />
       </div>
 
-      <button class="login-page__submit" type="submit" [disabled]="loading()">
-        @if (loading()) {
+      <button class="login-page__submit" type="submit" [disabled]="isLoading">
+        @if (isLoading) {
           Signing in...
         } @else {
           Sign in

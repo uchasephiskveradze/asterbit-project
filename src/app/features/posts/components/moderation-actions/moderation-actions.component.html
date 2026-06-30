@@ -1,13 +1,16 @@
 <div class="moderation-actions">
+  @let isLoading = loading();
+  @let isDisabled = disabled() || isLoading;
+
   <button
     mat-flat-button
     color="primary"
     type="button"
     class="moderation-actions__approve"
-    [disabled]="disabled() || loading()"
+    [disabled]="isDisabled"
     (click)="approve.emit()"
   >
-    @if (loading()) {
+    @if (isLoading) {
       <mat-progress-spinner
         class="moderation-actions__spinner"
         mode="indeterminate"
@@ -25,7 +28,7 @@
     mat-stroked-button
     type="button"
     class="moderation-actions__reject"
-    [disabled]="disabled() || loading()"
+    [disabled]="isDisabled"
     (click)="reject.emit()"
   >
     <span class="material-symbols-outlined moderation-actions__icon" aria-hidden="true">

@@ -1,4 +1,6 @@
 <div class="delete-post-dialog" role="dialog" aria-labelledby="delete-post-dialog-title">
+  @let isDeleting = store.deleting();
+
   <div class="delete-post-dialog__icon-wrap" aria-hidden="true">
     <span class="material-symbols-outlined delete-post-dialog__icon">delete_forever</span>
   </div>
@@ -20,7 +22,7 @@
       mat-stroked-button
       type="button"
       mat-dialog-close
-      [disabled]="store.deleting()"
+      [disabled]="isDeleting"
     >
       Cancel
     </button>
@@ -29,10 +31,10 @@
       color="warn"
       type="button"
       class="delete-post-dialog__confirm"
-      [disabled]="store.deleting()"
+      [disabled]="isDeleting"
       (click)="confirm()"
     >
-      @if (store.deleting()) {
+      @if (isDeleting) {
         <mat-progress-spinner
           class="delete-post-dialog__spinner"
           mode="indeterminate"

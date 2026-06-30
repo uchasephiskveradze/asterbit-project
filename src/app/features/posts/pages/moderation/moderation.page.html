@@ -1,27 +1,31 @@
 <section class="moderation-page">
+  @let errorMessage = store.error();
+
   <header class="moderation-page__header">
     <h1 class="moderation-page__title">Moderation</h1>
     <p class="moderation-page__subtitle">Review pending posts submitted by users.</p>
   </header>
 
-  @if (store.error()) {
-    <p class="moderation-page__banner" role="alert">{{ store.error() }}</p>
+  @if (errorMessage) {
+    <p class="moderation-page__banner" role="alert">{{ errorMessage }}</p>
   }
 
   @if (store.loading()) {
     <app-posts-loading-state />
-  } @else if (store.error() && isEmpty()) {
-    <app-posts-error-state [message]="store.error()!" (retry)="store.loadPosts()" />
+  } @else if (errorMessage && isEmpty()) {
+    <app-posts-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
   } @else if (isEmpty()) {
     <app-posts-empty-state variant="no-posts" />
   } @else {
     <div class="moderation-page__list">
       @for (post of store.pendingPosts(); track post.id) {
+        @let reason = post.pendingReason;
+
         <article class="moderation-page__card">
           <div class="moderation-page__card-body">
             <div class="moderation-page__card-heading">
               <a class="moderation-page__card-title" [routerLink]="['/posts', post.id]">{{ post.title }}</a>
-              @if (post.pendingReason; as reason) {
+              @if (reason) {
                 <span
                   class="moderation-page__badge"
                   [class.moderation-page__badge--edited]="reason === 'edited'"

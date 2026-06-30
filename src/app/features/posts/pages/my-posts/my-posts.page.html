@@ -1,4 +1,6 @@
 <section class="my-posts-page">
+  @let errorMessage = store.error();
+
   <header class="my-posts-page__header">
     <div class="my-posts-page__intro">
       <h1 class="my-posts-page__title">My Posts</h1>
@@ -13,12 +15,14 @@
 
   <nav class="my-posts-page__tabs" aria-label="Post status tabs">
     @for (tab of tabs; track tab) {
+      @let isActiveTab = store.activeTab() === tab;
+
       <a
         class="my-posts-page__tab"
-        [class.my-posts-page__tab--active]="store.activeTab() === tab"
+        [class.my-posts-page__tab--active]="isActiveTab"
         [routerLink]="['/posts/my']"
         [queryParams]="{ tab }"
-        [attr.aria-current]="store.activeTab() === tab ? 'page' : null"
+        [attr.aria-current]="isActiveTab ? 'page' : null"
       >
         {{ tabLabels[tab] }}
       </a>
@@ -27,8 +31,8 @@
 
   @if (store.loading()) {
     <app-posts-loading-state />
-  } @else if (store.error()) {
-    <app-posts-error-state [message]="store.error()!" (retry)="store.loadPosts()" />
+  } @else if (errorMessage) {
+    <app-posts-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
   } @else if (isEmpty()) {
     <app-posts-empty-state variant="no-posts" />
   } @else {

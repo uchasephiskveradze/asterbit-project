@@ -1,11 +1,14 @@
 <section class="post-details-page">
+  @let post = store.post();
+  @let errorMessage = store.error();
+
   <div class="post-details-page__toolbar">
     <a class="post-details-page__back" routerLink="/posts">
       <span class="material-symbols-outlined">arrow_back</span>
       Back to Posts
     </a>
 
-    @if (store.post(); as post) {
+    @if (post) {
       @if (canModerate() || canEdit() || canDelete()) {
         <div class="post-details-page__actions">
           @if (canModerate()) {
@@ -51,8 +54,8 @@
         class="post-details-page__skeleton post-details-page__skeleton--line post-details-page__skeleton--short"
       ></div>
     </div>
-  } @else if (store.error()) {
-    <app-posts-error-state [message]="store.error()!" (retry)="store.retry()" />
+  } @else if (errorMessage) {
+    <app-posts-error-state [message]="errorMessage" (retry)="store.retry()" />
   } @else if (store.notFound()) {
     <div class="post-details-page__not-found">
       <h2 class="post-details-page__not-found-title">Post not found</h2>
@@ -61,8 +64,10 @@
       </p>
       <a class="post-details-page__not-found-link" routerLink="/posts">Return to Posts</a>
     </div>
-  } @else if (store.post(); as post) {
-    @if (showsRevisionPanel() && post.previousVersion; as previousVersion) {
+  } @else if (post) {
+    @let previousVersion = post.previousVersion;
+
+    @if (showsRevisionPanel() && previousVersion) {
       <app-post-revision-panel
         [changes]="revisionChanges()"
         [previousVersion]="previousVersion"

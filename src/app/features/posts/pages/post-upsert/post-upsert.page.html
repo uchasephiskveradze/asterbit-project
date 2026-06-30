@@ -1,5 +1,9 @@
 <section class="post-upsert-page">
-  @if (isEditMode() && store.notFound()) {
+  @let editMode = isEditMode();
+  @let errorMessage = store.error();
+  @let post = store.post();
+
+  @if (editMode && store.notFound()) {
     <div class="post-upsert-page__not-found">
       <h2 class="post-upsert-page__not-found-title">Post not found</h2>
       <p class="post-upsert-page__not-found-text">
@@ -21,9 +25,9 @@
         </a>
       </div>
     </div>
-  } @else if (isEditMode() && store.error() && !store.post()) {
+  } @else if (editMode && errorMessage && !post) {
     <div class="post-upsert-page__load-error">
-      <app-posts-error-state [message]="store.error()!" (retry)="reloadPage()" />
+      <app-posts-error-state [message]="errorMessage" (retry)="reloadPage()" />
       <a class="post-upsert-page__back-link" routerLink="/posts">Back to Posts</a>
     </div>
   } @else {
@@ -35,14 +39,14 @@
       <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
     </header>
 
-    @if (store.error() && !isEditMode()) {
-      <div class="post-upsert-page__error" role="alert">{{ store.error() }}</div>
+    @if (errorMessage && !editMode) {
+      <div class="post-upsert-page__error" role="alert">{{ errorMessage }}</div>
     }
 
     @if (showForm()) {
       <div class="post-upsert-page__form">
         <app-post-form
-          [post]="store.post()"
+          [post]="post"
           [hideAuthor]="hideAuthorField()"
           [authorDisplayName]="auth.currentUser()?.name ?? ''"
           [submitting]="store.saving()"

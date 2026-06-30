@@ -1,4 +1,6 @@
 <div class="posts-filters">
+  @let selectedViewMode = viewMode();
+
   <div class="posts-filters__search">
     <span class="posts-filters__search-leading" aria-hidden="true">
       @if (filtering()) {
@@ -47,8 +49,8 @@
       <button
         type="button"
         class="posts-filters__view-mode-option"
-        [class.posts-filters__view-mode-option--active]="viewMode() === 'pagination'"
-        [attr.aria-pressed]="viewMode() === 'pagination'"
+        [class.posts-filters__view-mode-option--active]="selectedViewMode === 'pagination'"
+        [attr.aria-pressed]="selectedViewMode === 'pagination'"
         (click)="selectViewMode('pagination')"
       >
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
@@ -59,8 +61,8 @@
       <button
         type="button"
         class="posts-filters__view-mode-option"
-        [class.posts-filters__view-mode-option--active]="viewMode() === 'infinite-scroll'"
-        [attr.aria-pressed]="viewMode() === 'infinite-scroll'"
+        [class.posts-filters__view-mode-option--active]="selectedViewMode === 'infinite-scroll'"
+        [attr.aria-pressed]="selectedViewMode === 'infinite-scroll'"
         (click)="selectViewMode('infinite-scroll')"
       >
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">

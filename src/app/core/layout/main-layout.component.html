@@ -1,4 +1,6 @@
 <div class="layout">
+  @let isDarkTheme = theme.isDark();
+
   <header class="layout__header">
     <div class="layout__header-inner">
       <div class="layout__brand-group">
@@ -37,10 +39,10 @@
           class="layout__theme-toggle"
           type="button"
           (click)="theme.toggle()"
-          [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+          [attr.aria-label]="isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
         >
           <span class="material-symbols-outlined" aria-hidden="true">
-            {{ theme.isDark() ? 'light_mode' : 'dark_mode' }}
+            {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
           </span>
         </button>
 

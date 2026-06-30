@@ -1,4 +1,6 @@
 <form class="post-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  @let isSubmitting = submitting();
+
   <div class="post-form__card">
     <div class="post-form__field">
       <div class="post-form__label-row">
@@ -121,9 +123,9 @@
     <button
       class="post-form__submit"
       type="submit"
-      [disabled]="submitting()"
+      [disabled]="isSubmitting"
     >
-      @if (submitting()) {
+      @if (isSubmitting) {
         Saving...
       } @else {
         {{ submitLabel() }}
