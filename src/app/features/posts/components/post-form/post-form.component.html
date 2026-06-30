@@ -1,0 +1,79 @@
+<form class="post-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="post-form__card">
+    <div class="post-form__field">
+      <label class="post-form__label" for="post-title">Post Title</label>
+      <input
+        id="post-title"
+        class="post-form__control"
+        [class.post-form__control--invalid]="isInvalid('title')"
+        type="text"
+        formControlName="title"
+        placeholder="e.g. The Future of Content Management"
+        autocomplete="off"
+      />
+      @if (isInvalid('title')) {
+        <p class="post-form__error">{{ getError('title') }}</p>
+      }
+    </div>
+
+    <div class="post-form__field">
+      <label class="post-form__label" for="post-author">Author Name</label>
+      <input
+        id="post-author"
+        class="post-form__control"
+        [class.post-form__control--invalid]="isInvalid('author')"
+        type="text"
+        formControlName="author"
+        placeholder="John Doe"
+        autocomplete="name"
+      />
+      @if (isInvalid('author')) {
+        <p class="post-form__error">{{ getError('author') }}</p>
+      }
+    </div>
+
+    <div class="post-form__field">
+      <label class="post-form__label" for="post-description">Short Description</label>
+      <textarea
+        id="post-description"
+        class="post-form__control post-form__control--textarea"
+        [class.post-form__control--invalid]="isInvalid('description')"
+        formControlName="description"
+        rows="3"
+        placeholder="Provide a brief summary for the preview card..."
+      ></textarea>
+      @if (isInvalid('description')) {
+        <p class="post-form__error">{{ getError('description') }}</p>
+      }
+    </div>
+
+    <div class="post-form__field">
+      <label class="post-form__label" for="post-content">Post Content</label>
+      <textarea
+        id="post-content"
+        class="post-form__control post-form__control--textarea post-form__control--content"
+        [class.post-form__control--invalid]="isInvalid('content')"
+        formControlName="content"
+        rows="12"
+        placeholder="Write your post content here..."
+      ></textarea>
+      @if (isInvalid('content')) {
+        <p class="post-form__error">{{ getError('content') }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="post-form__actions">
+    <button
+      class="post-form__submit"
+      type="submit"
+      [disabled]="form.invalid || submitting()"
+    >
+      @if (submitting()) {
+        Saving...
+      } @else {
+        {{ submitLabel() }}
+      }
+    </button>
+  </div>
+</form>

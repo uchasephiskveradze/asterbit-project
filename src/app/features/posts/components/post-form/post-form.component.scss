@@ -1,0 +1,62 @@
+@use 'palette' as *;
+@use 'mixins' as *;
+
+.post-form {
+  &__card {
+    @include card-shell;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $color-slate-900;
+  }
+
+  &__control {
+    @include form-control;
+
+    &--textarea {
+      resize: vertical;
+      min-height: 5rem;
+    }
+
+    &--content {
+      min-height: 16rem;
+      line-height: 1.6;
+    }
+  }
+
+  &__error {
+    margin: 0;
+    font-size: 0.75rem;
+    color: $color-error-red;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  &__submit {
+    @include primary-button;
+    padding: 0.75rem 2rem;
+    border: none;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
