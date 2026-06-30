@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import { Post } from '../models/post.model';
+import { POST_STATUS } from '../models/post-status.model';
 import { PostsApiService } from '../services/posts-api.service';
 import { PostsViewStorageService } from '../services/posts-view-storage.service';
 import { PostsListStore } from './posts-list.store';
@@ -14,14 +15,21 @@ describe('PostsListStore', () => {
     description: 'Short description text',
     content: 'a'.repeat(100),
     createdAt: '2026-01-02T00:00:00.000Z',
-    status: 'approved',
+    status: POST_STATUS.approved,
+  };
+
+  const pendingPost: Post = {
+    ...approvedPost,
+    id: '2',
+    title: 'Pending Post',
+    status: POST_STATUS.pending,
   };
 
   let store: PostsListStore;
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    api = { getPosts: vi.fn(() => of([approvedPost])) };
+    api = { getPosts: vi.fn(() => of([approvedPost, pendingPost])) };
 
     TestBed.configureTestingModule({
       providers: [
@@ -37,7 +45,7 @@ describe('PostsListStore', () => {
     store = TestBed.inject(PostsListStore);
   });
 
-  it('should load approved posts from the API', async () => {
+  it('should request every post from the API', async () => {
     store.loadPosts();
 
     await vi.waitFor(() => expect(store.loading()).toBe(false));
@@ -45,13 +53,12 @@ describe('PostsListStore', () => {
     expect(api.getPosts).toHaveBeenCalledWith({
       force: false,
       query: {
-        status: 'approved',
         titleLike: undefined,
         sort: 'createdAt',
         order: 'desc',
       },
     });
-    expect(store.posts()).toEqual([approvedPost]);
+    expect(store.posts()).toEqual([approvedPost, pendingPost]);
     expect(store.error()).toBeNull();
   });
 
@@ -66,19 +73,18 @@ describe('PostsListStore', () => {
     expect(store.posts()).toEqual([]);
   });
 
-  it('should request server-side search when the query changes', async () => {
+  it('should request server-side search across all posts when the query changes', async () => {
     store.loadPosts();
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
-    store.setSearchInput('Approved');
+    store.setSearchInput('Pending');
 
     await vi.waitFor(() => expect(store.filtering()).toBe(false));
 
     expect(api.getPosts).toHaveBeenLastCalledWith({
-      force: true,
+      force: false,
       query: {
-        status: 'approved',
-        titleLike: 'Approved',
+        titleLike: 'Pending',
         sort: 'createdAt',
         order: 'desc',
       },

@@ -32,7 +32,7 @@
   @if (store.loading()) {
     <app-posts-loading-state />
   } @else if (errorMessage) {
-    <app-posts-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
+    <app-posts-error-state [message]="errorMessage" (retry)="store.retry()" />
   } @else if (isEmpty()) {
     <app-posts-empty-state variant="no-posts" />
   } @else {

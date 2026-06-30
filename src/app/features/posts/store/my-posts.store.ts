@@ -5,6 +5,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
+import { PostsListQuery } from '../models/posts-list-query.model';
 import {
   isMyPostsTab,
   MY_POSTS_TAB_STATUS,
@@ -24,15 +25,12 @@ export class MyPostsStore {
 
   public readonly filteredPosts = computed(() => {
     const user = this.auth.currentUser();
-    const status = MY_POSTS_TAB_STATUS[this.activeTab()];
 
     if (!user) {
       return [];
     }
 
-    return this.posts().filter(
-      (post) => post.submittedBy === user.id && post.status === status,
-    );
+    return this.posts().filter((post) => post.submittedBy === user.id);
   });
 
   public constructor() {
@@ -40,21 +38,29 @@ export class MyPostsStore {
   }
 
   public setTab(tab: MyPostsTab): void {
+    if (this.activeTab() === tab) {
+      return;
+    }
+
     this.activeTab.set(tab);
+    this.loadPosts();
   }
 
   public setTabFromQuery(tab: string | null): void {
-    if (isMyPostsTab(tab)) {
-      this.activeTab.set(tab);
+    if (!isMyPostsTab(tab) || this.activeTab() === tab) {
+      return;
     }
+
+    this.activeTab.set(tab);
+    this.loadPosts();
   }
 
-  public loadPosts(): void {
+  public loadPosts(force = false): void {
     this.loading.set(true);
     this.error.set(null);
 
     this.api
-      .getPosts()
+      .getPosts({ force, query: this.buildListQuery() })
       .pipe(
         catchError(() => {
           this.error.set('Unable to load your posts. Please try again.');
@@ -64,5 +70,15 @@ export class MyPostsStore {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((posts) => this.posts.set(posts));
+  }
+
+  public retry(): void {
+    this.loadPosts(true);
+  }
+
+  private buildListQuery(): PostsListQuery {
+    return {
+      status: MY_POSTS_TAB_STATUS[this.activeTab()],
+    };
   }
 }

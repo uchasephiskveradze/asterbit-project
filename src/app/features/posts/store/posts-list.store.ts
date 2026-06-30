@@ -1,6 +1,17 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { PostsViewStorageService } from '../services/posts-view-storage.service';
@@ -78,7 +89,7 @@ export class PostsListStore {
   });
 
   public readonly isEmpty = computed(
-    () => !this.loading() && !this.error() && this.posts().length === 0 && !this.hasActiveFilters(),
+    () => !this.loading() && !this.error() && this.filteredPosts().length === 0 && !this.hasActiveFilters(),
   );
 
   public readonly isEmptySearch = computed(
@@ -116,7 +127,7 @@ export class PostsListStore {
               if (queryChanged || sortChanged) {
                 this.currentPage.set(1);
                 this.visibleCount.set(this.pageSize);
-                this.refresh$.next(true);
+                this.refresh$.next(false);
               } else {
                 this.currentPage.set(page);
               }
@@ -214,7 +225,6 @@ export class PostsListStore {
     const query = this.searchQuery().trim();
 
     return {
-      status: 'approved',
       titleLike: query || undefined,
       sort: 'createdAt',
       order: this.sortOrder(),
