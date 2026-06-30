@@ -35,6 +35,7 @@ export class PostFormComponent {
   public readonly validation = POST_FORM_VALIDATION;
 
   private readonly focusedField = signal<keyof PostFormValue | null>(null);
+  private readonly loadedPostId = signal<string | null>(null);
 
   private readonly fb = inject(FormBuilder);
 
@@ -75,14 +76,18 @@ export class PostFormComponent {
   public constructor() {
     effect(() => {
       const value = this.post();
-      if (value) {
-        this.form.patchValue({
-          title: value.title,
-          author: value.author,
-          description: value.description,
-          content: value.content,
-        });
+
+      if (!value || value.id === this.loadedPostId()) {
+        return;
       }
+
+      this.loadedPostId.set(value.id);
+      this.form.patchValue({
+        title: value.title,
+        author: value.author,
+        description: value.description,
+        content: value.content,
+      });
     });
 
     effect(() => {
