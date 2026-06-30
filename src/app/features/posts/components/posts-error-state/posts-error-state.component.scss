@@ -18,12 +18,12 @@
     height: 4rem;
     margin-bottom: 1rem;
     border-radius: $radius-full;
-    background: $color-error-container;
+    background: var(--app-error-container);
   }
 
   &__icon {
     font-size: 2rem;
-    color: $color-error;
+    color: var(--app-error);
   }
 
   &__title {
@@ -31,14 +31,14 @@
     font-family: $font-family-headline;
     font-size: 1.25rem;
     font-weight: 600;
-    color: $color-on-surface;
+    color: var(--app-text);
   }
 
   &__message {
     margin: 0 0 1.5rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__retry {

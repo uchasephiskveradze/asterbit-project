@@ -86,7 +86,7 @@
               [class.post-details-page__status--pending]="post.status === 'pending'"
               [class.post-details-page__status--rejected]="post.status === 'rejected'"
             >
-              {{ statusLabel(post) }}
+              {{ post | postStatusLabel }}
             </span>
           }
         </div>

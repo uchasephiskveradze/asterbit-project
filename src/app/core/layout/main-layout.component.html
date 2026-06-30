@@ -12,28 +12,38 @@
           >
             Posts
           </a>
-          @if (auth.isAuthenticated()) {
-            <a
-              class="layout__nav-link"
-              routerLink="/posts/my"
-              routerLinkActive="layout__nav-link--active"
-              [routerLinkActiveOptions]="{ exact: false }"
-            >
-              My Posts
-            </a>
-            <a
-              *appIsAdmin
-              class="layout__nav-link"
-              routerLink="/posts/moderation"
-              routerLinkActive="layout__nav-link--active"
-            >
-              Moderation
-            </a>
-          }
+          <a
+            *appIsAuthenticated
+            class="layout__nav-link"
+            routerLink="/posts/my"
+            routerLinkActive="layout__nav-link--active"
+            [routerLinkActiveOptions]="{ exact: false }"
+          >
+            My Posts
+          </a>
+          <a
+            *appIsAdmin
+            class="layout__nav-link"
+            routerLink="/posts/moderation"
+            routerLinkActive="layout__nav-link--active"
+          >
+            Moderation
+          </a>
         </nav>
       </div>
 
       <div class="layout__actions">
+        <button
+          class="layout__theme-toggle"
+          type="button"
+          (click)="theme.toggle()"
+          [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">
+            {{ theme.isDark() ? 'light_mode' : 'dark_mode' }}
+          </span>
+        </button>
+
         @if (auth.isAuthenticated()) {
           <a class="layout__cta" routerLink="/posts/new">Create Post</a>
           <button class="layout__auth-link" type="button" (click)="auth.logout()">Logout</button>

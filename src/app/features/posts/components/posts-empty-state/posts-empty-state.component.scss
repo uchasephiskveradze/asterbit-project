@@ -23,7 +23,7 @@
   &__glow {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, $color-primary-glow, transparent);
+    background: linear-gradient(to bottom, var(--app-primary-glow), transparent);
     border-radius: $radius-full;
     filter: blur(48px);
     transform: scale(0.75);
@@ -32,15 +32,15 @@
   &__icon-wrap {
     position: relative;
     padding: 2.5rem;
-    background: $color-surface-lowest;
-    border: 1px solid $color-border-subtle;
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: $radius-full;
     box-shadow: $shadow-sm;
   }
 
   &__icon {
     font-size: 5rem;
-    color: $color-secondary;
+    color: var(--app-text-muted);
     opacity: 0.3;
   }
 
@@ -52,8 +52,8 @@
     align-items: center;
     justify-content: center;
     padding: 0.75rem;
-    background: $color-primary;
-    color: $color-on-primary;
+    background: var(--app-primary);
+    color: var(--app-on-primary);
     border-radius: $radius-md;
     box-shadow: $shadow-badge;
   }
@@ -63,7 +63,7 @@
     font-family: $font-family-headline;
     font-size: 1.5rem;
     font-weight: 600;
-    color: $color-on-surface;
+    color: var(--app-text);
   }
 
   &__text {
@@ -71,7 +71,7 @@
     max-width: 25rem;
     font-size: 1rem;
     line-height: 1.5;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__cta {

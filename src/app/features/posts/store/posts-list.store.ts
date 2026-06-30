@@ -23,7 +23,7 @@ export class PostsListStore {
   public readonly searchInput = signal('');
   public readonly searchQuery = signal('');
   public readonly sortOrder = signal<PostDateSort>('desc');
-  public readonly currentPage = signal(1);
+  public readonly visibleCount = signal(POSTS_PAGE_SIZE);
 
   public readonly filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -44,21 +44,12 @@ export class PostsListStore {
 
   public readonly totalItems = computed(() => this.filteredPosts().length);
 
-  public readonly totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.totalItems() / this.pageSize)),
+  public readonly visiblePosts = computed(() =>
+    this.filteredPosts().slice(0, this.visibleCount()),
   );
 
-  public readonly paginatedPosts = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize;
-    return this.filteredPosts().slice(start, start + this.pageSize);
-  });
-
-  public readonly rangeStart = computed(() =>
-    this.totalItems() === 0 ? 0 : (this.currentPage() - 1) * this.pageSize + 1,
-  );
-
-  public readonly rangeEnd = computed(() =>
-    Math.min(this.currentPage() * this.pageSize, this.totalItems()),
+  public readonly hasMorePosts = computed(
+    () => this.visibleCount() < this.filteredPosts().length,
   );
 
   public readonly isEmpty = computed(
@@ -86,7 +77,7 @@ export class PostsListStore {
       )
       .subscribe((query) => {
         this.searchQuery.set(query);
-        this.currentPage.set(1);
+        this.resetVisibleCount();
         this.filtering.set(false);
       });
   }
@@ -108,7 +99,7 @@ export class PostsListStore {
       )
       .subscribe((posts) => {
         this.posts.set(posts);
-        this.currentPage.set(1);
+        this.resetVisibleCount();
       });
   }
 
@@ -125,15 +116,24 @@ export class PostsListStore {
 
   public setSortOrder(order: PostDateSort): void {
     this.sortOrder.set(order);
-    this.currentPage.set(1);
+    this.resetVisibleCount();
   }
 
-  public setPage(page: number): void {
-    const nextPage = Math.min(Math.max(page, 1), this.totalPages());
-    this.currentPage.set(nextPage);
+  public loadMore(): void {
+    if (!this.hasMorePosts()) {
+      return;
+    }
+
+    this.visibleCount.update((count) =>
+      Math.min(count + this.pageSize, this.filteredPosts().length),
+    );
   }
 
   public retry(): void {
     this.loadPosts();
+  }
+
+  private resetVisibleCount(): void {
+    this.visibleCount.set(this.pageSize);
   }
 }

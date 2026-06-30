@@ -8,6 +8,7 @@ import { PostsLoadingStateComponent } from '../../components/posts-loading-state
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PENDING_REASON_LABELS } from '../../models/post-status.model';
 import { ModerationStore } from '../../store/moderation.store';
+import { TruncatePipe } from '../../../../shared/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-moderation-page',
@@ -18,6 +19,7 @@ import { ModerationStore } from '../../store/moderation.store';
     PostsEmptyStateComponent,
     PostsErrorStateComponent,
     ModerationActionsComponent,
+    TruncatePipe,
   ],
   providers: [ModerationStore],
   templateUrl: './moderation.page.html',

@@ -1,4 +1,5 @@
 @use "./styles/palette" as *;
+@use "./styles/theme";
 @use "./styles/reset";
 @use "@angular/material" as mat;
 
@@ -37,14 +38,16 @@ html {
 
 body {
   font-family: $font-family-body;
-  background: $color-background;
-  color: $color-on-surface;
+  background: var(--app-background);
+  color: var(--app-text);
 }
 
 .delete-post-dialog-panel {
   .mat-mdc-dialog-surface {
     border-radius: $radius-lg;
     padding: 0;
-    box-shadow: $shadow-soft;
+    box-shadow: var(--app-shadow-soft);
+    background: var(--app-surface);
+    color: var(--app-text);
   }
 }

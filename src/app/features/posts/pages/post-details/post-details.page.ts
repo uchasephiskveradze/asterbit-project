@@ -9,15 +9,14 @@ import { ModerationActionsComponent } from '../../components/moderation-actions/
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostAccessService } from '../../data-access/post-access.service';
-import { Post } from '../../models/post.model';
-import { POST_STATUS_LABELS } from '../../models/post-status.model';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsStore } from '../../store/post-details.store';
+import { PostStatusLabelPipe } from '../../../../shared/pipes/post-status-label.pipe';
 import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-revision.utils';
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent],
+  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',
@@ -44,8 +43,6 @@ export class PostDetailsPage {
     const post = this.store.post();
     return this.auth.isAdmin() && post?.status === 'pending';
   });
-
-  public readonly statusLabels = POST_STATUS_LABELS;
 
   public readonly revisionChanges = computed(() => {
     const post = this.store.post();
@@ -82,14 +79,6 @@ export class PostDetailsPage {
 
   public rejectPost(): void {
     this.store.moderatePost('rejected');
-  }
-
-  public statusLabel(post: Post): string {
-    if (post.status === 'pending' && post.pendingReason === 'edited') {
-      return 'Under Review (Edited)';
-    }
-
-    return this.statusLabels[post.status];
   }
 
   public openDeleteDialog(): void {

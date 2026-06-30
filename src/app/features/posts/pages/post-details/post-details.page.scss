@@ -15,14 +15,14 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: $color-secondary;
+    color: var(--app-text-muted);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s;
 
     &:hover {
-      color: $color-primary;
+      color: var(--app-primary);
     }
   }
 
@@ -93,14 +93,14 @@
     font-family: $font-family-headline;
     font-size: 1.5rem;
     font-weight: 600;
-    color: $color-on-surface;
+    color: var(--app-text);
   }
 
   &__not-found-text {
     margin: 0 0 1.5rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__not-found-link {
@@ -118,7 +118,7 @@
   &__header {
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid $color-border-subtle;
+    border-bottom: 1px solid var(--app-border);
   }
 
   &__title {
@@ -128,7 +128,7 @@
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.25;
-    color: $color-slate-900;
+    color: var(--app-heading);
     @include break-long-words;
   }
 
@@ -146,13 +146,13 @@
     font-weight: 600;
 
     &--pending {
-      background: rgba(30, 64, 175, 0.1);
-      color: $color-primary;
+      background: var(--app-primary-container);
+      color: var(--app-primary);
     }
 
     &--rejected {
-      background: $color-error-container;
-      color: $color-on-error-container;
+      background: var(--app-error-container);
+      color: var(--app-on-error-container);
     }
   }
 
@@ -165,13 +165,13 @@
   &__author {
     font-size: 0.875rem;
     font-weight: 600;
-    color: $color-slate-900;
+    color: var(--app-heading);
     @include break-long-words;
   }
 
   &__date {
     font-size: 0.75rem;
-    color: $color-slate-700;
+    color: var(--app-text-muted);
   }
 
   &__description {
@@ -179,14 +179,14 @@
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.6;
-    color: $color-slate-900;
+    color: var(--app-heading);
     @include break-long-words;
   }
 
   &__content {
     font-size: 1rem;
     line-height: 1.75;
-    color: $color-slate-700;
+    color: var(--app-text-muted);
     white-space: pre-line;
     @include break-long-words;
   }

@@ -44,15 +44,21 @@
             </div>
           }
 
-          <app-posts-table [posts]="store.paginatedPosts()" />
-          <app-posts-pagination
-            [currentPage]="store.currentPage()"
-            [totalPages]="store.totalPages()"
-            [totalItems]="store.totalItems()"
-            [rangeStart]="store.rangeStart()"
-            [rangeEnd]="store.rangeEnd()"
-            (pageChange)="store.setPage($event)"
-          />
+          <app-posts-table [posts]="store.visiblePosts()" />
+
+          @if (store.hasMorePosts()) {
+            <div
+              class="posts-list-page__scroll-sentinel"
+              appInfiniteScroll
+              [appInfiniteScrollDisabled]="store.filtering()"
+              (appInfiniteScrollReached)="store.loadMore()"
+            >
+              <mat-progress-spinner mode="indeterminate" diameter="28" />
+              <span>Loading more posts...</span>
+            </div>
+          } @else if (store.visiblePosts().length > 0) {
+            <p class="posts-list-page__end">Showing all {{ store.totalItems() }} posts</p>
+          }
         </div>
       }
     }

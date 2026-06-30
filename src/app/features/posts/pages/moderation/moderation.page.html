@@ -39,7 +39,7 @@
                 </span>
               }
             </div>
-            <p class="moderation-page__description">{{ post.description }}</p>
+            <p class="moderation-page__description">{{ post.description | truncate: 140 }}</p>
             <p class="moderation-page__meta">
               <span>{{ post.author }}</span>
               <span>{{ post.createdAt | date: 'MMM d, y' }}</span>

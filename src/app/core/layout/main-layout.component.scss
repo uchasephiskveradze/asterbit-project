@@ -3,16 +3,16 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: $color-background;
-  color: $color-on-surface;
+  background: var(--app-background);
+  color: var(--app-text);
 }
 
 .layout__header {
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 1px solid $color-border-subtle;
-  background: $color-surface-lowest;
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-surface);
 }
 
 .layout__header-inner {
@@ -39,7 +39,7 @@
 }
 
 .layout__brand {
-  color: $color-primary;
+  color: var(--app-primary);
   font-family: $font-family-headline;
   font-size: 1.25rem;
   font-weight: 700;
@@ -59,7 +59,7 @@
 }
 
 .layout__nav-link {
-  color: $color-secondary;
+  color: var(--app-text-muted);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -67,8 +67,8 @@
 
 .layout__nav-link--active {
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid $color-primary;
-  color: $color-primary;
+  border-bottom: 2px solid var(--app-primary);
+  color: var(--app-primary);
 }
 
 .layout__cta {
@@ -76,8 +76,8 @@
   align-items: center;
   padding: 0.5rem 1.25rem;
   border-radius: $radius-md;
-  background: $color-primary-container;
-  color: $color-on-primary;
+  background: var(--app-primary);
+  color: var(--app-on-primary);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -94,14 +94,37 @@
   border: none;
   border-radius: $radius-md;
   background: transparent;
-  color: $color-secondary;
+  color: var(--app-text-muted);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s;
 
   &:hover {
-    color: $color-primary;
+    color: var(--app-primary);
+  }
+}
+
+.layout__theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--app-border);
+  border-radius: $radius-md;
+  background: var(--app-surface-muted);
+  color: var(--app-text-muted);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    color: var(--app-primary);
+    border-color: var(--app-primary);
   }
 }
 

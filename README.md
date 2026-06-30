@@ -1,6 +1,6 @@
 # Blog Management System
 
-Angular SPA for managing blog posts with role-based access, moderation workflow, and full CRUD (list, view, create, edit, delete) plus search, sorting, and pagination.
+Angular SPA for managing blog posts with role-based access, moderation workflow, and full CRUD (list, view, create, edit, delete) plus search, sorting, and infinite scroll.
 
 ## Requirements
 
@@ -120,7 +120,7 @@ Signal stores per feature area (not NgRx):
 
 | Store | Responsibility |
 |-------|----------------|
-| **PostsListStore** | Fetch, debounced search, sort, pagination (approved only) |
+| **PostsListStore** | Fetch, debounced search, sort, infinite scroll batching (approved only) |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
 | **MyPostsStore** | User's posts filtered by tab |
@@ -151,6 +151,28 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - Collections: `posts`, `users`
 - Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions)
 - Post IDs are server-generated strings (json-server v1)
+
+## Technical Highlights
+
+| Area | Implementation |
+|------|----------------|
+| **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard` |
+| **HTTP Interceptor** | `authInterceptor` — attaches demo bearer token |
+| **Custom Pipes** | `postStatusLabel`, `truncate` |
+| **Custom Directives** | `*appIsAdmin`, `*appIsAuthenticated`, `appInfiniteScroll` |
+| **Unit Tests** | Guards, access rules, pipes, theme, revision utils, components |
+| **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
+| **Local Storage** | Auth session + theme preference |
+| **Infinite Scroll** | Posts list loads more via `IntersectionObserver` |
+| **Authentication** | Mock login with roles (`user` / `admin`) |
+
+### Intentionally not used
+
+| Area | Choice |
+|------|--------|
+| **NgRx** | Signal stores per feature — simpler for this scope |
+| **Firebase** | json-server mock API for local/demo workflow |
+| **Backend framework** | json-server stands in for a REST backend |
 
 ## Quick Test Flow
 

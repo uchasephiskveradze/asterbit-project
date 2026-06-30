@@ -15,14 +15,14 @@
     font-family: $font-family-headline;
     font-size: 1.125rem;
     font-weight: 700;
-    color: $color-slate-900;
+    color: var(--app-heading);
   }
 
   &__subtitle {
     margin: 0;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__changes {
@@ -33,7 +33,7 @@
 
   &__change {
     padding-top: 1rem;
-    border-top: 1px solid $color-border-subtle;
+    border-top: 1px solid var(--app-border);
 
     &:first-child {
       padding-top: 0;
@@ -47,7 +47,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: $color-primary;
+    color: var(--app-primary);
   }
 
   &__compare {
@@ -64,7 +64,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $color-outline;
+    color: var(--app-text-subtle);
   }
 
   &__value {
@@ -77,16 +77,16 @@
     @include break-long-words;
 
     &--previous {
-      background: $color-surface-container-low;
-      color: $color-slate-700;
+      background: var(--app-surface-muted);
+      color: var(--app-text-muted);
       text-decoration: line-through;
-      text-decoration-color: rgba(15, 23, 42, 0.35);
+      text-decoration-color: var(--app-strike-decoration);
     }
 
     &--current {
-      background: rgba(30, 64, 175, 0.08);
-      color: $color-slate-900;
-      border: 1px solid rgba(30, 64, 175, 0.15);
+      background: var(--app-revision-current-bg);
+      color: var(--app-heading);
+      border: 1px solid var(--app-revision-current-border);
     }
   }
 }

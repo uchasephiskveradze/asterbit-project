@@ -2,15 +2,15 @@
 
 @mixin focus-ring {
   outline: none;
-  border-color: $color-primary-container;
-  box-shadow: 0 0 0 2px $color-primary-focus-ring;
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 2px var(--app-primary-focus-ring);
 }
 
 @mixin card-shell {
-  background: $color-surface-lowest;
-  border: 1px solid $color-border-subtle;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: $radius-lg;
-  box-shadow: $shadow-soft;
+  box-shadow: var(--app-shadow-soft);
 }
 
 @mixin secondary-button {
@@ -18,17 +18,17 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border: 1px solid $color-border-subtle;
+  border: 1px solid var(--app-border);
   border-radius: $radius-md;
-  background: $color-surface-lowest;
-  color: $color-secondary;
+  background: var(--app-surface);
+  color: var(--app-text-muted);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 0.2s;
 
   &:hover {
-    background: $color-surface-container-low;
+    background: var(--app-surface-muted);
   }
 }
 
@@ -39,8 +39,8 @@
   padding: 0.5rem 1rem;
   border: none;
   border-radius: $radius-md;
-  background: $color-error-red;
-  color: $color-on-primary;
+  background: var(--app-error);
+  color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -55,18 +55,18 @@
 @mixin form-control {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid $color-border-subtle;
+  border: 1px solid var(--app-border);
   border-radius: $radius-md;
-  background: $color-surface-lowest;
+  background: var(--app-surface);
   font-family: $font-family-body;
   font-size: 1rem;
-  color: $color-on-surface;
+  color: var(--app-text);
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
 
   &::placeholder {
-    color: $color-outline;
+    color: var(--app-text-subtle);
   }
 
   &:focus {
@@ -74,10 +74,10 @@
   }
 
   &--invalid {
-    border-color: $color-error-red;
+    border-color: var(--app-error);
 
     &:focus {
-      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2);
     }
   }
 }
@@ -88,8 +88,8 @@
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
   border-radius: $radius-md;
-  background: $color-primary-container;
-  color: $color-on-primary;
+  background: var(--app-primary);
+  color: var(--app-on-primary);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -108,8 +108,8 @@
 @mixin inline-spinner($size: 1rem, $border-width: 2px) {
   width: $size;
   height: $size;
-  border: $border-width solid $color-border-subtle;
-  border-top-color: $color-primary;
+  border: $border-width solid var(--app-border);
+  border-top-color: var(--app-primary);
   border-radius: $radius-full;
   animation: inline-spinner-rotate 0.65s linear infinite;
 }
@@ -133,9 +133,9 @@
 
   background: linear-gradient(
     90deg,
-    $color-skeleton-from 25%,
-    $color-skeleton-mid 50%,
-    $color-skeleton-from 75%
+    var(--app-skeleton-from) 25%,
+    var(--app-skeleton-mid) 50%,
+    var(--app-skeleton-from) 75%
   );
   background-size: 1000px 100%;
   animation: shimmer 2s infinite linear;

@@ -7,13 +7,13 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: $color-surface-container-low;
-  border-top: 1px solid $color-border-subtle;
+  background: var(--app-surface-muted);
+  border-top: 1px solid var(--app-border);
 
   &__summary {
     font-size: 0.75rem;
     font-weight: 500;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__controls {
@@ -36,14 +36,14 @@
     font-family: $font-family-body;
     font-size: 0.75rem;
     font-weight: 500;
-    color: $color-slate-700;
+    color: var(--app-text-muted);
     cursor: pointer;
     transition: background-color 0.2s;
   }
 
   &__nav {
     &:hover:not(:disabled) {
-      background: $color-surface-container;
+      background: var(--app-surface-raised);
     }
 
     &:disabled {
@@ -54,17 +54,17 @@
 
   &__page {
     &:hover:not(&--active) {
-      background: $color-surface-container;
+      background: var(--app-surface-raised);
     }
 
     &--active {
-      background: $color-primary;
-      color: $color-on-primary;
+      background: var(--app-primary);
+      color: var(--app-on-primary);
     }
   }
 
   &__ellipsis {
     padding: 0 0.25rem;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 }

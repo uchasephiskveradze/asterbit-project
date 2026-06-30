@@ -1,0 +1,67 @@
+@use './palette' as *;
+
+html {
+  color-scheme: light;
+
+  --app-primary: #{$color-primary};
+  --app-on-primary: #{$color-on-primary};
+  --app-secondary: #{$color-secondary};
+  --app-tertiary: #{$color-tertiary};
+  --app-background: #{$color-background};
+  --app-surface: #{$color-surface-lowest};
+  --app-surface-muted: #{$color-surface-container-low};
+  --app-surface-raised: #{$color-surface-container-low};
+  --app-text: #{$color-on-surface};
+  --app-text-muted: #{$color-secondary};
+  --app-text-subtle: #{$color-outline};
+  --app-heading: #{$color-slate-900};
+  --app-border: #{$color-border-subtle};
+  --app-primary-glow: #{$color-primary-glow};
+  --app-primary-container: rgba(30, 64, 175, 0.1);
+  --app-tertiary-container: rgba(209, 105, 0, 0.12);
+  --app-revision-current-bg: rgba(30, 64, 175, 0.08);
+  --app-revision-current-border: rgba(30, 64, 175, 0.15);
+  --app-strike-decoration: rgba(15, 23, 42, 0.35);
+  --app-primary-focus-ring: #{$color-primary-focus-ring};
+  --app-overlay: rgba(255, 255, 255, 0.35);
+  --app-shadow-soft: #{$shadow-soft};
+  --app-row-hover: #{$color-surface};
+  --app-skeleton-from: #{$color-skeleton-from};
+  --app-skeleton-mid: #{$color-skeleton-mid};
+  --app-error: #{$color-error-red};
+  --app-error-container: #{$color-error-container};
+  --app-on-error-container: #{$color-on-error-container};
+
+  &[data-theme='dark'] {
+    color-scheme: dark;
+
+    --app-primary: #3b82f6;
+    --app-on-primary: #0f172a;
+    --app-secondary: #64748b;
+    --app-tertiary: #d16900;
+    --app-background: #0f172a;
+    --app-surface: #1e293b;
+    --app-surface-muted: #334155;
+    --app-surface-raised: #334155;
+    --app-text: #f8fafc;
+    --app-text-muted: #cbd5e1;
+    --app-text-subtle: #94a3b8;
+    --app-heading: #f8fafc;
+    --app-border: #334155;
+    --app-primary-glow: rgba(59, 130, 246, 0.12);
+    --app-primary-container: rgba(59, 130, 246, 0.14);
+    --app-tertiary-container: rgba(209, 105, 0, 0.16);
+    --app-revision-current-bg: rgba(59, 130, 246, 0.1);
+    --app-revision-current-border: rgba(59, 130, 246, 0.22);
+    --app-strike-decoration: rgba(248, 250, 252, 0.35);
+    --app-primary-focus-ring: rgba(59, 130, 246, 0.28);
+    --app-overlay: rgba(15, 23, 42, 0.72);
+    --app-shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+    --app-row-hover: #334155;
+    --app-skeleton-from: #1e293b;
+    --app-skeleton-mid: #334155;
+    --app-error: #f87171;
+    --app-error-container: rgba(248, 113, 113, 0.14);
+    --app-on-error-container: #fecaca;
+  }
+}

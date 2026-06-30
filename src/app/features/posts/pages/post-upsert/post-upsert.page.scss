@@ -19,24 +19,24 @@
     font-family: $font-family-headline;
     font-size: 2rem;
     font-weight: 700;
-    color: $color-slate-900;
+    color: var(--app-heading);
   }
 
   &__subtitle {
     margin: 0.5rem 0 0;
     font-size: 1rem;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__cancel {
-    color: $color-secondary;
+    color: var(--app-text-muted);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s;
 
     &:hover {
-      color: $color-primary;
+      color: var(--app-primary);
     }
   }
 
@@ -48,8 +48,8 @@
     margin-bottom: 1rem;
     padding: 0.75rem 1rem;
     border-radius: $radius-md;
-    background: $color-error-container;
-    color: $color-on-error-container;
+    background: var(--app-error-container);
+    color: var(--app-on-error-container);
     font-size: 0.875rem;
   }
 
@@ -67,7 +67,7 @@
     font-family: $font-family-headline;
     font-size: 1.5rem;
     font-weight: 600;
-    color: $color-on-surface;
+    color: var(--app-text);
   }
 
   &__not-found-text {
@@ -75,7 +75,7 @@
     max-width: 28rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: $color-secondary;
+    color: var(--app-text-muted);
   }
 
   &__not-found-actions {
@@ -97,14 +97,14 @@
 
   &__back-link {
     margin-top: 1rem;
-    color: $color-secondary;
+    color: var(--app-text-muted);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s;
 
     &:hover {
-      color: $color-primary;
+      color: var(--app-primary);
     }
   }
 }
