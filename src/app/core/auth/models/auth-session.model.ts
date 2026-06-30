@@ -1,7 +1,9 @@
-import { AuthUser } from './user.model';
+import { Injectable } from '@angular/core';
+
+import { User } from './user.model';
 
 export interface AuthSession {
-  user: AuthUser;
+  user: User;
   token: string;
 }
 

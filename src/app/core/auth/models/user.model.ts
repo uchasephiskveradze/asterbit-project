@@ -7,9 +7,4 @@ export interface User {
   name: string;
 }
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: UserRole;
-  name: string;
-}
+export type AuthUser = User;

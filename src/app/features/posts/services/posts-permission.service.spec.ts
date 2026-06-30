@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthUser } from '../../../core/auth/models/user.model';
+import { User } from '../../../core/auth/models/user.model';
 import { Post } from '../models/post.model';
 import { PostsPermissionService } from './posts-permission.service';
 
@@ -24,14 +24,14 @@ describe('PostsPermissionService', () => {
     submittedBy: '2',
   };
 
-  const user: AuthUser = {
+  const user: User = {
     id: '2',
     email: 'user@blog.com',
     role: 'user',
     name: 'Demo User',
   };
 
-  const admin: AuthUser = {
+  const admin: User = {
     id: '1',
     email: 'admin@blog.com',
     role: 'admin',
