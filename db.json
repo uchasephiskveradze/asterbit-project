@@ -647,14 +647,12 @@
     {
       "id": "1",
       "email": "admin@blog.com",
-      "password": "admin123",
       "role": "admin",
       "name": "Admin User"
     },
     {
       "id": "2",
       "email": "user@blog.com",
-      "password": "user123",
       "role": "user",
       "name": "Demo User"
     }

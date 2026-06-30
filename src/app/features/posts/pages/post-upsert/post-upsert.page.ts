@@ -102,6 +102,10 @@ export class PostUpsertPage {
   }
 
   public reloadPage(): void {
-    globalThis.location.reload();
+    const id = this.id();
+
+    if (id) {
+      this.store.reloadPost(id);
+    }
   }
 }

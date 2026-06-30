@@ -43,6 +43,30 @@ export class PostUpsertStore {
     this.post.set(result.post);
   }
 
+  public reloadPost(id: string): void {
+    this.error.set(null);
+    this.notFound.set(false);
+
+    this.api
+      .getPostById(id, { force: true })
+      .pipe(
+        catchError(() => {
+          this.error.set('Unable to load post. Please try again.');
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((post) => {
+        if (!post) {
+          this.notFound.set(true);
+          this.post.set(null);
+          return;
+        }
+
+        this.post.set(post);
+      });
+  }
+
   public createPost(value: PostFormValue): void {
     const user = this.auth.currentUser();
     if (!user) {
