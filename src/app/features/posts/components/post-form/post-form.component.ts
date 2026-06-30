@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 
 import { Post } from '../../models/post.model';
+import { getPostFormControlError } from './post-form-error.messages';
 import { PostFormControls, PostFormValue } from './types/post-form.types';
 import { POST_FORM_VALIDATION } from './post-form.validation';
 
@@ -134,22 +135,6 @@ export class PostFormComponent {
   }
 
   public getError(controlName: keyof PostFormValue): string {
-    const control = this.form.controls[controlName];
-
-    if (control.hasError('required')) {
-      return 'This field is required.';
-    }
-
-    if (control.hasError('minlength')) {
-      const required = control.getError('minlength').requiredLength;
-      return `Must be at least ${required} characters.`;
-    }
-
-    if (control.hasError('maxlength')) {
-      const required = control.getError('maxlength').requiredLength;
-      return `Must be at most ${required} characters.`;
-    }
-
-    return 'Invalid value.';
+    return getPostFormControlError(this.form.controls[controlName].errors);
   }
 }
