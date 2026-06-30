@@ -1,4 +1,5 @@
 import { PostStatus } from './post-status.model';
+import { PostPendingReason, PostRevisionSnapshot } from './post-revision.model';
 
 export interface Post {
   id: string;
@@ -9,4 +10,6 @@ export interface Post {
   createdAt: string;
   status: PostStatus;
   submittedBy?: string;
+  pendingReason?: PostPendingReason;
+  previousVersion?: PostRevisionSnapshot;
 }

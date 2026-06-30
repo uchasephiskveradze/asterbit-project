@@ -37,6 +37,27 @@
       @include secondary-button;
     }
 
+    &--approve {
+      @include primary-button;
+      border: none;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    &--reject {
+      @include secondary-button;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
     &--danger {
       @include danger-button;
 
@@ -134,8 +155,26 @@
 
   &__meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
+  }
+
+  &__status {
+    padding: 0.25rem 0.75rem;
+    border-radius: $radius-full;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &--pending {
+      background: rgba(30, 64, 175, 0.1);
+      color: $color-primary;
+    }
+
+    &--rejected {
+      background: $color-error-container;
+      color: $color-on-error-container;
+    }
   }
 
   &__meta-author {

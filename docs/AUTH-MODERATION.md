@@ -29,6 +29,8 @@
 
 - `status`: `pending` | `approved` | `rejected`
 - `submittedBy`: user id (string)
+- `pendingReason`: `new` | `edited` (why a pending post is under review)
+- `previousVersion`: snapshot of content before an edited resubmission
 
 ## Create rules
 
@@ -39,11 +41,13 @@
 
 - **Admin** can edit any post; changes stay approved
 - **User** can edit only their own `approved` posts; save sets `status: pending` for admin re-review
+- Edited resubmissions store `previousVersion` and show a before/after diff on post details
 
 ## Moderation (admin)
 
 - Approve → `status: approved` → visible on public Posts
 - Reject → `status: rejected` → visible in submitter's My Posts → Rejected
+- Available on Moderation queue and on post details when `status: pending`
 
 ## Demo users (`db.json`)
 

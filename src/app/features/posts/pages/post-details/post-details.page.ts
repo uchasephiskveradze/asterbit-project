@@ -3,17 +3,20 @@ import { Component, computed, effect, inject, Injector, input } from '@angular/c
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
-import { IsAdminDirective } from '../../../../core/auth/directives/is-admin.directive';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
+import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostAccessService } from '../../data-access/post-access.service';
+import { Post } from '../../models/post.model';
+import { POST_STATUS_LABELS } from '../../models/post-status.model';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsStore } from '../../store/post-details.store';
+import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-revision.utils';
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, PostsErrorStateComponent],
+  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',
@@ -36,6 +39,31 @@ export class PostDetailsPage {
 
   public readonly canDelete = computed(() => this.auth.isAdmin());
 
+  public readonly canModerate = computed(() => {
+    const post = this.store.post();
+    return this.auth.isAdmin() && post?.status === 'pending';
+  });
+
+  public readonly statusLabels = POST_STATUS_LABELS;
+
+  public readonly revisionChanges = computed(() => {
+    const post = this.store.post();
+    return post ? getPostRevisionChanges(post) : [];
+  });
+
+  public readonly showsRevisionPanel = computed(() => {
+    const post = this.store.post();
+    if (!post || !isEditedPendingReview(post) || this.revisionChanges().length === 0) {
+      return false;
+    }
+
+    if (this.auth.isAdmin()) {
+      return true;
+    }
+
+    return post.submittedBy === this.auth.currentUser()?.id;
+  });
+
   public constructor() {
     effect(() => {
       const id = this.id();
@@ -45,6 +73,22 @@ export class PostDetailsPage {
         this.store.applyResolverResult(id, resolvedPost);
       }
     });
+  }
+
+  public approvePost(): void {
+    this.store.moderatePost('approved');
+  }
+
+  public rejectPost(): void {
+    this.store.moderatePost('rejected');
+  }
+
+  public statusLabel(post: Post): string {
+    if (post.status === 'pending' && post.pendingReason === 'edited') {
+      return 'Under Review (Edited)';
+    }
+
+    return this.statusLabels[post.status];
   }
 
   public openDeleteDialog(): void {

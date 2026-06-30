@@ -127,8 +127,9 @@
       "description": "A sample post waiting for admin review before it can appear on the public list.",
       "content": "This pending post demonstrates the moderation workflow. Regular users submit content that stays hidden from guests until an administrator approves it. Admins can approve or reject from the moderation queue.",
       "createdAt": "2024-10-26T09:00:00.000Z",
-      "status": "approved",
-      "submittedBy": "2"
+      "status": "pending",
+      "submittedBy": "2",
+      "pendingReason": "new"
     },
     {
       "id": "14",
@@ -138,17 +139,8 @@
       "content": "Building side projects is a great way to learn new frameworks. This post is intentionally left pending so reviewers can practice approving or rejecting submissions without affecting the main public catalog of approved articles.",
       "createdAt": "2024-10-27T11:30:00.000Z",
       "status": "pending",
-      "submittedBy": "2"
-    },
-    {
-      "title": "testtest",
-      "author": "Demo User",
-      "description": "testtesttesttesttesttesttesttesttesttest",
-      "content": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
-      "status": "pending",
       "submittedBy": "2",
-      "createdAt": "2026-06-30T15:02:51.382Z",
-      "id": "LWrA-prOqZI"
+      "pendingReason": "new"
     }
   ],
   "users": [

@@ -5,6 +5,7 @@ import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } 
 
 import { PostsApiService } from '../data-access/posts-api.service';
 import { Post } from '../models/post.model';
+import { PostStatus } from '../models/post-status.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class PostDetailsStore {
 
   public readonly loading = signal(false);
   public readonly deleting = signal(false);
+  public readonly moderating = signal(false);
   public readonly error = signal<string | null>(null);
   public readonly notFound = signal(false);
   public readonly post = signal<Post | null>(null);
@@ -83,5 +85,30 @@ export class PostDetailsStore {
       }),
       finalize(() => this.deleting.set(false)),
     );
+  }
+
+  public moderatePost(status: Extract<PostStatus, 'approved' | 'rejected'>): void {
+    const post = this.post();
+    if (!post || this.moderating()) {
+      return;
+    }
+
+    this.moderating.set(true);
+    this.error.set(null);
+
+    this.api
+      .updatePostStatus(post.id, status)
+      .pipe(
+        catchError(() => {
+          this.error.set('Unable to update post status. Please try again.');
+          return of(null);
+        }),
+        finalize(() => this.moderating.set(false)),
+      )
+      .subscribe((updated) => {
+        if (updated) {
+          this.post.set(updated);
+        }
+      });
   }
 }

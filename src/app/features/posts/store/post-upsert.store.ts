@@ -54,6 +54,7 @@ export class PostUpsertStore {
       author: user.name,
       status: this.auth.isAdmin() ? 'approved' : 'pending',
       submittedBy: user.id,
+      pendingReason: this.auth.isAdmin() ? undefined : 'new',
     };
 
     this.persist(() => this.api.createPost(payload), (post) => {
@@ -82,6 +83,14 @@ export class PostUpsertStore {
 
     if (isOwnerResubmit) {
       payload.status = 'pending';
+      payload.pendingReason = 'edited';
+      payload.previousVersion = {
+        title: existingPost.title,
+        author: existingPost.author,
+        description: existingPost.description,
+        content: existingPost.content,
+        capturedAt: new Date().toISOString(),
+      };
     }
 
     this.persist(

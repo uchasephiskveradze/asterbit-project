@@ -6,8 +6,26 @@
     </a>
 
     @if (store.post(); as post) {
-      @if (canEdit() || canDelete()) {
+      @if (canModerate() || canEdit() || canDelete()) {
         <div class="post-details-page__actions">
+          @if (canModerate()) {
+            <button
+              class="post-details-page__action post-details-page__action--approve"
+              type="button"
+              [disabled]="store.moderating()"
+              (click)="approvePost()"
+            >
+              Approve
+            </button>
+            <button
+              class="post-details-page__action post-details-page__action--reject"
+              type="button"
+              [disabled]="store.moderating()"
+              (click)="rejectPost()"
+            >
+              Reject
+            </button>
+          }
           @if (canEdit()) {
             <a
               class="post-details-page__action post-details-page__action--secondary"
@@ -55,6 +73,13 @@
       <a class="post-details-page__not-found-link" routerLink="/posts">Return to Posts</a>
     </div>
   } @else if (store.post(); as post) {
+    @if (showsRevisionPanel() && post.previousVersion; as previousVersion) {
+      <app-post-revision-panel
+        [changes]="revisionChanges()"
+        [previousVersion]="previousVersion"
+      />
+    }
+
     <article class="post-details-page__article">
       <header class="post-details-page__header">
         <h1 class="post-details-page__title">{{ post.title }}</h1>
@@ -66,6 +91,15 @@
               post.createdAt | date: 'MMMM d, y'
             }}</span>
           </div>
+          @if (post.status !== 'approved') {
+            <span
+              class="post-details-page__status"
+              [class.post-details-page__status--pending]="post.status === 'pending'"
+              [class.post-details-page__status--rejected]="post.status === 'rejected'"
+            >
+              {{ statusLabel(post) }}
+            </span>
+          }
         </div>
       </header>
 

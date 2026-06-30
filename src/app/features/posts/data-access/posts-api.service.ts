@@ -5,12 +5,14 @@ import { map, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
+import { PostPendingReason } from '../models/post-revision.model';
 import { PostStatus, isPostStatus } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
 
 type PostResponse = Omit<Post, 'id'> & {
   id: string | number;
   status?: string;
+  pendingReason?: string;
 };
 
 @Injectable({
@@ -48,7 +50,14 @@ export class PostsApiService {
   }
 
   public updatePostStatus(id: string, status: PostStatus): Observable<Post> {
-    return this.updatePost(id, { status });
+    const payload: UpdatePostDto = { status };
+
+    if (status === 'approved' || status === 'rejected') {
+      payload.previousVersion = null;
+      payload.pendingReason = null;
+    }
+
+    return this.updatePost(id, payload);
   }
 
   public deletePost(id: string): Observable<void> {
@@ -57,6 +66,7 @@ export class PostsApiService {
 
   private normalizePost(post: PostResponse): Post {
     const status = post.status && isPostStatus(post.status) ? post.status : 'approved';
+    const pendingReason = this.normalizePendingReason(post.pendingReason);
 
     return {
       ...post,
@@ -64,6 +74,16 @@ export class PostsApiService {
       createdAt: post.createdAt ?? new Date().toISOString(),
       status,
       submittedBy: post.submittedBy ? String(post.submittedBy) : undefined,
+      pendingReason,
+      previousVersion: post.previousVersion,
     };
+  }
+
+  private normalizePendingReason(value: string | undefined): PostPendingReason | undefined {
+    if (value === 'new' || value === 'edited') {
+      return value;
+    }
+
+    return undefined;
   }
 }
