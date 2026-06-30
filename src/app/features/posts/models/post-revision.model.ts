@@ -1,4 +1,9 @@
-export type PostPendingReason = 'new' | 'edited';
+export const POST_PENDING_REASON = {
+  new: 'new',
+  edited: 'edited',
+} as const;
+
+export type PostPendingReason = (typeof POST_PENDING_REASON)[keyof typeof POST_PENDING_REASON];
 
 export interface PostRevisionSnapshot {
   title: string;

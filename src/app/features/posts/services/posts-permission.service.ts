@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 
 import { User } from '../../../core/auth/models/user.model';
 import { Post } from '../models/post.model';
+import { POST_STATUS } from '../models/post-status.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostsPermissionService {
   public canViewPost(post: Post, user: User | null): boolean {
-    if (post.status === 'approved') {
+    if (post.status === POST_STATUS.approved) {
       return true;
     }
 
@@ -24,7 +25,7 @@ export class PostsPermissionService {
   }
 
   public isPubliclyListed(post: Post): boolean {
-    return post.status === 'approved';
+    return post.status === POST_STATUS.approved;
   }
 
   public canEditPost(post: Post, user: User | null): boolean {
@@ -36,6 +37,6 @@ export class PostsPermissionService {
       return true;
     }
 
-    return post.submittedBy === user.id && post.status === 'approved';
+    return post.submittedBy === user.id && post.status === POST_STATUS.approved;
   }
 }

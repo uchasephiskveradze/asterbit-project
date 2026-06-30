@@ -12,6 +12,8 @@ import { PostsApiService } from '../services/posts-api.service';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
+import { POST_PENDING_REASON } from '../models/post-revision.model';
+import { POST_STATUS } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
 
 @Injectable()
@@ -78,9 +80,9 @@ export class PostUpsertStore {
     const payload: CreatePostDto = {
       ...value,
       author: user.name,
-      status: this.auth.isAdmin() ? 'approved' : 'pending',
+      status: this.auth.isAdmin() ? POST_STATUS.approved : POST_STATUS.pending,
       submittedBy: user.id,
-      pendingReason: this.auth.isAdmin() ? undefined : 'new',
+      pendingReason: this.auth.isAdmin() ? undefined : POST_PENDING_REASON.new,
     };
 
     this.persist(() => this.api.createPost(payload), (post) => {
@@ -105,11 +107,11 @@ export class PostUpsertStore {
 
     const payload: UpdatePostDto = { ...value };
     const isOwnerResubmit =
-      !this.auth.isAdmin() && existingPost?.submittedBy === user.id && existingPost.status === 'approved';
+      !this.auth.isAdmin() && existingPost?.submittedBy === user.id && existingPost.status === POST_STATUS.approved;
 
     if (isOwnerResubmit) {
-      payload.status = 'pending';
-      payload.pendingReason = 'edited';
+      payload.status = POST_STATUS.pending;
+      payload.pendingReason = POST_PENDING_REASON.edited;
       payload.previousVersion = {
         title: existingPost.title,
         author: existingPost.author,

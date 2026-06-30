@@ -5,7 +5,7 @@ import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } 
 
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
-import { PostStatus } from '../models/post-status.model';
+import { POST_STATUS, PostStatus } from '../models/post-status.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
 
 @Injectable()
@@ -87,7 +87,7 @@ export class PostDetailsStore {
     );
   }
 
-  public moderatePost(status: Extract<PostStatus, 'approved' | 'rejected'>): void {
+  public moderatePost(status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected): void {
     const post = this.post();
     if (!post || this.moderating()) {
       return;

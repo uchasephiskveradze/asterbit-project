@@ -95,11 +95,11 @@
               post.createdAt | date: 'MMMM d, y'
             }}</span>
           </div>
-          @if (post.status !== 'approved') {
+          @if (post.status !== postStatus.approved) {
             <span
               class="post-details-page__status"
-              [class.post-details-page__status--pending]="post.status === 'pending'"
-              [class.post-details-page__status--rejected]="post.status === 'rejected'"
+              [class.post-details-page__status--pending]="post.status === postStatus.pending"
+              [class.post-details-page__status--rejected]="post.status === postStatus.rejected"
             >
               {{ post | postStatusLabel }}
             </span>

@@ -6,6 +6,7 @@ import { PostFormComponent } from '../../components/post-form/post-form.componen
 import { PostFormValue } from '../../components/post-form/types/post-form.types';
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
+import { POST_STATUS } from '../../models/post-status.model';
 import { PostUpsertStore } from '../../store/post-upsert.store';
 
 @Component({
@@ -29,7 +30,7 @@ export class PostUpsertPage {
     () =>
       this.isEditMode() &&
       !this.auth.isAdmin() &&
-      this.store.post()?.status === 'approved' &&
+      this.store.post()?.status === POST_STATUS.approved &&
       this.store.post()?.submittedBy === this.auth.currentUser()?.id,
   );
 

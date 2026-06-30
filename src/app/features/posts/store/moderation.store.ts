@@ -4,7 +4,7 @@ import { catchError, finalize, of } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
-import { PostStatus } from '../models/post-status.model';
+import { POST_STATUS, PostStatus } from '../models/post-status.model';
 
 @Injectable()
 export class ModerationStore {
@@ -17,7 +17,7 @@ export class ModerationStore {
   public readonly posts = signal<Post[]>([]);
 
   public readonly pendingPosts = computed(() =>
-    this.posts().filter((post) => post.status === 'pending'),
+    this.posts().filter((post) => post.status === POST_STATUS.pending),
   );
 
   public constructor() {
@@ -41,7 +41,7 @@ export class ModerationStore {
       .subscribe((posts) => this.posts.set(posts));
   }
 
-  public moderatePost(id: string, status: Extract<PostStatus, 'approved' | 'rejected'>): void {
+  public moderatePost(id: string, status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected): void {
     this.actingOnId.set(id);
     this.error.set(null);
 

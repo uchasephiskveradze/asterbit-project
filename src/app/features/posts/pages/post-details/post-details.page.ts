@@ -10,6 +10,7 @@ import { PostRevisionPanelComponent } from '../../components/post-revision-panel
 import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
 import { PostsPermissionService } from '../../services/posts-permission.service';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
+import { POST_STATUS } from '../../models/post-status.model';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { PostStatusLabelPipe } from '../../../../shared/pipes/post-status-label.pipe';
 import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-revision.utils';
@@ -32,6 +33,7 @@ export class PostDetailsPage {
   public readonly resolvedPost = input.required<PostResolverResult>();
 
   public readonly store = inject(PostDetailsStore);
+  public readonly postStatus = POST_STATUS;
 
   private readonly auth = inject(AuthService);
   private readonly access = inject(PostsPermissionService);
@@ -51,7 +53,7 @@ export class PostDetailsPage {
 
   public readonly canModerate = computed(() => {
     const post = this.store.post();
-    return this.auth.isAdmin() && post?.status === 'pending';
+    return this.auth.isAdmin() && post?.status === POST_STATUS.pending;
   });
 
   public readonly revisionChanges = computed(() => {
@@ -84,11 +86,11 @@ export class PostDetailsPage {
   }
 
   public approvePost(): void {
-    this.store.moderatePost('approved');
+    this.store.moderatePost(POST_STATUS.approved);
   }
 
   public rejectPost(): void {
-    this.store.moderatePost('rejected');
+    this.store.moderatePost(POST_STATUS.rejected);
   }
 
   public openDeleteDialog(): void {

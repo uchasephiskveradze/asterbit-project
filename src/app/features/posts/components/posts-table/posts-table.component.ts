@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Post } from '../../models/post.model';
+import { POST_STATUS } from '../../models/post-status.model';
 import {
   getPostDetailsQueryParams,
   PostNavigationSource,
@@ -35,7 +36,7 @@ export class PostsTableComponent {
       this.enableOwnerEdit() &&
       ownerId !== null &&
       post.submittedBy === ownerId &&
-      post.status === 'approved'
+      post.status === POST_STATUS.approved
     );
   }
 }

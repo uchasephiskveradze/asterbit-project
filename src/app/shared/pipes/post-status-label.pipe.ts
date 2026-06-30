@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { Post } from '../../features/posts/models/post.model';
-import { POST_STATUS_LABELS } from '../../features/posts/models/post-status.model';
+import { POST_STATUS_LABELS, POST_STATUS } from '../../features/posts/models/post-status.model';
+import { POST_PENDING_REASON } from '../../features/posts/models/post-revision.model';
 
 type PostStatusInput = Pick<Post, 'status' | 'pendingReason'> | Post['status'];
 
@@ -18,7 +19,7 @@ export class PostStatusLabelPipe implements PipeTransform {
       return POST_STATUS_LABELS[value];
     }
 
-    if (value.status === 'pending' && value.pendingReason === 'edited') {
+    if (value.status === POST_STATUS.pending && value.pendingReason === POST_PENDING_REASON.edited) {
       return 'Under Review (Edited)';
     }
 
