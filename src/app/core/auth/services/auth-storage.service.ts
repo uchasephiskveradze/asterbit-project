@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH_STORAGE_KEY, AuthSession } from '../models/auth-session.model';
+import { AUTH_STORAGE_KEY, AuthSession, isAuthSession } from '../models/auth-session.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,8 @@ export class AuthStorageService {
     }
 
     try {
-      return JSON.parse(raw) as AuthSession;
+      const parsed: unknown = JSON.parse(raw);
+      return isAuthSession(parsed) ? parsed : null;
     } catch {
       return null;
     }
