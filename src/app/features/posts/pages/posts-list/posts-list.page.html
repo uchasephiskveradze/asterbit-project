@@ -5,7 +5,7 @@
       <p class="posts-list-page__subtitle">Manage and organize your blog publications.</p>
     </div>
 
-    @if (!store.loading() && !store.error() && !store.isEmpty()) {
+    @if (viewState() === 'content') {
       <a class="posts-list-page__action posts-list-page__action--desktop" routerLink="/posts/new">
         <span class="material-symbols-outlined">add</span>
         Create Post
@@ -13,47 +13,52 @@
     }
   </header>
 
-  @if (store.loading()) {
-    <app-posts-loading-state />
-  } @else if (store.error()) {
-    <app-posts-error-state [message]="store.error()!" (retry)="store.retry()" />
-  } @else if (store.isEmpty()) {
-    <app-posts-empty-state variant="no-posts" />
-  } @else {
-    <div class="posts-list-page__controls">
-      <app-posts-filters
-        [searchQuery]="store.searchInput()"
-        [sortOrder]="store.sortOrder()"
-        [filtering]="store.filtering()"
-        (searchChange)="store.setSearchInput($event)"
-        (sortChange)="store.setSortOrder($event)"
-      />
-    </div>
-
-    @if (store.isEmptySearch()) {
-      <app-posts-empty-state variant="no-results" />
-    } @else {
-      <div class="posts-list-page__content">
-        @if (store.filtering()) {
-          <div class="posts-list-page__filtering-overlay" aria-busy="true" aria-live="polite">
-            <span class="posts-list-page__filtering-spinner"></span>
-          </div>
-        }
-
-        <app-posts-table [posts]="store.paginatedPosts()" />
-        <app-posts-pagination
-          [currentPage]="store.currentPage()"
-          [totalPages]="store.totalPages()"
-          [totalItems]="store.totalItems()"
-          [rangeStart]="store.rangeStart()"
-          [rangeEnd]="store.rangeEnd()"
-          (pageChange)="store.setPage($event)"
+  @switch (viewState()) {
+    @case ('loading') {
+      <app-posts-loading-state />
+    }
+    @case ('error') {
+      <app-posts-error-state [message]="store.error()!" (retry)="store.retry()" />
+    }
+    @case ('empty') {
+      <app-posts-empty-state variant="no-posts" />
+    }
+    @default {
+      <div class="posts-list-page__controls">
+        <app-posts-filters
+          [searchQuery]="store.searchInput()"
+          [sortOrder]="store.sortOrder()"
+          [filtering]="store.filtering()"
+          (searchChange)="store.setSearchInput($event)"
+          (sortChange)="store.setSortOrder($event)"
         />
       </div>
+
+      @if (store.isEmptySearch()) {
+        <app-posts-empty-state variant="no-results" />
+      } @else {
+        <div class="posts-list-page__content">
+          @if (store.filtering()) {
+            <div class="posts-list-page__filtering-overlay" aria-busy="true" aria-live="polite">
+              <span class="posts-list-page__filtering-spinner"></span>
+            </div>
+          }
+
+          <app-posts-table [posts]="store.paginatedPosts()" />
+          <app-posts-pagination
+            [currentPage]="store.currentPage()"
+            [totalPages]="store.totalPages()"
+            [totalItems]="store.totalItems()"
+            [rangeStart]="store.rangeStart()"
+            [rangeEnd]="store.rangeEnd()"
+            (pageChange)="store.setPage($event)"
+          />
+        </div>
+      }
     }
   }
 
-  @if (!store.loading() && !store.error()) {
+  @if (viewState() !== 'loading' && viewState() !== 'error') {
     <a class="posts-list-page__fab" routerLink="/posts/new" aria-label="Create post">
       <span class="material-symbols-outlined">add</span>
     </a>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
@@ -8,6 +8,8 @@ import { PostsLoadingStateComponent } from '../../components/posts-loading-state
 import { PostsPaginationComponent } from '../../components/posts-pagination/posts-pagination.component';
 import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
 import { PostsListStore } from '../../store/posts-list.store';
+
+export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
 
 @Component({
   selector: 'app-posts-list-page',
@@ -26,6 +28,22 @@ import { PostsListStore } from '../../store/posts-list.store';
 })
 export class PostsListPage implements OnInit {
   public readonly store = inject(PostsListStore);
+
+  public readonly viewState = computed<PostsListViewState>(() => {
+    if (this.store.loading()) {
+      return 'loading';
+    }
+
+    if (this.store.error()) {
+      return 'error';
+    }
+
+    if (this.store.isEmpty()) {
+      return 'empty';
+    }
+
+    return 'content';
+  });
 
   public ngOnInit(): void {
     this.store.loadPosts();
