@@ -1,7 +1,17 @@
 <form class="post-form" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="post-form__card">
     <div class="post-form__field">
-      <label class="post-form__label" for="post-title">Post Title</label>
+      <div class="post-form__label-row">
+        <label class="post-form__label" for="post-title">Post Title</label>
+        @if (showCounter('title')) {
+          <span
+            class="post-form__counter"
+            [class.post-form__counter--invalid]="isInvalid('title') || isBelowMinLength('title')"
+          >
+            {{ getLength('title') }} / {{ validation.title.minLength }}+
+          </span>
+        }
+      </div>
       <input
         id="post-title"
         class="post-form__control"
@@ -10,6 +20,9 @@
         formControlName="title"
         placeholder="e.g. The Future of Content Management"
         autocomplete="off"
+        [attr.maxlength]="validation.title.maxLength"
+        (focus)="onFieldFocus('title')"
+        (blur)="onFieldBlur('title')"
       />
       @if (isInvalid('title')) {
         <p class="post-form__error">{{ getError('title') }}</p>
@@ -17,7 +30,17 @@
     </div>
 
     <div class="post-form__field">
-      <label class="post-form__label" for="post-author">Author Name</label>
+      <div class="post-form__label-row">
+        <label class="post-form__label" for="post-author">Author Name</label>
+        @if (showCounter('author')) {
+          <span
+            class="post-form__counter"
+            [class.post-form__counter--invalid]="isInvalid('author')"
+          >
+            {{ getLength('author') }} / {{ validation.author.maxLength }}
+          </span>
+        }
+      </div>
       <input
         id="post-author"
         class="post-form__control"
@@ -26,6 +49,9 @@
         formControlName="author"
         placeholder="John Doe"
         autocomplete="name"
+        [attr.maxlength]="validation.author.maxLength"
+        (focus)="onFieldFocus('author')"
+        (blur)="onFieldBlur('author')"
       />
       @if (isInvalid('author')) {
         <p class="post-form__error">{{ getError('author') }}</p>
@@ -33,7 +59,17 @@
     </div>
 
     <div class="post-form__field">
-      <label class="post-form__label" for="post-description">Short Description</label>
+      <div class="post-form__label-row">
+        <label class="post-form__label" for="post-description">Short Description</label>
+        @if (showCounter('description')) {
+          <span
+            class="post-form__counter"
+            [class.post-form__counter--invalid]="isInvalid('description') || isBelowMinLength('description')"
+          >
+            {{ getLength('description') }} / {{ validation.description.minLength }}+
+          </span>
+        }
+      </div>
       <textarea
         id="post-description"
         class="post-form__control post-form__control--textarea"
@@ -41,6 +77,9 @@
         formControlName="description"
         rows="3"
         placeholder="Provide a brief summary for the preview card..."
+        [attr.maxlength]="validation.description.maxLength"
+        (focus)="onFieldFocus('description')"
+        (blur)="onFieldBlur('description')"
       ></textarea>
       @if (isInvalid('description')) {
         <p class="post-form__error">{{ getError('description') }}</p>
@@ -48,7 +87,17 @@
     </div>
 
     <div class="post-form__field">
-      <label class="post-form__label" for="post-content">Post Content</label>
+      <div class="post-form__label-row">
+        <label class="post-form__label" for="post-content">Post Content</label>
+        @if (showCounter('content')) {
+          <span
+            class="post-form__counter"
+            [class.post-form__counter--invalid]="isInvalid('content') || isBelowMinLength('content')"
+          >
+            {{ getLength('content') }} / {{ validation.content.minLength }}+
+          </span>
+        }
+      </div>
       <textarea
         id="post-content"
         class="post-form__control post-form__control--textarea post-form__control--content"
@@ -56,6 +105,9 @@
         formControlName="content"
         rows="12"
         placeholder="Write your post content here..."
+        [attr.maxlength]="validation.content.maxLength"
+        (focus)="onFieldFocus('content')"
+        (blur)="onFieldBlur('content')"
       ></textarea>
       @if (isInvalid('content')) {
         <p class="post-form__error">{{ getError('content') }}</p>
@@ -67,7 +119,7 @@
     <button
       class="post-form__submit"
       type="submit"
-      [disabled]="form.invalid || submitting()"
+      [disabled]="submitting()"
     >
       @if (submitting()) {
         Saving...

@@ -16,10 +16,27 @@
     gap: 0.5rem;
   }
 
+  &__label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
   &__label {
     font-size: 0.875rem;
     font-weight: 600;
     color: $color-slate-900;
+  }
+
+  &__counter {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: $color-secondary;
+
+    &--invalid {
+      color: $color-error-red;
+    }
   }
 
   &__control {

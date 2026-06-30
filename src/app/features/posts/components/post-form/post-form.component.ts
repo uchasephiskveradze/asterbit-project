@@ -4,6 +4,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,6 +14,7 @@ import {
 
 import { Post } from '../../models/post.model';
 import { PostFormControls, PostFormValue } from './types/post-form.types';
+import { POST_FORM_VALIDATION } from './post-form.validation';
 
 @Component({
   selector: 'app-post-form',
@@ -27,6 +29,10 @@ export class PostFormComponent {
 
   public readonly formSubmit = output<PostFormValue>();
 
+  public readonly validation = POST_FORM_VALIDATION;
+
+  private readonly focusedField = signal<keyof PostFormValue | null>(null);
+
   private readonly fb = inject(FormBuilder);
 
   public readonly form = this.fb.group<PostFormControls>({
@@ -34,25 +40,32 @@ export class PostFormComponent {
       nonNullable: true,
       validators: [
         Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(200),
+        Validators.minLength(POST_FORM_VALIDATION.title.minLength),
+        Validators.maxLength(POST_FORM_VALIDATION.title.maxLength),
       ],
     }),
     author: this.fb.control('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(2)],
+      validators: [
+        Validators.required,
+        Validators.maxLength(POST_FORM_VALIDATION.author.maxLength),
+      ],
     }),
     description: this.fb.control('', {
       nonNullable: true,
       validators: [
         Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(500),
+        Validators.minLength(POST_FORM_VALIDATION.description.minLength),
+        Validators.maxLength(POST_FORM_VALIDATION.description.maxLength),
       ],
     }),
     content: this.fb.control('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(20)],
+      validators: [
+        Validators.required,
+        Validators.minLength(POST_FORM_VALIDATION.content.minLength),
+        Validators.maxLength(POST_FORM_VALIDATION.content.maxLength),
+      ],
     }),
   });
 
@@ -80,9 +93,36 @@ export class PostFormComponent {
     this.formSubmit.emit(this.form.getRawValue());
   }
 
+  public getLength(controlName: keyof PostFormValue): number {
+    return this.form.controls[controlName].value.length;
+  }
+
+  public showCounter(controlName: keyof PostFormValue): boolean {
+    return this.focusedField() === controlName;
+  }
+
+  public onFieldFocus(controlName: keyof PostFormValue): void {
+    this.focusedField.set(controlName);
+  }
+
+  public onFieldBlur(controlName: keyof PostFormValue): void {
+    if (this.focusedField() === controlName) {
+      this.focusedField.set(null);
+    }
+  }
+
   public isInvalid(controlName: keyof PostFormValue): boolean {
     const control = this.form.controls[controlName];
     return control.invalid && control.touched;
+  }
+
+  public isBelowMinLength(controlName: keyof PostFormValue): boolean {
+    const rules = POST_FORM_VALIDATION[controlName];
+    if (!('minLength' in rules)) {
+      return false;
+    }
+
+    return this.getLength(controlName) < rules.minLength;
   }
 
   public getError(controlName: keyof PostFormValue): string {
