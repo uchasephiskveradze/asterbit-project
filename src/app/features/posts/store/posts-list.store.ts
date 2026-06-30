@@ -3,21 +3,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
-import { PostsPermissionService } from '../services/posts-permission.service';
 import { PostsViewStorageService } from '../services/posts-view-storage.service';
 import { Post } from '../models/post.model';
+import { PostsListQuery } from '../models/posts-list-query.model';
 import { PostsListViewMode } from '../models/posts-list-view-mode.model';
 import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 
 @Injectable()
 export class PostsListStore {
   private readonly api = inject(PostsApiService);
-  private readonly access = inject(PostsPermissionService);
   private readonly viewStorage = inject(PostsViewStorageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchInput$ = new Subject<string>();
   private readonly sortOrder$ = new Subject<PostDateSort>();
   private readonly page$ = new Subject<number>();
+  private readonly refresh$ = new Subject<boolean>();
 
   public readonly pageSize = POSTS_PAGE_SIZE;
 
@@ -32,22 +32,7 @@ export class PostsListStore {
   public readonly currentPage = signal(1);
   public readonly visibleCount = signal(POSTS_PAGE_SIZE);
 
-  public readonly filteredPosts = computed(() => {
-    const query = this.searchQuery().trim().toLowerCase();
-    let result = this.posts().filter((post) => this.access.isPubliclyListed(post));
-
-    if (query) {
-      result = result.filter((post) => post.title.toLowerCase().includes(query));
-    }
-
-    const order = this.sortOrder();
-
-    return [...result].sort((left, right) => {
-      const diff =
-        new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
-      return order === 'desc' ? diff : -diff;
-    });
-  });
+  public readonly filteredPosts = computed(() => this.posts());
 
   public readonly totalItems = computed(() => this.filteredPosts().length);
 
@@ -93,7 +78,7 @@ export class PostsListStore {
   });
 
   public readonly isEmpty = computed(
-    () => !this.loading() && !this.error() && this.posts().length === 0,
+    () => !this.loading() && !this.error() && this.posts().length === 0 && !this.hasActiveFilters(),
   );
 
   public readonly isEmptySearch = computed(
@@ -101,7 +86,7 @@ export class PostsListStore {
       !this.loading() &&
       !this.filtering() &&
       !this.error() &&
-      this.posts().length > 0 &&
+      this.hasActiveFilters() &&
       this.filteredPosts().length === 0,
   );
 
@@ -131,6 +116,7 @@ export class PostsListStore {
               if (queryChanged || sortChanged) {
                 this.currentPage.set(1);
                 this.visibleCount.set(this.pageSize);
+                this.refresh$.next(true);
               } else {
                 this.currentPage.set(page);
               }
@@ -142,21 +128,21 @@ export class PostsListStore {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
-  }
 
-  public loadPosts(force = false): void {
-    this.loading.set(true);
-    this.error.set(null);
-
-    this.api
-      .getPosts(force ? { force: true } : undefined)
+    this.refresh$
       .pipe(
-        tap(() => this.error.set(null)),
-        catchError(() => {
-          this.error.set('Unable to load posts. Please try again.');
-          return of([] as Post[]);
+        switchMap((force) => {
+          this.loading.set(true);
+          this.error.set(null);
+
+          return this.api.getPosts({ force, query: this.buildListQuery() }).pipe(
+            catchError(() => {
+              this.error.set('Unable to load posts. Please try again.');
+              return of([] as Post[]);
+            }),
+            finalize(() => this.loading.set(false)),
+          );
         }),
-        finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((posts) => {
@@ -164,6 +150,10 @@ export class PostsListStore {
         this.resetListPosition();
         this.page$.next(1);
       });
+  }
+
+  public loadPosts(force = false): void {
+    this.refresh$.next(force);
   }
 
   public setSearchInput(query: string): void {
@@ -218,6 +208,21 @@ export class PostsListStore {
 
   public retry(): void {
     this.loadPosts(true);
+  }
+
+  private buildListQuery(): PostsListQuery {
+    const query = this.searchQuery().trim();
+
+    return {
+      status: 'approved',
+      titleLike: query || undefined,
+      sort: 'createdAt',
+      order: this.sortOrder(),
+    };
+  }
+
+  private hasActiveFilters(): boolean {
+    return this.searchQuery().trim().length > 0;
   }
 
   private resetListPosition(): void {
