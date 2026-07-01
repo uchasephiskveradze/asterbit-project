@@ -4,7 +4,7 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 
 import { navigateSafely } from '../../router/navigate.util';
 
-import { AuthApiService } from '../data-access/auth-api.service';
+import { AuthApiService } from './auth-api.service';
 import { AuthSession } from '../models/auth-session.model';
 import { User } from '../models/user.model';
 import { AuthStorageService } from './auth-storage.service';

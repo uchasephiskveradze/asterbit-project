@@ -101,9 +101,8 @@ Feature-based structure with lazy-loaded routes and signal stores.
 src/app/
 ├── core/
 │   ├── auth/
-│   │   ├── data-access/   # AuthApiService (HTTP)
-│   │   ├── services/      # AuthService, AuthStorageService
-│   │   ├── guards/        # auth, admin, guest, postEdit
+│   │   ├── services/      # AuthService, AuthApiService, AuthStorageService
+│   │   ├── guards/        # auth, admin, guest
 │   │   ├── interceptors/  # authInterceptor
 │   │   └── models/        # User, session, roles
 │   ├── errors/            # GlobalErrorHandler
@@ -115,7 +114,9 @@ src/app/
 │   ├── auth/pages/        # Login
 │   └── posts/
 │       ├── components/    # Table, filters, form, states, revision panel, moderation actions
+│       ├── guards/        # postEditGuard
 │       ├── models/        # Post, status, revision, DTOs, API wire types
+│       ├── pipes/         # postStatusLabel
 │       ├── services/      # PostsApiService, PostsPermissionService, PostsViewStorageService
 │       ├── pages/         # List, details, upsert, my-posts, moderation
 │       ├── resolvers/     # PostResolver service + route resolver fn
@@ -123,7 +124,7 @@ src/app/
 │       └── utils/         # Revision diff, json-server query helpers
 └── shared/
     ├── directives/        # appInfiniteScroll
-    └── pipes/             # postStatusLabel, truncate
+    └── pipes/             # truncate
 ```
 
 ### State Management

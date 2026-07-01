@@ -12,7 +12,7 @@ import { PostsPermissionService } from '../../services/posts-permission.service'
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { POST_STATUS } from '../../models/post-status.model';
 import { PostDetailsStore } from '../../store/post-details.store';
-import { PostStatusLabelPipe } from '../../../../shared/pipes/post-status-label.pipe';
+import { PostStatusLabelPipe } from '../../pipes/post-status-label.pipe';
 import { getPostRevisionChanges, isEditedPendingReview } from '../../utils/post-revision.utils';
 import {
   getPostBackNavigation,

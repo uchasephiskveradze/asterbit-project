@@ -2,9 +2,9 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 
-import { AuthService } from '../services/auth.service';
-import { PostsPermissionService } from '../../../features/posts/services/posts-permission.service';
-import { PostsApiService } from '../../../features/posts/services/posts-api.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { PostsPermissionService } from '../services/posts-permission.service';
+import { PostsApiService } from '../services/posts-api.service';
 
 export const postEditGuard: CanActivateFn = (route, state) => {
   const api = inject(PostsApiService);

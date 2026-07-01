@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { Post } from '../../features/posts/models/post.model';
-import { POST_STATUS_LABELS, POST_STATUS } from '../../features/posts/models/post-status.model';
-import { POST_PENDING_REASON } from '../../features/posts/models/post-revision.model';
+import { Post } from '../models/post.model';
+import { POST_STATUS_LABELS, POST_STATUS } from '../models/post-status.model';
+import { POST_PENDING_REASON } from '../models/post-revision.model';
 
 type PostStatusInput = Pick<Post, 'status' | 'pendingReason'> | Post['status'];
 

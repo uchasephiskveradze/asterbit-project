@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -61,3 +61,6 @@ export class PostResolver {
     );
   }
 }
+
+export const postResolver: ResolveFn<PostResolverResult> = (route) =>
+  inject(PostResolver).resolve(route);

@@ -10,7 +10,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import { Post } from '../models/post.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
-import { postResolver } from './post.resolver';
+import { postResolver } from './post-resolver.service';
 
 describe('postResolver', () => {
   let httpMock: HttpTestingController;
