@@ -15,6 +15,7 @@
 
   &__header {
     margin-bottom: 1.5rem;
+    text-align: center;
   }
 
   &__title {
@@ -64,6 +65,7 @@
 
   &__submit {
     @include primary-button;
+    justify-content: center;
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.75rem 1rem;
