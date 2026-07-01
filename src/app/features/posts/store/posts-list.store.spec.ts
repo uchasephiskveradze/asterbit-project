@@ -21,8 +21,10 @@ describe('PostsListStore', () => {
   let store: PostsListStore;
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
+  const listResult = { posts: [approvedPost], totalItems: 1 };
+
   beforeEach(() => {
-    api = { getPosts: vi.fn(() => of([approvedPost])) };
+    api = { getPosts: vi.fn(() => of(listResult)) };
 
     TestBed.configureTestingModule({
       providers: [
@@ -50,9 +52,12 @@ describe('PostsListStore', () => {
         titleLike: undefined,
         sort: 'createdAt',
         order: 'desc',
+        page: 1,
+        limit: store.pageSize,
       },
     });
     expect(store.posts()).toEqual([approvedPost]);
+    expect(store.totalItems()).toBe(1);
   });
 
   it('should set an error when loading fails', async () => {
@@ -81,6 +86,31 @@ describe('PostsListStore', () => {
         titleLike: 'Approved',
         sort: 'createdAt',
         order: 'desc',
+        page: 1,
+        limit: store.pageSize,
+      },
+    });
+  });
+
+  it('should request the current page from the API in pagination mode', async () => {
+    api.getPosts.mockReturnValue(of({ posts: [approvedPost], totalItems: 25 }));
+
+    store.loadPosts();
+    await vi.waitFor(() => expect(store.loading()).toBe(false));
+
+    store.setPage(2);
+    await vi.waitFor(() => expect(store.filtering()).toBe(false));
+
+    expect(store.currentPage()).toBe(2);
+    expect(api.getPosts).toHaveBeenLastCalledWith({
+      force: false,
+      query: {
+        status: POST_STATUS.approved,
+        titleLike: undefined,
+        sort: 'createdAt',
+        order: 'desc',
+        page: 2,
+        limit: store.pageSize,
       },
     });
   });

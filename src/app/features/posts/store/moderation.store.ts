@@ -32,12 +32,12 @@ export class ModerationStore {
       .pipe(
         catchError(() => {
           this.error.set('errors.posts.moderationLoad');
-          return of([]);
+          return of({ posts: [], totalItems: 0 });
         }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((posts) => this.posts.set(posts));
+      .subscribe((result) => this.posts.set(result.posts));
   }
 
   public moderatePost(

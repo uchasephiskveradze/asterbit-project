@@ -81,11 +81,11 @@ export class MyPostsStore {
       .pipe(
         catchError(() => {
           if (generation !== this.loadGeneration) {
-            return of([]);
+            return of({ posts: [], totalItems: 0 });
           }
 
           this.error.set('errors.posts.myPostsLoad');
-          return of([]);
+          return of({ posts: [], totalItems: 0 });
         }),
         finalize(() => {
           if (generation === this.loadGeneration) {
@@ -94,12 +94,12 @@ export class MyPostsStore {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((posts) => {
+      .subscribe((result) => {
         if (generation !== this.loadGeneration) {
           return;
         }
 
-        this.posts.set(posts);
+        this.posts.set(result.posts);
       });
   }
 

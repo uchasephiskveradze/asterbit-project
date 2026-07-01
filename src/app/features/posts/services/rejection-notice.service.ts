@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Post } from '../models/post.model';
@@ -34,9 +34,9 @@ export class RejectionNoticeService {
 
     this.fetchRejectedWithReasonForUser(user.id)
       .pipe(
-        map((posts) => {
+        map((rejectedPosts) => {
           const state = this.storage.read(user.id);
-          return filterUnseenForBadge(posts, state).length;
+          return filterUnseenForBadge(rejectedPosts, state).length;
         }),
         catchError(() => of(0)),
       )
@@ -97,9 +97,6 @@ export class RejectionNoticeService {
       .getPosts({
         query: { status: POST_STATUS.rejected, sort: 'rejectedAt', order: 'desc' },
       })
-      .pipe(
-        map((posts) => filterRejectedWithReasonForUser(posts, userId)),
-        tap(() => this.refreshBadge()),
-      );
+      .pipe(map((result) => filterRejectedWithReasonForUser(result.posts, userId)));
   }
 }

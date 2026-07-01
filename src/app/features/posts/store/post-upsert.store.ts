@@ -79,7 +79,7 @@ export class PostUpsertStore {
 
     const payload: CreatePostDto = {
       ...value,
-      author: user.name,
+      author: value.author,
       status: this.auth.isAdmin() ? POST_STATUS.approved : POST_STATUS.pending,
       submittedBy: user.id,
       pendingReason: this.auth.isAdmin() ? undefined : POST_PENDING_REASON.new,

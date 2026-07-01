@@ -25,7 +25,7 @@ describe('ModerationStore', () => {
 
   beforeEach(() => {
     api = {
-      getPosts: vi.fn(() => of([pendingPost])),
+      getPosts: vi.fn(() => of({ posts: [pendingPost], totalItems: 1 })),
       updatePostStatus: vi.fn(() => of({ ...pendingPost, status: POST_STATUS.approved })),
     };
 

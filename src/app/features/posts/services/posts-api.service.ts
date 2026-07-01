@@ -5,9 +5,11 @@ import { finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { LruCache } from '../../../core/utils/lru-cache';
 import { API_BASE_URL } from '../../../core/config';
 import { CreatePostDto } from '../models/create-post.dto';
+import { JsonServerPostsListResponse } from '../models/json-server-paginated-response.model';
 import { Post } from '../models/post.model';
 import { PostResponse } from '../models/post-response.model';
 import { PostsListQuery } from '../models/posts-list-query.model';
+import { PostsListResult } from '../models/posts-list-result.model';
 import { PostPendingReason, POST_PENDING_REASON } from '../models/post-revision.model';
 import { PostsRequestOptions } from '../models/posts-request-options.model';
 import { isPostStatus, POST_STATUS, PostStatus } from '../models/post-status.model';
@@ -24,12 +26,12 @@ export class PostsApiService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
-  private readonly listQueryCache = new Map<string, Post[]>();
-  private readonly listQueryInFlight = new Map<string, Observable<Post[]>>();
+  private readonly listQueryCache = new Map<string, PostsListResult>();
+  private readonly listQueryInFlight = new Map<string, Observable<PostsListResult>>();
   private readonly postByIdCache = new LruCache<string, Post>(POST_BY_ID_CACHE_MAX_SIZE);
   private readonly postByIdInFlight = new Map<string, Observable<Post>>();
 
-  public getPosts(options?: PostsRequestOptions): Observable<Post[]> {
+  public getPosts(options?: PostsRequestOptions): Observable<PostsListResult> {
     const force = options?.force ?? false;
     const cacheKey = this.getListCacheKey(options?.query);
 
@@ -48,14 +50,14 @@ export class PostsApiService {
     }
 
     const request$ = this.http
-      .get<PostResponse[]>(`${this.apiBaseUrl}/posts`, {
+      .get<JsonServerPostsListResponse>(`${this.apiBaseUrl}/posts`, {
         params: this.buildQueryParams(options?.query),
       })
       .pipe(
-        map((posts) => posts.map((post) => this.normalizePost(post))),
-        tap((posts) => {
-          this.listQueryCache.set(cacheKey, posts);
-          posts.forEach((post) => this.postByIdCache.set(post.id, post));
+        map((response) => this.normalizeListResponse(response)),
+        tap((result) => {
+          this.listQueryCache.set(cacheKey, result);
+          result.posts.forEach((post) => this.postByIdCache.set(post.id, post));
         }),
         shareReplay({ bufferSize: 1, refCount: true }),
         finalize(() => {
@@ -174,8 +176,8 @@ export class PostsApiService {
   }
 
   private findPostInListCaches(id: string): Post | undefined {
-    for (const posts of this.listQueryCache.values()) {
-      const match = posts.find((post) => post.id === id);
+    for (const result of this.listQueryCache.values()) {
+      const match = result.posts.find((post) => post.id === id);
 
       if (match) {
         return match;
@@ -214,10 +216,22 @@ export class PostsApiService {
     }
 
     if (query.limit) {
-      params = params.set('_limit', String(query.limit));
+      params = params.set('_per_page', String(query.limit));
     }
 
     return params;
+  }
+
+  private normalizeListResponse(response: JsonServerPostsListResponse): PostsListResult {
+    if (Array.isArray(response)) {
+      const posts = response.map((post) => this.normalizePost(post));
+
+      return { posts, totalItems: posts.length };
+    }
+
+    const posts = response.data.map((post) => this.normalizePost(post));
+
+    return { posts, totalItems: response.items };
   }
 
   private normalizePost(post: PostResponse): Post {

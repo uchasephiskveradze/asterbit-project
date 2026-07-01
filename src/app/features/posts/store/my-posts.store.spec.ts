@@ -30,7 +30,7 @@ describe('MyPostsStore', () => {
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    api = { getPosts: vi.fn(() => of([userPost])) };
+    api = { getPosts: vi.fn(() => of({ posts: [userPost], totalItems: 1 })) };
 
     TestBed.configureTestingModule({
       providers: [
@@ -67,7 +67,7 @@ describe('MyPostsStore', () => {
   it('should fetch approved posts when the approved tab is selected', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
-    api.getPosts.mockReturnValue(of([approvedPost]));
+    api.getPosts.mockReturnValue(of({ posts: [approvedPost], totalItems: 1 }));
     store.setTab('approved');
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
@@ -87,7 +87,7 @@ describe('MyPostsStore', () => {
       rejectionReason: 'Needs more detail',
     };
 
-    api.getPosts.mockReturnValue(of([rejectedPost]));
+    api.getPosts.mockReturnValue(of({ posts: [rejectedPost], totalItems: 1 }));
     store.initializeTab('rejected');
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
@@ -117,7 +117,7 @@ describe('MyPostsStore', () => {
       rejectedAt: '2026-01-20T00:00:00.000Z',
     };
 
-    api.getPosts.mockReturnValue(of([olderRejected, newerRejected]));
+    api.getPosts.mockReturnValue(of({ posts: [olderRejected, newerRejected], totalItems: 2 }));
     store.setTab('rejected');
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 

@@ -9,7 +9,6 @@ type PostStatusInput = Pick<Post, 'status' | 'pendingReason'> | Post['status'];
 
 @Pipe({
   name: 'postStatusLabel',
-  pure: false,
 })
 export class PostStatusLabelPipe implements PipeTransform {
   private readonly translate = inject(TranslateService);

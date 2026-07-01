@@ -46,7 +46,7 @@ Thumbs.db
 # Local workflow docs config
 DESIGN.md
 RULES.md
-FIX.md
+
 .cursor/
 
 stitch_markdown_design_system/
