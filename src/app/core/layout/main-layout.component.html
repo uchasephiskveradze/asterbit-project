@@ -4,8 +4,54 @@
 
   <header class="layout__header">
     <div class="layout__header-inner">
-      <div class="layout__brand-group">
+      <div class="layout__header-top">
         <a class="layout__brand" routerLink="/posts">{{ 'layout.brand' | translate }}</a>
+
+        <div class="layout__actions">
+          <button
+            class="layout__locale-toggle"
+            type="button"
+            (click)="locale.toggle()"
+            [attr.aria-label]="
+              language === 'ka' ? ('layout.switchToEnglish' | translate) : ('layout.switchToGeorgian' | translate)
+            "
+          >
+            {{ locale.languageLabel(language) }}
+          </button>
+
+          <button
+            class="layout__theme-toggle"
+            type="button"
+            (click)="theme.toggle()"
+            [attr.aria-label]="
+              isDarkTheme ? ('layout.switchToLightTheme' | translate) : ('layout.switchToDarkTheme' | translate)
+            "
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">
+              {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
+            </span>
+          </button>
+
+          @if (auth.isAuthenticated()) {
+            <a class="layout__cta layout__cta--desktop" routerLink="/posts/new">
+              {{ 'common.createPost' | translate }}
+            </a>
+            <button
+              class="layout__auth-link"
+              type="button"
+              (click)="openLogoutModal()"
+              [attr.aria-label]="'layout.logout' | translate"
+            >
+              <span class="material-symbols-outlined layout__auth-link-icon" aria-hidden="true">logout</span>
+              <span class="layout__auth-link-text">{{ 'layout.logout' | translate }}</span>
+            </button>
+          } @else {
+            <a class="layout__cta" routerLink="/login">{{ 'layout.login' | translate }}</a>
+          }
+        </div>
+      </div>
+
+      @if (auth.isAuthenticated()) {
         <nav class="layout__nav" [attr.aria-label]="'layout.navLabel' | translate">
           <a
             class="layout__nav-link"
@@ -15,27 +61,25 @@
           >
             {{ 'layout.posts' | translate }}
           </a>
-          @if (auth.isAuthenticated()) {
-            <a
-              class="layout__nav-link"
-              routerLink="/posts/my"
-              routerLinkActive="layout__nav-link--active"
-              [routerLinkActiveOptions]="{ exact: false }"
-            >
-              {{ 'layout.myPosts' | translate }}
-              @if (rejectionNotice.unseenBadgeCount() > 0) {
-                <span
-                  class="layout__nav-badge"
-                  [attr.aria-label]="
-                    'posts.myPosts.rejectionNotice.navBadge'
-                      | translate: { count: rejectionNotice.unseenBadgeCount() }
-                  "
-                >
-                  {{ rejectionNotice.unseenBadgeCount() }}
-                </span>
-              }
-            </a>
-          }
+          <a
+            class="layout__nav-link"
+            routerLink="/posts/my"
+            routerLinkActive="layout__nav-link--active"
+            [routerLinkActiveOptions]="{ exact: false }"
+          >
+            {{ 'layout.myPosts' | translate }}
+            @if (rejectionNotice.unseenBadgeCount() > 0) {
+              <span
+                class="layout__nav-badge"
+                [attr.aria-label]="
+                  'posts.myPosts.rejectionNotice.navBadge'
+                    | translate: { count: rejectionNotice.unseenBadgeCount() }
+                "
+              >
+                {{ rejectionNotice.unseenBadgeCount() }}
+              </span>
+            }
+          </a>
           @if (auth.isAdmin()) {
             <a
               class="layout__nav-link"
@@ -46,42 +90,7 @@
             </a>
           }
         </nav>
-      </div>
-
-      <div class="layout__actions">
-        <button
-          class="layout__locale-toggle"
-          type="button"
-          (click)="locale.toggle()"
-          [attr.aria-label]="
-            language === 'ka' ? ('layout.switchToEnglish' | translate) : ('layout.switchToGeorgian' | translate)
-          "
-        >
-          {{ locale.languageLabel(language) }}
-        </button>
-
-        <button
-          class="layout__theme-toggle"
-          type="button"
-          (click)="theme.toggle()"
-          [attr.aria-label]="
-            isDarkTheme ? ('layout.switchToLightTheme' | translate) : ('layout.switchToDarkTheme' | translate)
-          "
-        >
-          <span class="material-symbols-outlined" aria-hidden="true">
-            {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
-          </span>
-        </button>
-
-        @if (auth.isAuthenticated()) {
-          <a class="layout__cta" routerLink="/posts/new">{{ 'common.createPost' | translate }}</a>
-          <button class="layout__auth-link" type="button" (click)="openLogoutModal()">
-            {{ 'layout.logout' | translate }}
-          </button>
-        } @else {
-          <a class="layout__cta" routerLink="/login">{{ 'layout.login' | translate }}</a>
-        }
-      </div>
+      }
     </div>
   </header>
 

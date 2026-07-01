@@ -213,7 +213,7 @@
     }
 
     &--active {
-      background: var(--app-surface);
+      background: var(--app-surface) !important;
       color: var(--app-primary);
       box-shadow: $shadow-sm;
     }
