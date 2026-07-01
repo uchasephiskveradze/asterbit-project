@@ -42,7 +42,14 @@ Demo passwords are validated in `AuthApiService` (not stored in `db.json`). json
 
 ```bash
 npm run build   # production build
-npm test        # unit tests (Vitest)
+npm test        # unit tests (Vitest, 58 specs)
+```
+
+For Lighthouse, serve the production output (not `ng serve`):
+
+```bash
+npm run build
+npx serve dist/asterbit-task/browser -l 4200
 ```
 
 ## Angular Version
@@ -53,7 +60,7 @@ npm test        # unit tests (Vitest)
 
 | Library | Purpose |
 |---------|---------|
-| **ngx-translate** | UI strings in English and Georgian (`public/i18n/en.json`, `ka.json`) |
+| **ngx-translate** | UI strings in English and Georgian (`public/i18n/en.json`, `ka.json`); English bundled at build time, Georgian loaded on demand |
 | Angular Material | `MatButton`, `MatProgressSpinner` on moderation and initial loading states |
 | RxJS | HTTP streams, operators in signal stores |
 | json-server | Mock REST API (`db.json`) for posts and users |
@@ -71,6 +78,7 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Shared **
 - View post details (owners and admins can open non-approved posts they are allowed to see)
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
+- Create/edit form warns on navigation away with unsaved changes (`postUpsertCanDeactivateGuard` + confirmation modal)
 - Header **locale toggle** (EN / KA) and **dark / light theme**
 - **Responsive layout** — posts table switches to stacked cards below **850px**; mobile header uses a compact top bar plus scrollable nav links
 
@@ -104,10 +112,10 @@ Owners can **delete their own posts** (any status) from post details using the s
 
 - Mock login via `AuthService` (signals + `localStorage`)
 - **Logout** asks for confirmation via `app-modal` before clearing the session
-- Route guards: `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard`
+- Route guards: `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard`, `postUpsertCanDeactivateGuard`
 - HTTP interceptor attaches a demo bearer token
 
-See [docs/AUTH-MODERATION.md](docs/AUTH-MODERATION.md) for the full role and workflow spec.
+**Role summary:** admins moderate all posts and can edit/delete any post; users submit posts for review, edit/resubmit own approved or rejected posts, and delete own posts.
 
 ## Architecture
 
@@ -120,7 +128,7 @@ src/app/
 │   │   ├── services/      # AuthService, AuthApiService, AuthStorageService
 │   │   ├── guards/        # auth, admin, guest
 │   │   └── models/        # User, session, roles
-│   ├── i18n/              # LocaleService, translate testing helpers
+│   ├── i18n/              # LocaleService, AppTranslateLoader
 │   ├── interceptors/      # authInterceptor, httpErrorInterceptor
 │   ├── layout/            # Main shell (responsive header), rejection modal, logout modal
 │   ├── config.ts          # API base URL
@@ -133,7 +141,7 @@ src/app/
 │   ├── auth/pages/        # Login
 │   └── posts/
 │       ├── components/    # Table, filters, form, states, revision panel, moderation actions
-│       ├── guards/        # postEditGuard
+│       ├── guards/        # postEditGuard, postUpsertCanDeactivateGuard
 │       ├── models/        # Post, status, revision, rejection notice, DTOs
 │       ├── pipes/         # postStatusLabel
 │       ├── services/      # PostsApiService, PostsPermissionService, RejectionNoticeService, …
@@ -143,6 +151,8 @@ src/app/
 │       └── utils/         # Revision diff, rejection notice filters, json-server helpers
 └── shared/
     ├── components/        # modal, error-state, empty-state, page-header
+    ├── styles/            # _palette, _theme, _reset, _mixins (display-flex, flex-center, …)
+    ├── utils/             # body-scroll-lock for modals
     ├── infinite-scroll.directive.ts
     └── truncate.pipe.ts
 ```
@@ -201,16 +211,20 @@ Typical list queries:
 
 | Area | Implementation |
 |------|----------------|
-| **i18n** | `ngx-translate` + `LocaleService`; templates use translation keys, stores emit error keys |
-| **Shared modal** | `app-modal` — backdrop/Escape close, projected actions, body scroll lock |
+| **i18n** | `ngx-translate` + `LocaleService`; English bundled via `AppTranslateLoader`, Georgian fetched from `/i18n/ka.json` |
+| **Shared modal** | `app-modal` — CSS enter/leave transitions, backdrop/Escape close, projected actions, `body-scroll-lock` on `html` |
+| **UI animations** | Native `animate.leave` + CSS transitions (moderation queue); no `@angular/animations` |
+| **SCSS** | Shared partials in `shared/styles/` (`_palette`, `_mixins`, …); `display-flex` / `flex-center` mixins via `angular.json` `includePaths` |
+| **Unsaved changes** | `postUpsertCanDeactivateGuard` blocks leaving create/edit with dirty form unless confirmed |
+| **Performance** | Async Google Fonts + icon subset in `index.html`; SEO meta tags; measure Lighthouse on production build |
 | **Rejection notices** | `RejectionNoticeService` + `localStorage` per user (`seen` vs `acknowledged`) |
 | **Permissions** | `PostsPermissionService` — view, edit, delete rules for owners and admins |
-| **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard` |
+| **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard`, `postUpsertCanDeactivateGuard` |
 | **HTTP Interceptor** | `authInterceptor` (bearer token), `httpErrorInterceptor` (401 logout, error logging) |
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `appInfiniteScroll` (intersection observer) |
-| **Unit Tests** | 56 focused tests — guards, stores, services, pipes, theme, revision utils |
+| **Unit Tests** | 58 focused tests — guards, stores, services, pipes, theme, revision utils, scroll lock |
 | **Responsive UI** | Posts table cards `<850px`; mobile header nav row; FAB for create on small screens |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session, theme, list view mode, rejection notice state per user |
@@ -222,6 +236,7 @@ Typical list queries:
 | Area | Choice |
 |------|--------|
 | **NgRx** | Signal stores per feature — simpler for this scope |
+| **@angular/animations** | Native CSS `animate.leave` / transitions instead of the deprecated animations package |
 | **Firebase** | json-server mock API for local/demo workflow |
 | **Backend framework** | json-server stands in for a REST backend |
 
@@ -250,3 +265,23 @@ Typical list queries:
 ### Logout
 
 1. While logged in, click **Logout** → confirm in modal (or cancel to stay)
+
+### Unsaved form changes
+
+1. Login as **user** → **Create Post** or edit an existing post
+2. Change a field, then navigate away (back link, browser back, or another route)
+3. Confirmation modal appears — **Stay on page** keeps your edits; **Discard** leaves without saving
+
+## Screenshots
+
+Local demo captures live under `docs/screenshots/` (gitignored, not published to the remote repo):
+
+| File | Screen |
+|------|--------|
+| `01-posts-list-desktop.png` | Posts list — desktop |
+| `02-posts-list-mobile.png` | Posts list — mobile |
+| `03-moderation-queue.png` | Admin moderation queue |
+| `04-reject-modal.png` | Reject-with-reason modal |
+| `05-my-posts-rejected.png` | My Posts — Rejected tab |
+| `06-rejection-notice-modal.png` | Post-login rejection notice |
+| `07-post-details-diff.png` | Edited submission diff on post details |
