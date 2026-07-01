@@ -9,7 +9,7 @@ import { ModerationActionsComponent } from '../../components/moderation-actions/
 import { getPendingReasonLabel, POST_STATUS } from '../../models/post-status.model';
 import { POST_PENDING_REASON } from '../../models/post-revision.model';
 import { ModerationStore } from '../../store/moderation.store';
-import { TruncatePipe } from '../../../../shared/pipes/truncate.pipe';
+import { TruncatePipe } from '../../../../shared/truncate.pipe';
 
 @Component({
   selector: 'app-moderation-page',

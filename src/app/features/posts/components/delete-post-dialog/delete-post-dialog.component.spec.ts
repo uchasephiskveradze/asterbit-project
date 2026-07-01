@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { API_BASE_URL } from '../../../../core/config/api.config';
+import { API_BASE_URL } from '../../../../core/config';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { DeletePostDialogComponent } from './delete-post-dialog.component';
 

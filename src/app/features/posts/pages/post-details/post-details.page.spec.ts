@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { API_BASE_URL } from '../../../../core/config/api.config';
+import { API_BASE_URL } from '../../../../core/config';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { PostDetailsPage } from './post-details.page';
 

@@ -4,9 +4,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
-import { GlobalErrorHandler } from './core/errors/global-error.handler';
-import { httpErrorInterceptor } from './core/http/interceptors/http-error.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { GlobalErrorHandler } from './core/error-handler';
+import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { ThemeService } from './core/theme/theme.service';
 
 function initializeTheme(): () => void {

@@ -103,13 +103,12 @@ src/app/
 │   ├── auth/
 │   │   ├── services/      # AuthService, AuthApiService, AuthStorageService
 │   │   ├── guards/        # auth, admin, guest
-│   │   ├── interceptors/  # authInterceptor
 │   │   └── models/        # User, session, roles
-│   ├── errors/            # GlobalErrorHandler
-│   ├── http/              # httpErrorInterceptor
+│   ├── interceptors/      # authInterceptor, httpErrorInterceptor
 │   ├── layout/            # Main shell with role-aware navigation
-│   ├── config/            # API base URL
-│   └── theme/             # Dark/light toggle
+│   ├── config.ts          # API base URL
+│   ├── error-handler.ts   # GlobalErrorHandler
+│   └── theme/             # ThemeService, ThemeStorageService, app-theme model
 ├── features/
 │   ├── auth/pages/        # Login
 │   └── posts/
@@ -123,8 +122,8 @@ src/app/
 │       ├── store/         # Signal stores per page/flow
 │       └── utils/         # Revision diff, json-server query helpers
 └── shared/
-    ├── directives/        # appInfiniteScroll
-    └── pipes/             # truncate
+    ├── infinite-scroll.directive.ts   # appInfiniteScroll
+    └── truncate.pipe.ts               # truncate
 ```
 
 ### State Management

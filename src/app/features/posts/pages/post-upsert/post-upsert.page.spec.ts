@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
-import { API_BASE_URL } from '../../../../core/config/api.config';
+import { API_BASE_URL } from '../../../../core/config';
 import { PostUpsertPage } from './post-upsert.page';
 
 describe('PostUpsertPage', () => {

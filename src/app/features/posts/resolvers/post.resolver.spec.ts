@@ -7,7 +7,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
 
-import { API_BASE_URL } from '../../../core/config/api.config';
+import { API_BASE_URL } from '../../../core/config';
 import { Post } from '../models/post.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
 import { postResolver } from './post-resolver.service';

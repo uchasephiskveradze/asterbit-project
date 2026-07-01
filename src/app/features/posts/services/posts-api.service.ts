@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 
 import { LruCache } from '../../../core/utils/lru-cache';
-import { API_BASE_URL } from '../../../core/config/api.config';
+import { API_BASE_URL } from '../../../core/config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { Post } from '../models/post.model';
 import { PostResponse } from '../models/post-response.model';

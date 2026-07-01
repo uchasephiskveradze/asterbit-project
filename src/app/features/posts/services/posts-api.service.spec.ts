@@ -6,7 +6,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 
-import { API_BASE_URL } from '../../../core/config/api.config';
+import { API_BASE_URL } from '../../../core/config';
 import { Post } from '../models/post.model';
 import { PostsApiService } from './posts-api.service';
 

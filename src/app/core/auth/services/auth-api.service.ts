@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 
-import { API_BASE_URL } from '../../config/api.config';
+import { API_BASE_URL } from '../../config';
 import { User } from '../models/user.model';
 
 const DEMO_PASSWORDS: Record<string, string> = {
