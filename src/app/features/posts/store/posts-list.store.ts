@@ -18,6 +18,7 @@ import { PostsViewStorageService } from '../services/posts-view-storage.service'
 import { Post } from '../models/post.model';
 import { PostsListQuery } from '../models/posts-list-query.model';
 import { PostsListViewMode } from '../models/posts-list-view-mode.model';
+import { POST_STATUS } from '../models/post-status.model';
 import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 
 @Injectable()
@@ -225,6 +226,7 @@ export class PostsListStore {
     const query = this.searchQuery().trim();
 
     return {
+      status: POST_STATUS.approved,
       titleLike: query || undefined,
       sort: 'createdAt',
       order: this.sortOrder(),

@@ -38,7 +38,7 @@ describe('PostsListStore', () => {
     store = TestBed.inject(PostsListStore);
   });
 
-  it('should request every post from the API', async () => {
+  it('should request only approved posts from the API', async () => {
     store.loadPosts();
 
     await vi.waitFor(() => expect(store.loading()).toBe(false));
@@ -46,6 +46,7 @@ describe('PostsListStore', () => {
     expect(api.getPosts).toHaveBeenCalledWith({
       force: false,
       query: {
+        status: POST_STATUS.approved,
         titleLike: undefined,
         sort: 'createdAt',
         order: 'desc',
