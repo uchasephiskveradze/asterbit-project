@@ -18,6 +18,8 @@ export class MyPostsStore {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
+  private loadGeneration = 0;
+
   public readonly loading = signal(false);
   public readonly error = signal<string | null>(null);
   public readonly posts = signal<Post[]>([]);
@@ -33,7 +35,9 @@ export class MyPostsStore {
     return this.posts().filter((post) => post.submittedBy === user.id);
   });
 
-  public constructor() {
+  public initializeTab(tab: string | null): void {
+    const resolvedTab = isMyPostsTab(tab) ? tab : 'under-review';
+    this.activeTab.set(resolvedTab);
     this.loadPosts();
   }
 
@@ -56,6 +60,8 @@ export class MyPostsStore {
   }
 
   public loadPosts(force = false): void {
+    const generation = ++this.loadGeneration;
+
     this.loading.set(true);
     this.error.set(null);
 
@@ -63,13 +69,27 @@ export class MyPostsStore {
       .getPosts({ force, query: this.buildListQuery() })
       .pipe(
         catchError(() => {
+          if (generation !== this.loadGeneration) {
+            return of([]);
+          }
+
           this.error.set('errors.posts.myPostsLoad');
           return of([]);
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          if (generation === this.loadGeneration) {
+            this.loading.set(false);
+          }
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((posts) => this.posts.set(posts));
+      .subscribe((posts) => {
+        if (generation !== this.loadGeneration) {
+          return;
+        }
+
+        this.posts.set(posts);
+      });
   }
 
   public retry(): void {

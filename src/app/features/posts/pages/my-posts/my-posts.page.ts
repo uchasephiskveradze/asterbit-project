@@ -46,6 +46,8 @@ export class MyPostsPage {
   public readonly showRejectionCallout = computed(() => this.store.activeTab() === 'rejected');
 
   public constructor() {
+    this.store.initializeTab(this.route.snapshot.queryParamMap.get('tab'));
+
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {

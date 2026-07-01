@@ -51,6 +51,7 @@ describe('MyPostsStore', () => {
     });
 
     store = TestBed.inject(MyPostsStore);
+    store.initializeTab(null);
   });
 
   it('should fetch pending posts for the default tab and filter by owner', async () => {
@@ -75,5 +76,26 @@ describe('MyPostsStore', () => {
       query: { status: POST_STATUS.approved },
     });
     expect(store.filteredPosts()).toEqual([approvedPost]);
+  });
+
+  it('should initialize from the rejected tab query param', async () => {
+    const rejectedPost: Post = {
+      ...userPost,
+      id: '3',
+      title: 'My Rejected Post',
+      status: POST_STATUS.rejected,
+      rejectionReason: 'Needs more detail',
+    };
+
+    api.getPosts.mockReturnValue(of([rejectedPost]));
+    store.initializeTab('rejected');
+    await vi.waitFor(() => expect(store.loading()).toBe(false));
+
+    expect(store.activeTab()).toBe('rejected');
+    expect(api.getPosts).toHaveBeenLastCalledWith({
+      force: false,
+      query: { status: POST_STATUS.rejected },
+    });
+    expect(store.filteredPosts()).toEqual([rejectedPost]);
   });
 });
