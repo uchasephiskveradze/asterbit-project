@@ -4,7 +4,8 @@ import { catchError, finalize, of } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
-import { POST_STATUS, PostStatus } from '../models/post-status.model';
+import { PostsListQuery } from '../models/posts-list-query.model';
+import { POST_STATUS } from '../models/post-status.model';
 
 @Injectable()
 export class ModerationStore {
@@ -16,20 +17,18 @@ export class ModerationStore {
   public readonly error = signal<string | null>(null);
   public readonly posts = signal<Post[]>([]);
 
-  public readonly pendingPosts = computed(() =>
-    this.posts().filter((post) => post.status === POST_STATUS.pending),
-  );
+  public readonly pendingPosts = computed(() => this.posts());
 
   public constructor() {
     this.loadPosts();
   }
 
-  public loadPosts(): void {
+  public loadPosts(force = false): void {
     this.loading.set(true);
     this.error.set(null);
 
     this.api
-      .getPosts()
+      .getPosts({ force, query: this.buildListQuery() })
       .pipe(
         catchError(() => {
           this.error.set('Unable to load moderation queue. Please try again.');
@@ -60,7 +59,13 @@ export class ModerationStore {
           return;
         }
 
-        this.posts.update((items) => items.map((item) => (item.id === post.id ? post : item)));
+        this.posts.update((items) => items.filter((item) => item.id !== post.id));
       });
+  }
+
+  private buildListQuery(): PostsListQuery {
+    return {
+      status: POST_STATUS.pending,
+    };
   }
 }

@@ -64,14 +64,14 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Material 
 
 ### Posts (all logged-in users)
 
-- Browse **approved** posts with debounced search, date sort, and pagination or infinite scroll (user preference)
+- Browse **all posts** (every status) with debounced search, server-side date sort, and client-side pagination or infinite scroll (user preference)
 - View post details
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
 
 ### My Posts (`/posts/my`)
 
-Tabs for the current user's submissions:
+Tabs for the current user's submissions. Each tab fetches posts filtered by `status` on the server, then filters by `submittedBy` on the client:
 
 - **Under Review** — `pending`
 - **Approved**
@@ -81,9 +81,9 @@ Users can edit their own **approved** posts; changes return to `pending` for adm
 
 ### Moderation (`/posts/moderation`, admin only)
 
-- Review pending submissions from all users
+- Fetches only `pending` posts from the API (`GET /posts?status=pending`)
 - Approve or reject from the queue or directly on post details
-- **New submission** vs **Edited submission** badges on the queue
+- **New submission** vs **Edited submission** badges on the queue (posts without a reason show **Pending review**)
 
 ### Auth
 
@@ -105,7 +105,6 @@ src/app/
 │   │   ├── services/      # AuthService, AuthStorageService
 │   │   ├── guards/        # auth, admin, guest, postEdit
 │   │   ├── interceptors/  # authInterceptor
-│   │   ├── directives/    # *appIsAdmin, *appIsAuthenticated
 │   │   └── models/        # User, session, roles
 │   ├── errors/            # GlobalErrorHandler
 │   ├── http/              # httpErrorInterceptor
@@ -121,7 +120,7 @@ src/app/
 │       ├── pages/         # List, details, upsert, my-posts, moderation
 │       ├── resolvers/     # PostResolver service + route resolver fn
 │       ├── store/         # Signal stores per page/flow
-│       └── utils/         # Revision diff helpers
+│       └── utils/         # Revision diff, json-server query helpers
 └── shared/
     ├── directives/        # appInfiniteScroll
     └── pipes/             # postStatusLabel, truncate
@@ -133,11 +132,11 @@ Signal stores per feature area (not NgRx):
 
 | Store | Responsibility |
 |-------|----------------|
-| **PostsListStore** | Fetch, debounced search, sort, pagination or infinite scroll (user preference) |
+| **PostsListStore** | Fetch all posts, debounced search, server-side sort, pagination or infinite scroll |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
-| **MyPostsStore** | User's posts filtered by tab |
-| **ModerationStore** | Admin pending queue, approve/reject |
+| **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client) |
+| **ModerationStore** | Pending queue (`status=pending` on API), approve/reject |
 
 RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `tap`, and `finalize`.
 
@@ -146,7 +145,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | Route | Access | Description |
 |-------|--------|-------------|
 | `/login` | Guest only | Sign in |
-| `/posts` | Authenticated | Approved posts list |
+| `/posts` | Authenticated | All posts (any status) |
 | `/posts/my` | Authenticated | Own posts by status tab |
 | `/posts/moderation` | Admin | Pending review queue |
 | `/posts/new` | Authenticated | Create / submit post |
@@ -164,6 +163,8 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - Collections: `posts`, `users`
 - Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions)
 - Post IDs are server-generated strings (json-server v1)
+- List queries use json-server v1 sort syntax (`_sort=-createdAt` for descending)
+- `PostsApiService` caches list responses per query key and individual posts in an LRU cache (max 100)
 
 ## Technical Highlights
 
@@ -173,8 +174,8 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | **HTTP Interceptor** | `authInterceptor` (bearer token), `httpErrorInterceptor` (401 logout, error logging) |
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
-| **Custom Directives** | `*appIsAdmin`, `*appIsAuthenticated`, `appInfiniteScroll` |
-| **Unit Tests** | Guards, access rules, pipes, theme, revision utils, components |
+| **Custom Directives** | `appInfiniteScroll` (intersection observer) |
+| **Unit Tests** | Guards, stores, access rules, pipes, theme, revision utils, components |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session, theme preference, posts list view mode (`blog-auth-session`, `blog-app-theme`, `blog-posts-list-view-mode`) |
 | **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |

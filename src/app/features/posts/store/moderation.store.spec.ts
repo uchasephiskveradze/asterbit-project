@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import { Post } from '../models/post.model';
+import { POST_STATUS } from '../models/post-status.model';
 import { PostsApiService } from '../services/posts-api.service';
 import { ModerationStore } from './moderation.store';
 
@@ -13,14 +14,7 @@ describe('ModerationStore', () => {
     description: 'Short description text',
     content: 'a'.repeat(100),
     createdAt: '2026-01-01T00:00:00.000Z',
-    status: 'pending',
-  };
-
-  const approvedPost: Post = {
-    ...pendingPost,
-    id: '2',
-    title: 'Approved',
-    status: 'approved',
+    status: POST_STATUS.pending,
   };
 
   let store: ModerationStore;
@@ -31,8 +25,8 @@ describe('ModerationStore', () => {
 
   beforeEach(() => {
     api = {
-      getPosts: vi.fn(() => of([pendingPost, approvedPost])),
-      updatePostStatus: vi.fn(() => of({ ...pendingPost, status: 'approved' })),
+      getPosts: vi.fn(() => of([pendingPost])),
+      updatePostStatus: vi.fn(() => of({ ...pendingPost, status: POST_STATUS.approved })),
     };
 
     TestBed.configureTestingModule({
@@ -42,9 +36,13 @@ describe('ModerationStore', () => {
     store = TestBed.inject(ModerationStore);
   });
 
-  it('should expose only pending posts', async () => {
+  it('should request only pending posts from the API', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
+    expect(api.getPosts).toHaveBeenCalledWith({
+      force: false,
+      query: { status: POST_STATUS.pending },
+    });
     expect(store.pendingPosts()).toEqual([pendingPost]);
   });
 
@@ -67,14 +65,14 @@ describe('ModerationStore', () => {
     expect(failingStore.error()).toBe('Unable to load moderation queue. Please try again.');
   });
 
-  it('should update local state after moderation succeeds', async () => {
+  it('should remove moderated posts from the local queue', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
-    store.moderatePost('1', 'approved');
+    store.moderatePost('1', POST_STATUS.approved);
 
-    await vi.waitFor(() => expect(api.updatePostStatus).toHaveBeenCalledWith('1', 'approved'));
+    await vi.waitFor(() => expect(api.updatePostStatus).toHaveBeenCalledWith('1', POST_STATUS.approved));
 
-    expect(store.posts().find((post) => post.id === '1')?.status).toBe('approved');
+    expect(store.pendingPosts()).toEqual([]);
     expect(api.getPosts).toHaveBeenCalledTimes(1);
   });
 });
