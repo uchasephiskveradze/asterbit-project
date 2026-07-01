@@ -1,5 +1,4 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 
@@ -21,7 +20,6 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
   imports: [
     RouterLink,
     TranslatePipe,
-    MatProgressSpinnerModule,
     InfiniteScrollDirective,
     PostsFiltersComponent,
     PostsPaginationComponent,
@@ -40,7 +38,7 @@ export class PostsListPage implements OnInit {
   public readonly auth = inject(AuthService);
 
   public readonly viewState = computed<PostsListViewState>(() => {
-    if (this.store.loading()) {
+    if (this.store.loading() && this.store.posts().length === 0) {
       return 'loading';
     }
 

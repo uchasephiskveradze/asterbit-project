@@ -65,4 +65,23 @@ describe('PostsListStore', () => {
     expect(store.error()).toBe('errors.posts.load');
     expect(store.posts()).toEqual([]);
   });
+
+  it('should refetch with title search without toggling initial loading', async () => {
+    store.loadPosts();
+    await vi.waitFor(() => expect(store.posts()).toEqual([approvedPost]));
+
+    store.setSearchInput('Approved');
+    await vi.waitFor(() => expect(store.filtering()).toBe(false));
+
+    expect(store.loading()).toBe(false);
+    expect(api.getPosts).toHaveBeenLastCalledWith({
+      force: false,
+      query: {
+        status: POST_STATUS.approved,
+        titleLike: 'Approved',
+        sort: 'createdAt',
+        order: 'desc',
+      },
+    });
+  });
 });

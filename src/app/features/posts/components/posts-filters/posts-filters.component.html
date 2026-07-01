@@ -1,17 +1,9 @@
 <div class="posts-filters">
   @let selectedViewMode = viewMode();
 
-  <div class="posts-filters__search">
+  <div class="posts-filters__search" [class.posts-filters__search--filtering]="filtering()">
     <span class="posts-filters__search-leading" aria-hidden="true">
-      @if (filtering()) {
-        <mat-progress-spinner
-          class="posts-filters__search-spinner"
-          mode="indeterminate"
-          diameter="18"
-        />
-      } @else {
-        <span class="material-symbols-outlined posts-filters__search-icon">search</span>
-      }
+      <span class="material-symbols-outlined posts-filters__search-icon">search</span>
     </span>
     <input
       class="posts-filters__search-input"
@@ -56,7 +48,7 @@
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
           view_list
         </span>
-        {{ 'posts.filters.pagination' | translate }}
+        <span class="posts-filters__view-mode-text">{{ 'posts.filters.pagination' | translate }}</span>
       </button>
       <button
         type="button"
@@ -68,7 +60,7 @@
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
           unfold_more
         </span>
-        {{ 'posts.filters.infiniteScroll' | translate }}
+        <span class="posts-filters__view-mode-text">{{ 'posts.filters.infiniteScroll' | translate }}</span>
       </button>
     </div>
   </div>

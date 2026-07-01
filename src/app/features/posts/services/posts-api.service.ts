@@ -143,8 +143,10 @@ export class PostsApiService {
 
     if (status === POST_STATUS.rejected) {
       payload.rejectionReason = options?.rejectionReason ?? null;
+      payload.rejectedAt = new Date().toISOString();
     } else {
       payload.rejectionReason = null;
+      payload.rejectedAt = null;
     }
 
     return this.updatePost(id, payload);
@@ -200,7 +202,7 @@ export class PostsApiService {
     }
 
     if (query.titleLike) {
-      params = params.set('title_like', query.titleLike);
+      params = params.set('title:contains', query.titleLike);
     }
 
     if (query.sort) {

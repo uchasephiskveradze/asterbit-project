@@ -56,11 +56,12 @@
           [badgeIcon]="null"
         />
       } @else {
-        <div class="posts-list-page__content">
+        <div
+          class="posts-list-page__content"
+          [class.posts-list-page__content--filtering]="isFiltering"
+        >
           @if (isFiltering) {
-            <div class="posts-list-page__filtering-overlay" aria-busy="true" aria-live="polite">
-              <mat-progress-spinner mode="indeterminate" diameter="32" />
-            </div>
+            <div class="posts-list-page__filtering-bar" aria-hidden="true"></div>
           }
 
           <app-posts-table [posts]="store.displayedPosts()" />
@@ -82,7 +83,7 @@
                 [disabled]="isFiltering"
                 (reached)="store.loadMore()"
               >
-                <mat-progress-spinner mode="indeterminate" diameter="28" />
+                <span class="posts-list-page__scroll-dots" aria-hidden="true"></span>
                 <span>{{ 'posts.list.showingRange' | translate: { end: rangeEnd, total: totalItems } }}</span>
               </div>
             } @else {

@@ -107,4 +107,19 @@ describe('PostsApiService', () => {
     request.flush(mockPosts);
     await promise;
   });
+
+  it('should use json-server v1 contains filter for title search', async () => {
+    const promise = firstValueFrom(
+      service.getPosts({
+        force: true,
+        query: { titleLike: 'angular' },
+      }),
+    );
+    const request = httpMock.expectOne(
+      (req) => req.url === '/api/posts' && req.params.get('title:contains') === 'angular',
+    );
+
+    request.flush([mockPosts[0]]);
+    await promise;
+  });
 });

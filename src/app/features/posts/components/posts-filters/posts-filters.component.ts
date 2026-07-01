@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import { distinctUntilChanged } from 'rxjs';
 
@@ -17,7 +16,7 @@ import { PostsListViewMode } from '../../models/posts-list-view-mode.model';
 
 @Component({
   selector: 'app-posts-filters',
-  imports: [ReactiveFormsModule, MatProgressSpinnerModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './posts-filters.component.html',
   styleUrl: './posts-filters.component.scss',
 })

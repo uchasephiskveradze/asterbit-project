@@ -44,6 +44,8 @@ export class PostsListStore {
   public readonly currentPage = signal(1);
   public readonly visibleCount = signal(POSTS_PAGE_SIZE);
 
+  private readonly initialized = signal(false);
+
   public readonly filteredPosts = computed(() => this.posts());
 
   public readonly totalItems = computed(() => this.filteredPosts().length);
@@ -104,39 +106,27 @@ export class PostsListStore {
 
   public constructor() {
     combineLatest([
-      this.searchInput$.pipe(
-        tap((query) => {
-          this.filtering.set(query !== this.searchQuery());
-        }),
-        debounceTime(300),
-        distinctUntilChanged(),
-        startWith(this.searchInput()),
-      ),
+      this.searchInput$.pipe(debounceTime(400), distinctUntilChanged(), startWith(this.searchInput())),
       this.sortOrder$.pipe(startWith(this.sortOrder())),
       this.page$.pipe(startWith(this.currentPage())),
     ])
       .pipe(
-        switchMap(([query, sort, page]) =>
-          of({ query, sort, page }).pipe(
-            tap(({ query, sort, page }) => {
-              const queryChanged = query !== this.searchQuery();
-              const sortChanged = sort !== this.sortOrder();
+        tap(([query, sort, page]) => {
+          const queryChanged = query !== this.searchQuery();
+          const sortChanged = sort !== this.sortOrder();
 
-              this.searchQuery.set(query);
-              this.sortOrder.set(sort);
+          this.searchQuery.set(query);
+          this.sortOrder.set(sort);
 
-              if (queryChanged || sortChanged) {
-                this.currentPage.set(1);
-                this.visibleCount.set(this.pageSize);
-                this.refresh$.next(false);
-              } else {
-                this.currentPage.set(page);
-              }
+          if (queryChanged || sortChanged) {
+            this.currentPage.set(1);
+            this.visibleCount.set(this.pageSize);
+            this.refresh$.next(false);
+            return;
+          }
 
-              this.filtering.set(false);
-            }),
-          ),
-        ),
+          this.currentPage.set(page);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
@@ -144,7 +134,12 @@ export class PostsListStore {
     this.refresh$
       .pipe(
         switchMap((force) => {
-          this.loading.set(true);
+          if (this.initialized()) {
+            this.filtering.set(true);
+          } else {
+            this.loading.set(true);
+          }
+
           this.error.set(null);
 
           return this.api.getPosts({ force, query: this.buildListQuery() }).pipe(
@@ -152,7 +147,11 @@ export class PostsListStore {
               this.error.set('errors.posts.load');
               return of([] as Post[]);
             }),
-            finalize(() => this.loading.set(false)),
+            finalize(() => {
+              this.loading.set(false);
+              this.filtering.set(false);
+              this.initialized.set(true);
+            }),
           );
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -160,7 +159,6 @@ export class PostsListStore {
       .subscribe((posts) => {
         this.posts.set(posts);
         this.resetListPosition();
-        this.page$.next(1);
       });
   }
 
@@ -176,6 +174,7 @@ export class PostsListStore {
       return;
     }
 
+    this.filtering.set(true);
     this.searchInput$.next(query);
   }
 
@@ -184,6 +183,7 @@ export class PostsListStore {
       return;
     }
 
+    this.filtering.set(true);
     this.sortOrder$.next(order);
   }
 
