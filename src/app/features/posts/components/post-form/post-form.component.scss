@@ -68,13 +68,12 @@
   &__submit {
     @include primary-button;
     padding: 0.75rem 2rem;
-    border: none;
-    cursor: pointer;
 
     &:disabled,
     &--disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      filter: none;
     }
   }
 }

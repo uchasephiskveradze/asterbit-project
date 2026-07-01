@@ -38,7 +38,10 @@
     font-weight: 500;
     color: var(--app-text-muted);
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      filter 0.2s;
   }
 
   &__nav {
@@ -55,11 +58,16 @@
   &__page {
     &:hover:not(&--active) {
       background: var(--app-surface-raised);
+      color: var(--app-text);
     }
 
     &--active {
       background: var(--app-primary);
       color: var(--app-on-primary);
+
+      &:hover {
+        filter: brightness(1.08);
+      }
     }
   }
 

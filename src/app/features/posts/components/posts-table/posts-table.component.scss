@@ -90,10 +90,13 @@
     border-radius: $radius-sm;
     color: var(--app-text-subtle);
     text-decoration: none;
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      background-color 0.2s;
 
     &:hover {
       color: var(--app-primary);
+      background: var(--app-surface-muted);
     }
 
     & + & {

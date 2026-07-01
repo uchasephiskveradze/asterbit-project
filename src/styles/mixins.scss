@@ -25,10 +25,20 @@
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.2s;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--app-surface-muted);
+    border-color: var(--app-text-subtle);
+    color: var(--app-text);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--app-surface-raised);
   }
 }
 
@@ -45,10 +55,16 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: $shadow-sm;
-  transition: opacity 0.2s;
+  transition:
+    filter 0.2s,
+    opacity 0.2s;
 
-  &:hover {
-    opacity: 0.9;
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(0.95);
   }
 }
 
@@ -87,16 +103,22 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
+  border: none;
   border-radius: $radius-md;
   background: var(--app-primary);
   color: var(--app-on-primary);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s;
+  cursor: pointer;
+  transition: filter 0.2s;
 
-  &:hover {
-    opacity: 0.9;
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(0.95);
   }
 }
 

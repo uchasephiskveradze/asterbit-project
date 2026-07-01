@@ -1,4 +1,5 @@
 @use 'palette' as *;
+@use 'mixins' as *;
 
 :host {
   display: block;
@@ -44,6 +45,11 @@
   font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(1.15);
+  }
 }
 
 .layout__nav {
@@ -67,6 +73,11 @@
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--app-primary);
+  }
 }
 
 .layout__nav-badge {
@@ -93,15 +104,8 @@
 }
 
 .layout__cta {
-  display: inline-flex;
-  align-items: center;
+  @include primary-button;
   padding: 0.5rem 1.25rem;
-  border-radius: $radius-md;
-  background: var(--app-primary);
-  color: var(--app-on-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
 }
 
 .layout__actions {
@@ -119,10 +123,13 @@
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
 
   &:hover {
     color: var(--app-primary);
+    background: var(--app-surface-muted);
   }
 }
 
@@ -149,6 +156,7 @@
   &:hover {
     color: var(--app-primary);
     border-color: var(--app-primary);
+    background: var(--app-surface);
   }
 }
 
@@ -176,23 +184,12 @@
   color: var(--app-text);
 }
 
-.layout__rejection-dismiss,
-.layout__rejection-cta {
-  padding: 0.625rem 1rem;
-  border-radius: $radius-md;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 .layout__rejection-dismiss {
-  border: 1px solid var(--app-border);
-  background: transparent;
-  color: var(--app-text-muted);
+  @include secondary-button;
+  padding: 0.625rem 1rem;
 }
 
 .layout__rejection-cta {
-  border: none;
-  background: var(--app-primary);
-  color: var(--app-on-primary);
+  @include primary-button;
+  padding: 0.625rem 1rem;
 }
