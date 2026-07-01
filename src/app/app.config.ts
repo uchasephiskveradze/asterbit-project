@@ -7,10 +7,10 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
+import { provideAppTranslateLoader } from './core/i18n/app-translate.loader';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { GlobalErrorHandler } from './core/error-handler';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
@@ -22,10 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
     provideTranslateService({
-      loader: provideTranslateHttpLoader({
-        prefix: '/i18n/',
-        suffix: '.json',
-      }),
+      loader: provideAppTranslateLoader(),
       fallbackLang: 'en',
     }),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
