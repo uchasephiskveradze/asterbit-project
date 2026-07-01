@@ -1,6 +1,6 @@
-@use "./styles/palette" as *;
-@use "./styles/theme";
-@use "./styles/reset";
+@use "./app/shared/styles/palette" as *;
+@use "./app/shared/styles/theme";
+@use "./app/shared/styles/reset";
 @use "@angular/material" as mat;
 
 @include mat.core();
