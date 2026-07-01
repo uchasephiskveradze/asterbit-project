@@ -25,6 +25,38 @@ describe('PostFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should not show field errors before a field is touched', () => {
+    expect(component.getError('title')).toBeNull();
+    expect(component.getError('author')).toBeNull();
+    expect(component.getError('description')).toBeNull();
+    expect(component.getError('content')).toBeNull();
+  });
+
+  it('should keep submit disabled until the form is valid', () => {
+    expect(component.canSubmit()).toBe(false);
+
+    component.form.setValue({
+      title: 'Valid Post Title',
+      author: 'Jane Doe',
+      description: 'a'.repeat(POST_FORM_VALIDATION.description.minLength),
+      content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength),
+    });
+
+    expect(component.canSubmit()).toBe(true);
+  });
+
+  it('should mark fields touched when submit is attempted while invalid', () => {
+    const event = { preventDefault: vi.fn() } as unknown as MouseEvent;
+
+    component.onSubmitAttempt(event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(component.isInvalid('title')).toBe(true);
+    expect(component.isInvalid('author')).toBe(true);
+    expect(component.isInvalid('description')).toBe(true);
+    expect(component.isInvalid('content')).toBe(true);
+  });
+
   it('should block submit and show errors when required fields are empty', () => {
     const emitSpy = vi.spyOn(component.formSubmit, 'emit');
 
@@ -45,7 +77,9 @@ describe('PostFormComponent', () => {
       description: 'a'.repeat(POST_FORM_VALIDATION.description.minLength - 1),
       content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength - 1),
     });
-    component.form.markAllAsTouched();
+    component.form.controls.title.markAsTouched();
+    component.form.controls.description.markAsTouched();
+    component.form.controls.content.markAsTouched();
 
     expect(component.form.invalid).toBe(true);
     expect(component.getError('title')).toEqual({

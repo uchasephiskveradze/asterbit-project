@@ -122,8 +122,11 @@
   <div class="post-form__actions">
     <button
       class="post-form__submit"
+      [class.post-form__submit--disabled]="!canSubmit()"
       type="submit"
-      [disabled]="isSubmitting"
+      [disabled]="submitting()"
+      [attr.aria-disabled]="!canSubmit()"
+      (click)="onSubmitAttempt($event)"
     >
       @if (isSubmitting) {
         {{ 'common.saving' | translate }}

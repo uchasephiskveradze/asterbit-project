@@ -99,13 +99,29 @@ export class PostFormComponent {
   }
 
   public onSubmit(): void {
-    this.form.markAllAsTouched();
+    if (this.submitting()) {
+      return;
+    }
 
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
 
     this.formSubmit.emit(this.form.getRawValue());
+  }
+
+  public onSubmitAttempt(event: MouseEvent): void {
+    if (this.submitting() || this.canSubmit()) {
+      return;
+    }
+
+    event.preventDefault();
+    this.form.markAllAsTouched();
+  }
+
+  public canSubmit(): boolean {
+    return this.form.valid;
   }
 
   public getLength(controlName: keyof PostFormValue): number {
@@ -141,6 +157,10 @@ export class PostFormComponent {
   }
 
   public getError(controlName: keyof PostFormValue): PostFormControlError | null {
+    if (!this.isInvalid(controlName)) {
+      return null;
+    }
+
     return getPostFormControlError(this.form.controls[controlName].errors);
   }
 }
