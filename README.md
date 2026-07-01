@@ -53,12 +53,13 @@ npm test        # unit tests (Vitest)
 
 | Library | Purpose |
 |---------|---------|
-| Angular Material | `MatDialog`, `MatButton`, `MatProgressSpinner` for dialogs and moderation actions |
+| **ngx-translate** | UI strings in English and Georgian (`public/i18n/en.json`, `ka.json`) |
+| Angular Material | `MatButton`, `MatProgressSpinner` for moderation and delete actions |
 | RxJS | HTTP streams, operators in signal stores |
 | json-server | Mock REST API (`db.json`) for posts and users |
 | Vitest | Unit testing |
 
-Custom Stitch-styled UI is used for lists, filters, forms, and layout. Material is applied selectively where it improves feedback (dialogs, spinners, moderation buttons).
+Custom Stitch-styled UI is used for lists, filters, forms, and layout. Shared **`app-modal`** handles logout confirmation, rejection notices, admin reject-with-reason, and delete confirmation flows. Material is used selectively for buttons and spinners.
 
 ## Features
 
@@ -68,6 +69,7 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Material 
 - View post details
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
+- Header **locale toggle** (EN / KA) and **dark / light theme**
 
 ### My Posts (`/posts/my`)
 
@@ -75,19 +77,28 @@ Tabs for the current user's submissions. Each tab fetches posts filtered by `sta
 
 - **Under Review** — `pending`
 - **Approved**
-- **Rejected**
+- **Rejected** — inline callout shows `rejectionReason` when admin provided one
 
 Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details.
+
+**Rejection notifications** (regular users only):
+
+1. After login, if unseen rejected posts exist → modal on the main layout (page loads first, then overlay)
+2. Nav badge on **My Posts** until the user opens the **Rejected** tab
+3. Badge on the **Rejected** tab itself while unseen rejections remain
+4. Seen / acknowledged state persisted per user in `localStorage`
 
 ### Moderation (`/posts/moderation`, admin only)
 
 - Fetches only `pending` posts from the API (`GET /posts?status=pending`)
 - Approve or reject from the queue or directly on post details
+- **Reject** opens `app-modal` with a required reason (10–500 chars); reason is stored as `rejectionReason` on the post
 - **New submission** vs **Edited submission** badges on the queue (posts without a reason show **Pending review**)
 
 ### Auth
 
 - Mock login via `AuthService` (signals + `localStorage`)
+- **Logout** asks for confirmation via `app-modal` before clearing the session
 - Route guards: `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard`
 - HTTP interceptor attaches a demo bearer token
 
@@ -104,8 +115,9 @@ src/app/
 │   │   ├── services/      # AuthService, AuthApiService, AuthStorageService
 │   │   ├── guards/        # auth, admin, guest
 │   │   └── models/        # User, session, roles
+│   ├── i18n/              # LocaleService, translate testing helpers
 │   ├── interceptors/      # authInterceptor, httpErrorInterceptor
-│   ├── layout/            # Main shell with role-aware navigation
+│   ├── layout/            # Main shell, rejection notice modal, logout modal
 │   ├── config.ts          # API base URL
 │   ├── error-handler.ts   # GlobalErrorHandler
 │   └── theme/             # ThemeService, ThemeStorageService, app-theme model
@@ -114,15 +126,15 @@ src/app/
 │   └── posts/
 │       ├── components/    # Table, filters, form, states, revision panel, moderation actions
 │       ├── guards/        # postEditGuard
-│       ├── models/        # Post, status, revision, DTOs, API wire types
+│       ├── models/        # Post, status, revision, rejection notice, DTOs
 │       ├── pipes/         # postStatusLabel
-│       ├── services/      # PostsApiService, PostsPermissionService, PostsViewStorageService
+│       ├── services/      # PostsApiService, PostsPermissionService, RejectionNoticeService, …
 │       ├── pages/         # List, details, upsert, my-posts, moderation
 │       ├── resolvers/     # PostResolver service + route resolver fn
 │       ├── store/         # Signal stores per page/flow
-│       └── utils/         # Revision diff, json-server query helpers
+│       └── utils/         # Revision diff, rejection notice filters, json-server helpers
 └── shared/
-    ├── components/          # error-state, empty-state, page-header
+    ├── components/        # modal, error-state, empty-state, page-header
     ├── infinite-scroll.directive.ts
     └── truncate.pipe.ts
 ```
@@ -137,7 +149,7 @@ Signal stores per feature area (not NgRx):
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
 | **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client) |
-| **ModerationStore** | Pending queue (`status=pending` on API), approve/reject |
+| **ModerationStore** | Pending queue (`status=pending` on API), approve/reject with reason |
 
 RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `tap`, and `finalize`.
 
@@ -147,7 +159,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 |-------|--------|-------------|
 | `/login` | Guest only | Sign in |
 | `/posts` | Authenticated | All posts (any status) |
-| `/posts/my` | Authenticated | Own posts by status tab |
+| `/posts/my` | Authenticated | Own posts by status tab (`?tab=under-review\|approved\|rejected`) |
 | `/posts/moderation` | Admin | Pending review queue |
 | `/posts/new` | Authenticated | Create / submit post |
 | `/posts/:id` | Authenticated | Post details (+ admin moderation on pending) |
@@ -162,7 +174,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - `npm run api` serves `db.json` at `http://localhost:3000`
 - Angular proxy (`proxy.conf.json`) maps `/api/*` → `http://localhost:3000/*`
 - Collections: `posts`, `users`
-- Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions)
+- Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions), `rejectionReason` (set when admin rejects)
 - Post IDs are server-generated strings (json-server v1)
 - List queries use json-server v1 sort syntax (`_sort=-createdAt` for descending)
 - `PostsApiService` caches list responses per query key and individual posts in an LRU cache (max 100)
@@ -171,16 +183,18 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 
 | Area | Implementation |
 |------|----------------|
+| **i18n** | `ngx-translate` + `LocaleService`; templates use translation keys, stores emit error keys |
+| **Shared modal** | `app-modal` — backdrop/Escape close, projected actions, body scroll lock |
+| **Rejection notices** | `RejectionNoticeService` + `localStorage` per user (`seen` vs `acknowledged`) |
 | **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard` |
 | **HTTP Interceptor** | `authInterceptor` (bearer token), `httpErrorInterceptor` (401 logout, error logging) |
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `appInfiniteScroll` (intersection observer) |
-| **Unit Tests** | Guards, stores, access rules, pipes, theme, revision utils, components |
+| **Unit Tests** | ~49 focused tests — guards, stores, services, pipes, theme, revision utils |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
-| **Local Storage** | Auth session, theme preference, posts list view mode (`blog-auth-session`, `blog-app-theme`, `blog-posts-list-view-mode`) |
+| **Local Storage** | Auth session, theme, list view mode, rejection notice state per user |
 | **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
-| **Incremental loading** | `appInfiniteScroll` directive when infinite scroll mode is selected |
 | **Authentication** | Mock login with roles (`user` / `admin`) |
 
 ### Intentionally not used
@@ -193,7 +207,20 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 
 ## Quick Test Flow
 
-1. Login as **user** → Create Post → check **My Posts → Under Review**
-2. Login as **admin** → **Moderation** → Approve
-3. Login as **user** → edit approved post → Submit for Review
-4. Login as **admin** → open post details → review diff → Approve or Reject
+### Happy path (approve + re-review)
+
+1. Login as **user** → **Create Post** → **My Posts → Under Review**
+2. Login as **admin** → **Moderation** → **Approve**
+3. Login as **user** → edit approved post → **Submit for Review**
+4. Login as **admin** → open post details → review diff → **Approve**
+
+### Rejection + owner notification
+
+1. Login as **user** → create a post (or use one already under review)
+2. Login as **admin** → **Moderation** → **Reject** → enter a reason → confirm
+3. Login as **user** → main page loads → rejection modal appears → **View reasons** → **My Posts → Rejected** with inline reason callout
+4. Nav / tab badges clear after visiting the **Rejected** tab
+
+### Logout
+
+1. While logged in, click **Logout** → confirm in modal (or cancel to stay)
