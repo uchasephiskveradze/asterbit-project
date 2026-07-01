@@ -34,7 +34,7 @@ Open [http://localhost:4200](http://localhost:4200). You will be redirected to *
 | Email | Password | Role |
 |-------|----------|------|
 | `admin@blog.com` | `admin123` | Admin — moderate, edit/delete any post, auto-approved creates |
-| `user@blog.com` | `user123` | User — submit posts for review, edit own approved posts (re-review) |
+| `user@blog.com` | `user123` | User — submit posts for review, edit own approved posts (re-review), resubmit rejected posts |
 
 Demo passwords are validated in `AuthApiService` (not stored in `db.json`).
 
@@ -54,7 +54,7 @@ npm test        # unit tests (Vitest)
 | Library | Purpose |
 |---------|---------|
 | **ngx-translate** | UI strings in English and Georgian (`public/i18n/en.json`, `ka.json`) |
-| Angular Material | `MatButton`, `MatProgressSpinner` for moderation and delete actions |
+| Angular Material | `MatButton`, `MatProgressSpinner` on moderation and loading states |
 | RxJS | HTTP streams, operators in signal stores |
 | json-server | Mock REST API (`db.json`) for posts and users |
 | Vitest | Unit testing |
@@ -65,8 +65,9 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Shared **
 
 ### Posts (all logged-in users)
 
-- Browse **all posts** (every status) with debounced search, server-side date sort, and client-side pagination or infinite scroll (user preference)
-- View post details
+- Browse **approved posts only** on `/posts` (`GET /posts?status=approved`) with debounced search, server-side date sort, and client-side pagination or infinite scroll (user preference)
+- **Pending** and **rejected** posts are not listed publicly; owners see them under **My Posts**, admins under **Moderation** or via direct URL when permitted
+- View post details (owners and admins can open non-approved posts they are allowed to see)
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
 - Header **locale toggle** (EN / KA) and **dark / light theme**
@@ -145,7 +146,7 @@ Signal stores per feature area (not NgRx):
 
 | Store | Responsibility |
 |-------|----------------|
-| **PostsListStore** | Fetch all posts, debounced search, server-side sort, pagination or infinite scroll |
+| **PostsListStore** | Fetch approved posts, debounced search, server-side sort, pagination or infinite scroll |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
 | **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client) |
@@ -158,7 +159,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | Route | Access | Description |
 |-------|--------|-------------|
 | `/login` | Guest only | Sign in |
-| `/posts` | Authenticated | All posts (any status) |
+| `/posts` | Authenticated | Approved posts only |
 | `/posts/my` | Authenticated | Own posts by status tab (`?tab=under-review\|approved\|rejected`) |
 | `/posts/moderation` | Admin | Pending review queue |
 | `/posts/new` | Authenticated | Create / submit post |
@@ -179,6 +180,14 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - List queries use json-server v1 sort syntax (`_sort=-createdAt` for descending)
 - `PostsApiService` caches list responses per query key and individual posts in an LRU cache (max 100)
 
+Typical list queries:
+
+| Screen | API filter |
+|--------|------------|
+| `/posts` | `status=approved` (+ optional `q`, `_sort`) |
+| `/posts/my` | `status=pending\|approved\|rejected` (per tab), then client filter by `submittedBy` |
+| `/posts/moderation` | `status=pending` |
+
 ## Technical Highlights
 
 | Area | Implementation |
@@ -191,7 +200,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `appInfiniteScroll` (intersection observer) |
-| **Unit Tests** | ~49 focused tests — guards, stores, services, pipes, theme, revision utils |
+| **Unit Tests** | 50 focused tests — guards, stores, services, pipes, theme, revision utils |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session, theme, list view mode, rejection notice state per user |
 | **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
@@ -209,9 +218,9 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 
 ### Happy path (approve + re-review)
 
-1. Login as **user** → **Create Post** → **My Posts → Under Review**
+1. Login as **user** → **Create Post** → **My Posts → Under Review** (post does not appear on main **Posts** list yet)
 2. Login as **admin** → **Moderation** → **Approve**
-3. Login as **user** → edit approved post → **Submit for Review**
+3. Login as **user** → post appears on **Posts** → edit approved post → **Submit for Review**
 4. Login as **admin** → open post details → review diff → **Approve**
 
 ### Rejection + owner notification
