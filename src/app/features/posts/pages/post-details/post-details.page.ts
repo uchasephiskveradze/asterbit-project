@@ -1,8 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, Injector, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -36,6 +35,7 @@ import {
     TranslatePipe,
     ModalComponent,
     ErrorStateComponent,
+    DeletePostDialogComponent,
     PostRevisionPanelComponent,
     ModerationActionsComponent,
     PostStatusLabelPipe,
@@ -56,6 +56,7 @@ export class PostDetailsPage {
   public readonly rejectionValidation = REJECTION_REASON_VALIDATION;
 
   public readonly rejectModalOpen = signal(false);
+  public readonly deleteModalOpen = signal(false);
 
   public readonly rejectReasonControl = new FormControl('', {
     nonNullable: true,
@@ -68,8 +69,6 @@ export class PostDetailsPage {
 
   private readonly auth = inject(AuthService);
   private readonly access = inject(PostsPermissionService);
-  private readonly dialog = inject(MatDialog);
-  private readonly injector = inject(Injector);
 
   public readonly backNavigation = computed(() =>
     getPostBackNavigation(this.from(), { tab: this.tab() }),
@@ -167,14 +166,14 @@ export class PostDetailsPage {
       return;
     }
 
-    this.dialog.open(DeletePostDialogComponent, {
-      data: { postId: post.id, postTitle: post.title },
-      panelClass: 'delete-post-dialog-panel',
-      autoFocus: 'dialog',
-      injector: Injector.create({
-        parent: this.injector,
-        providers: [{ provide: PostDetailsStore, useValue: this.store }],
-      }),
-    });
+    this.deleteModalOpen.set(true);
+  }
+
+  public closeDeleteDialog(): void {
+    if (this.store.deleting()) {
+      return;
+    }
+
+    this.deleteModalOpen.set(false);
   }
 }

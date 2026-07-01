@@ -2,9 +2,6 @@
 @use 'mixins' as *;
 
 .delete-post-dialog {
-  padding: 1.5rem;
-  max-width: 28rem;
-
   &__icon-wrap {
     display: flex;
     align-items: center;
@@ -19,14 +16,6 @@
   &__icon {
     font-size: 1.5rem;
     color: var(--app-error);
-  }
-
-  &__title {
-    margin: 0 0 0.75rem;
-    font-family: $font-family-headline;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--app-text);
   }
 
   &__message {
@@ -47,13 +36,6 @@
     font-weight: 600;
     color: var(--app-heading);
     @include break-long-words;
-  }
-
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 0.75rem;
   }
 
   &__confirm {

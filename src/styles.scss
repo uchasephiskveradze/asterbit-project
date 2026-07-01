@@ -69,13 +69,3 @@ body {
   background: var(--app-background);
   color: var(--app-text);
 }
-
-.delete-post-dialog-panel {
-  .mat-mdc-dialog-surface {
-    border-radius: $radius-lg;
-    padding: 0;
-    box-shadow: var(--app-shadow-soft);
-    background: var(--app-surface);
-    color: var(--app-text);
-  }
-}

@@ -1,42 +1,45 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 
 import { navigateSafely } from '../../../../core/router/navigate.util';
-
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PostDetailsStore } from '../../store/post-details.store';
-import { DeletePostDialogData } from './types/delete-post-dialog.types';
 
 @Component({
   selector: 'app-delete-post-dialog',
-  imports: [MatDialogClose, MatButtonModule, MatProgressSpinnerModule, TranslatePipe],
+  imports: [ModalComponent, MatButtonModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './delete-post-dialog.component.html',
   styleUrl: './delete-post-dialog.component.scss',
 })
 export class DeletePostDialogComponent {
-  public readonly data = inject<DeletePostDialogData>(MAT_DIALOG_DATA);
+  public readonly postId = input.required<string>();
+  public readonly postTitle = input.required<string>();
+  public readonly closed = output<void>();
+
   public readonly store = inject(PostDetailsStore);
 
-  private readonly dialogRef = inject(MatDialogRef<DeletePostDialogComponent, boolean>);
   private readonly router = inject(Router);
+
+  public onModalCloseAttempt(): void {
+    if (this.store.deleting()) {
+      return;
+    }
+
+    this.closed.emit();
+  }
 
   public confirm(): void {
     if (this.store.deleting()) {
       return;
     }
 
-    this.dialogRef.disableClose = true;
-
-    this.store.deletePost(this.data.postId).subscribe({
+    this.store.deletePost(this.postId()).subscribe({
       next: () => {
-        this.dialogRef.close(true);
+        this.closed.emit();
         navigateSafely(this.router, ['/posts']);
-      },
-      complete: () => {
-        this.dialogRef.disableClose = false;
       },
     });
   }
