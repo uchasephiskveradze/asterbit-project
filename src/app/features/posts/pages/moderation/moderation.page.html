@@ -26,7 +26,7 @@
         @let reason = post.pendingReason;
         @let isEdited = reason === pendingReason.edited;
 
-        <article class="moderation-page__card" @queueItem>
+        <article class="moderation-page__card" animate.leave="moderation-page__card--leaving">
           <div class="moderation-page__card-body">
             <div class="moderation-page__card-heading">
               <a

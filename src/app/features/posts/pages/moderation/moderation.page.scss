@@ -23,8 +23,13 @@
     gap: 1rem;
     padding: 1.25rem;
 
-    &.ng-animating {
+    &--leaving {
       overflow: hidden;
+      opacity: 0;
+      transform: translateX(-12px);
+      transition:
+        opacity 200ms ease-in,
+        transform 200ms ease-in;
     }
   }
 
@@ -121,5 +126,11 @@
     margin: 0;
     font-size: 0.75rem;
     color: var(--app-error);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moderation-page__card--leaving {
+    transition-duration: 0.01ms !important;
   }
 }
