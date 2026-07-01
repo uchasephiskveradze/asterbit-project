@@ -75,7 +75,7 @@
 
         @if (auth.isAuthenticated()) {
           <a class="layout__cta" routerLink="/posts/new">{{ 'common.createPost' | translate }}</a>
-          <button class="layout__auth-link" type="button" (click)="auth.logout()">
+          <button class="layout__auth-link" type="button" (click)="openLogoutModal()">
             {{ 'layout.logout' | translate }}
           </button>
         } @else {
@@ -108,6 +108,23 @@
       </button>
       <button class="layout__rejection-cta" type="button" (click)="viewRejectionReasons()">
         {{ 'posts.myPosts.rejectionNotice.viewReasons' | translate }}
+      </button>
+    </div>
+  </app-modal>
+}
+
+@if (logoutModalOpen()) {
+  <app-modal titleKey="layout.logoutModal.title" (closed)="closeLogoutModal()">
+    <p class="layout__rejection-message">
+      {{ 'layout.logoutModal.message' | translate }}
+    </p>
+
+    <div modalActions>
+      <button class="layout__rejection-dismiss" type="button" (click)="closeLogoutModal()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="layout__rejection-cta" type="button" (click)="confirmLogout()">
+        {{ 'layout.logoutModal.confirm' | translate }}
       </button>
     </div>
   </app-modal>

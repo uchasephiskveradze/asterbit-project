@@ -26,7 +26,12 @@
     "switchToLightTheme": "ღია თემაზე გადართვა",
     "switchToDarkTheme": "მუქ თემაზე გადართვა",
     "switchToGeorgian": "ქართულ ენაზე გადართვა",
-    "switchToEnglish": "ინგლისურ ენაზე გადართვა"
+    "switchToEnglish": "ინგლისურ ენაზე გადართვა",
+    "logoutModal": {
+      "title": "გსურთ გასვლა?",
+      "message": "დარწმუნებული ხართ, რომ გსურთ ანგარიშიდან გასვლა?",
+      "confirm": "გასვლა"
+    }
   },
   "auth": {
     "signInTitle": "შესვლა",

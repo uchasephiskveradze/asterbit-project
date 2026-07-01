@@ -27,6 +27,7 @@ export class MainLayoutComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly rejectionNoticePosts = signal<Post[] | null>(null);
+  public readonly logoutModalOpen = signal(false);
 
   private rejectionNoticePrompted = false;
 
@@ -53,6 +54,19 @@ export class MainLayoutComponent {
     }
 
     this.rejectionNoticePosts.set(null);
+  }
+
+  public openLogoutModal(): void {
+    this.logoutModalOpen.set(true);
+  }
+
+  public closeLogoutModal(): void {
+    this.logoutModalOpen.set(false);
+  }
+
+  public confirmLogout(): void {
+    this.logoutModalOpen.set(false);
+    this.auth.logout();
   }
 
   public viewRejectionReasons(): void {
