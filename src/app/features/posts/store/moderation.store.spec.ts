@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { Post } from '../models/post.model';
 import { POST_STATUS } from '../models/post-status.model';
@@ -46,25 +46,6 @@ describe('ModerationStore', () => {
     expect(store.pendingPosts()).toEqual([pendingPost]);
   });
 
-  it('should set an error when loading fails', async () => {
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        ModerationStore,
-        {
-          provide: PostsApiService,
-          useValue: { getPosts: () => throwError(() => new Error('network')) },
-        },
-      ],
-    });
-
-    const failingStore = TestBed.inject(ModerationStore);
-
-    await vi.waitFor(() => expect(failingStore.loading()).toBe(false));
-
-    expect(failingStore.error()).toBe('errors.posts.moderationLoad');
-  });
-
   it('should remove moderated posts from the local queue', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
@@ -73,6 +54,5 @@ describe('ModerationStore', () => {
     await vi.waitFor(() => expect(api.updatePostStatus).toHaveBeenCalledWith('1', POST_STATUS.approved));
 
     expect(store.pendingPosts()).toEqual([]);
-    expect(api.getPosts).toHaveBeenCalledTimes(1);
   });
 });

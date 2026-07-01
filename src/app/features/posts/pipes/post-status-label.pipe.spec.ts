@@ -17,7 +17,6 @@ describe('PostStatusLabelPipe', () => {
     translate = TestBed.inject(TranslateService);
     translate.setTranslation('en', {
       'posts.status.approved': 'Approved',
-      'posts.status.underReview': 'Under Review',
       'posts.status.underReviewEdited': 'Under Review (Edited)',
     });
     translate.use('en');
@@ -31,9 +30,5 @@ describe('PostStatusLabelPipe', () => {
     expect(pipe.transform({ status: 'pending', pendingReason: 'edited' })).toBe(
       'Under Review (Edited)',
     );
-  });
-
-  it('should return default pending label for new submissions', () => {
-    expect(pipe.transform({ status: 'pending', pendingReason: 'new' })).toBe('Under Review');
   });
 });

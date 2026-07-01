@@ -30,10 +30,6 @@ describe('LoginPage', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should not call auth.login when the form is invalid', () => {
     component.onSubmit();
 

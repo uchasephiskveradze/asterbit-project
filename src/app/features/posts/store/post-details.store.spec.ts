@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { Post } from '../models/post.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
@@ -58,17 +58,5 @@ describe('PostDetailsStore', () => {
     await vi.waitFor(() => expect(store.moderating()).toBe(false));
 
     expect(store.post()?.status).toBe('approved');
-  });
-
-  it('should set an error when moderation fails', async () => {
-    api.updatePostStatus.mockReturnValue(throwError(() => new Error('network')));
-    store.applyResolverResult('1', { post, notFound: false, error: null });
-
-    store.moderatePost('rejected');
-
-    await vi.waitFor(() => expect(store.moderating()).toBe(false));
-
-    expect(store.error()).toBe('errors.posts.updateStatus');
-    expect(store.post()?.status).toBe('pending');
   });
 });

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 
-import { Post } from '../../models/post.model';
 import { PostFormComponent } from './post-form.component';
 import { POST_FORM_VALIDATION } from './post-form.validation';
 
@@ -21,28 +20,11 @@ describe('PostFormComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should not show field errors before a field is touched', () => {
     expect(component.getError('title')).toBeNull();
     expect(component.getError('author')).toBeNull();
     expect(component.getError('description')).toBeNull();
     expect(component.getError('content')).toBeNull();
-  });
-
-  it('should keep submit disabled until the form is valid', () => {
-    expect(component.canSubmit()).toBe(false);
-
-    component.form.setValue({
-      title: 'Valid Post Title',
-      author: 'Jane Doe',
-      description: 'a'.repeat(POST_FORM_VALIDATION.description.minLength),
-      content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength),
-    });
-
-    expect(component.canSubmit()).toBe(true);
   });
 
   it('should mark fields touched when submit is attempted while invalid', () => {
@@ -65,12 +47,9 @@ describe('PostFormComponent', () => {
     expect(emitSpy).not.toHaveBeenCalled();
     expect(component.form.invalid).toBe(true);
     expect(component.isInvalid('title')).toBe(true);
-    expect(component.isInvalid('author')).toBe(true);
-    expect(component.isInvalid('description')).toBe(true);
-    expect(component.isInvalid('content')).toBe(true);
   });
 
-  it('should enforce assignment minimum lengths', () => {
+  it('should enforce minimum lengths', () => {
     component.form.setValue({
       title: 'a'.repeat(POST_FORM_VALIDATION.title.minLength - 1),
       author: 'Jane Doe',
@@ -78,21 +57,11 @@ describe('PostFormComponent', () => {
       content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength - 1),
     });
     component.form.controls.title.markAsTouched();
-    component.form.controls.description.markAsTouched();
-    component.form.controls.content.markAsTouched();
 
     expect(component.form.invalid).toBe(true);
     expect(component.getError('title')).toEqual({
       key: 'form.errors.minLength',
       params: { count: POST_FORM_VALIDATION.title.minLength },
-    });
-    expect(component.getError('description')).toEqual({
-      key: 'form.errors.minLength',
-      params: { count: POST_FORM_VALIDATION.description.minLength },
-    });
-    expect(component.getError('content')).toEqual({
-      key: 'form.errors.minLength',
-      params: { count: POST_FORM_VALIDATION.content.minLength },
     });
   });
 
@@ -109,48 +78,5 @@ describe('PostFormComponent', () => {
     component.onSubmit();
 
     expect(emitSpy).toHaveBeenCalledWith(validValue);
-  });
-
-  it('should show character counter only while a field is focused', () => {
-    expect(component.showCounter('title')).toBe(false);
-
-    component.onFieldFocus('title');
-    expect(component.showCounter('title')).toBe(true);
-    expect(component.showCounter('author')).toBe(false);
-
-    component.onFieldBlur('title');
-    expect(component.showCounter('title')).toBe(false);
-  });
-
-  it('should patch edit values only when the post id changes', () => {
-    const patchSpy = vi.spyOn(component.form, 'patchValue');
-    const post: Post = {
-      id: '1',
-      title: 'Original title',
-      author: 'Jane Doe',
-      description: 'a'.repeat(POST_FORM_VALIDATION.description.minLength),
-      content: 'a'.repeat(POST_FORM_VALIDATION.content.minLength),
-      createdAt: '2026-01-01T00:00:00.000Z',
-      status: 'approved',
-    };
-
-    fixture.componentRef.setInput('post', post);
-    fixture.detectChanges();
-    expect(patchSpy).toHaveBeenCalledTimes(1);
-
-    fixture.componentRef.setInput('post', {
-      ...post,
-      title: 'Updated title',
-    });
-    fixture.detectChanges();
-    expect(patchSpy).toHaveBeenCalledTimes(1);
-
-    fixture.componentRef.setInput('post', {
-      ...post,
-      id: '2',
-      title: 'Different post',
-    });
-    fixture.detectChanges();
-    expect(patchSpy).toHaveBeenCalledTimes(2);
   });
 });

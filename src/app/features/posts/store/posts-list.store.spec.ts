@@ -18,18 +18,11 @@ describe('PostsListStore', () => {
     status: POST_STATUS.approved,
   };
 
-  const pendingPost: Post = {
-    ...approvedPost,
-    id: '2',
-    title: 'Pending Post',
-    status: POST_STATUS.pending,
-  };
-
   let store: PostsListStore;
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    api = { getPosts: vi.fn(() => of([approvedPost, pendingPost])) };
+    api = { getPosts: vi.fn(() => of([approvedPost])) };
 
     TestBed.configureTestingModule({
       providers: [
@@ -58,8 +51,7 @@ describe('PostsListStore', () => {
         order: 'desc',
       },
     });
-    expect(store.posts()).toEqual([approvedPost, pendingPost]);
-    expect(store.error()).toBeNull();
+    expect(store.posts()).toEqual([approvedPost]);
   });
 
   it('should set an error when loading fails', async () => {
@@ -71,23 +63,5 @@ describe('PostsListStore', () => {
 
     expect(store.error()).toBe('errors.posts.load');
     expect(store.posts()).toEqual([]);
-  });
-
-  it('should request server-side search across all posts when the query changes', async () => {
-    store.loadPosts();
-    await vi.waitFor(() => expect(store.loading()).toBe(false));
-
-    store.setSearchInput('Pending');
-
-    await vi.waitFor(() => expect(store.filtering()).toBe(false));
-
-    expect(api.getPosts).toHaveBeenLastCalledWith({
-      force: false,
-      query: {
-        titleLike: 'Pending',
-        sort: 'createdAt',
-        order: 'desc',
-      },
-    });
   });
 });

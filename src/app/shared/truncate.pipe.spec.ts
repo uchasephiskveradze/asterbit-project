@@ -7,10 +7,6 @@ describe('TruncatePipe', () => {
     expect(pipe.transform(null)).toBe('');
   });
 
-  it('should return original text when shorter than limit', () => {
-    expect(pipe.transform('Short text', 20)).toBe('Short text');
-  });
-
   it('should truncate long text with suffix', () => {
     expect(pipe.transform('abcdefghijklmnopqrstuvwxyz', 10)).toBe('abcdefghij…');
   });

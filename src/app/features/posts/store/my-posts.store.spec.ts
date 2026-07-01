@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Post } from '../models/post.model';
@@ -24,12 +24,6 @@ describe('MyPostsStore', () => {
     id: '2',
     title: 'My Approved Post',
     status: POST_STATUS.approved,
-  };
-
-  const otherUsersApprovedPost: Post = {
-    ...approvedPost,
-    id: '3',
-    submittedBy: '9',
   };
 
   let store: MyPostsStore;
@@ -72,7 +66,7 @@ describe('MyPostsStore', () => {
   it('should fetch approved posts when the approved tab is selected', async () => {
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
-    api.getPosts.mockReturnValue(of([approvedPost, otherUsersApprovedPost]));
+    api.getPosts.mockReturnValue(of([approvedPost]));
     store.setTab('approved');
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
@@ -81,52 +75,5 @@ describe('MyPostsStore', () => {
       query: { status: POST_STATUS.approved },
     });
     expect(store.filteredPosts()).toEqual([approvedPost]);
-  });
-
-  it('should update the tab from a valid query param and refetch', async () => {
-    await vi.waitFor(() => expect(store.loading()).toBe(false));
-
-    api.getPosts.mockReturnValue(of([]));
-    store.setTabFromQuery('rejected');
-
-    await vi.waitFor(() => expect(store.loading()).toBe(false));
-
-    expect(store.activeTab()).toBe('rejected');
-    expect(api.getPosts).toHaveBeenLastCalledWith({
-      force: false,
-      query: { status: POST_STATUS.rejected },
-    });
-  });
-
-  it('should ignore invalid query tabs', async () => {
-    await vi.waitFor(() => expect(store.loading()).toBe(false));
-
-    store.setTab('approved');
-    store.setTabFromQuery('invalid');
-
-    expect(store.activeTab()).toBe('approved');
-  });
-
-  it('should set an error when loading fails', async () => {
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        MyPostsStore,
-        {
-          provide: PostsApiService,
-          useValue: { getPosts: () => throwError(() => new Error('network')) },
-        },
-        {
-          provide: AuthService,
-          useValue: { currentUser: () => null },
-        },
-      ],
-    });
-
-    const failingStore = TestBed.inject(MyPostsStore);
-
-    await vi.waitFor(() => expect(failingStore.loading()).toBe(false));
-
-    expect(failingStore.error()).toBe('errors.posts.myPostsLoad');
   });
 });

@@ -43,11 +43,8 @@ describe('PostsPermissionService', () => {
     service = TestBed.inject(PostsPermissionService);
   });
 
-  it('should allow anyone to view approved posts', () => {
+  it('should control who can view posts', () => {
     expect(service.canViewPost(approvedPost, null)).toBe(true);
-  });
-
-  it('should allow owners and admins to view pending posts', () => {
     expect(service.canViewPost(pendingPost, user)).toBe(true);
     expect(service.canViewPost(pendingPost, admin)).toBe(true);
     expect(service.canViewPost(pendingPost, null)).toBe(false);

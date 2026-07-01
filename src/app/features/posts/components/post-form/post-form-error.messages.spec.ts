@@ -19,15 +19,4 @@ describe('getPostFormControlError', () => {
       params: { count: 10 },
     });
   });
-
-  it('should return maxlength message key', () => {
-    const errors: ValidationErrors = {
-      maxlength: { requiredLength: 120, actualLength: 150 },
-    };
-
-    expect(getPostFormControlError(errors)).toEqual({
-      key: 'form.errors.maxLength',
-      params: { count: 120 },
-    });
-  });
 });

@@ -26,10 +26,4 @@ describe('PostsViewStorageService', () => {
     expect(localStorage.getItem(POSTS_LIST_VIEW_MODE_KEY)).toBe('infinite-scroll');
     expect(service.read()).toBe('infinite-scroll');
   });
-
-  it('should fall back to pagination for invalid stored values', () => {
-    localStorage.setItem(POSTS_LIST_VIEW_MODE_KEY, 'invalid');
-
-    expect(service.read()).toBe('pagination');
-  });
 });

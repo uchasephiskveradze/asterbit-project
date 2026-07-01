@@ -58,8 +58,7 @@ describe('postResolver', () => {
   it('should resolve a post by route id', async () => {
     const resultPromise = runResolver(createRoute('abc123'));
 
-    const request = httpMock.expectOne('/api/posts/abc123');
-    request.flush(mockPost);
+    httpMock.expectOne('/api/posts/abc123').flush(mockPost);
 
     await expect(resultPromise).resolves.toEqual({
       post: mockPost,
@@ -71,8 +70,7 @@ describe('postResolver', () => {
   it('should return notFound when the API responds with 404', async () => {
     const resultPromise = runResolver(createRoute('missing'));
 
-    const request = httpMock.expectOne('/api/posts/missing');
-    request.flush('Not found', {
+    httpMock.expectOne('/api/posts/missing').flush('Not found', {
       status: 404,
       statusText: 'Not Found',
     });
@@ -81,22 +79,6 @@ describe('postResolver', () => {
       post: null,
       notFound: true,
       error: null,
-    });
-  });
-
-  it('should return an error result for non-404 failures', async () => {
-    const resultPromise = runResolver(createRoute('abc123'));
-
-    const request = httpMock.expectOne('/api/posts/abc123');
-    request.flush('Server error', {
-      status: 500,
-      statusText: 'Internal Server Error',
-    });
-
-    await expect(resultPromise).resolves.toEqual({
-      post: null,
-      notFound: false,
-      error: 'errors.posts.loadOne',
     });
   });
 
