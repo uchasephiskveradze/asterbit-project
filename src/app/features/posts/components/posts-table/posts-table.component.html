@@ -49,8 +49,17 @@
               <a
                 class="posts-table__action"
                 [routerLink]="['/posts', post.id, 'edit']"
-                [queryParams]="{ from: 'my-posts' }"
+                [queryParams]="ownerEditQueryParams()"
                 [attr.aria-label]="'posts.table.editPost' | translate"
+              >
+                <span class="material-symbols-outlined">edit</span>
+              </a>
+            } @else if (canOwnerResubmit(post)) {
+              <a
+                class="posts-table__action"
+                [routerLink]="['/posts', post.id, 'edit']"
+                [queryParams]="ownerEditQueryParams()"
+                [attr.aria-label]="'posts.myPosts.rejectionNotice.editResubmit' | translate"
               >
                 <span class="material-symbols-outlined">edit</span>
               </a>
@@ -64,10 +73,21 @@
                 <span class="material-symbols-outlined posts-table__rejection-icon" aria-hidden="true">
                   cancel
                 </span>
-                <p class="posts-table__rejection-text">
-                  <strong>{{ 'posts.myPosts.rejectionNotice.calloutLabel' | translate }}</strong>
-                  {{ post.rejectionReason }}
-                </p>
+                <div class="posts-table__rejection-content">
+                  <p class="posts-table__rejection-text">
+                    <strong>{{ 'posts.myPosts.rejectionNotice.calloutLabel' | translate }}</strong>
+                    {{ post.rejectionReason }}
+                  </p>
+                  @if (canOwnerResubmit(post)) {
+                    <a
+                      class="posts-table__rejection-action"
+                      [routerLink]="['/posts', post.id, 'edit']"
+                      [queryParams]="ownerEditQueryParams()"
+                    >
+                      {{ 'posts.myPosts.rejectionNotice.editResubmit' | translate }}
+                    </a>
+                  }
+                </div>
               </div>
             </td>
           </tr>

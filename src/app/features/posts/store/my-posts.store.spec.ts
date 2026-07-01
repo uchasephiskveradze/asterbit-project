@@ -94,7 +94,7 @@ describe('MyPostsStore', () => {
     expect(store.activeTab()).toBe('rejected');
     expect(api.getPosts).toHaveBeenLastCalledWith({
       force: false,
-      query: { status: POST_STATUS.rejected },
+      query: { status: POST_STATUS.rejected, sort: 'createdAt', order: 'desc' },
     });
     expect(store.filteredPosts()).toEqual([rejectedPost]);
   });

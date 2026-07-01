@@ -36,7 +36,11 @@
       [subtitle]="pageSubtitle()"
       actionsAlign="start"
     >
-      <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">{{ 'common.cancel' | translate }}</a>
+      <a
+        class="post-upsert-page__cancel"
+        [routerLink]="cancelLink()"
+        [queryParams]="cancelQueryParams()"
+      >{{ 'common.cancel' | translate }}</a>
     </app-page-header>
 
     @if (errorMessage) {

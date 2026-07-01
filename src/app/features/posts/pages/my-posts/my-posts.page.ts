@@ -43,6 +43,7 @@ export class MyPostsPage {
   );
 
   public readonly showOwnerEdit = computed(() => this.store.activeTab() === 'approved');
+  public readonly showOwnerResubmit = computed(() => this.store.activeTab() === 'rejected');
   public readonly showRejectionCallout = computed(() => this.store.activeTab() === 'rejected');
 
   public constructor() {

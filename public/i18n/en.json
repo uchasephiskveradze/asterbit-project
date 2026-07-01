@@ -158,7 +158,9 @@
       "createAdminSubtitle": "Publish a new post immediately.",
       "submitSubtitle": "Your post will be reviewed by an admin before publication.",
       "submitForReview": "Submit for Review",
-      "updatePost": "Update Post"
+      "updatePost": "Update Post",
+      "ownerRejectedResubmitTitle": "Revise Rejected Post",
+      "ownerRejectedResubmitSubtitle": "Update your post and resubmit it for admin review. The rejection reason will be cleared once you submit."
     },
     "myPosts": {
       "title": "My Posts",
@@ -177,6 +179,7 @@
         "viewReasons": "View reasons",
         "dismiss": "Dismiss",
         "calloutLabel": "Rejected:",
+        "editResubmit": "Edit & Resubmit",
         "navBadge": "{{count}} unseen rejected posts"
       }
     },

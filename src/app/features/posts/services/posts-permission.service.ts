@@ -37,6 +37,9 @@ export class PostsPermissionService {
       return true;
     }
 
-    return post.submittedBy === user.id && post.status === POST_STATUS.approved;
+    return (
+      post.submittedBy === user.id &&
+      (post.status === POST_STATUS.approved || post.status === POST_STATUS.rejected)
+    );
   }
 }

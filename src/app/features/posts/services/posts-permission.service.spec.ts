@@ -50,9 +50,12 @@ describe('PostsPermissionService', () => {
     expect(service.canViewPost(pendingPost, null)).toBe(false);
   });
 
-  it('should allow owners to edit only approved posts', () => {
+  it('should allow owners to edit approved and rejected posts', () => {
     const ownedApproved = { ...approvedPost, submittedBy: '2' };
+    const ownedRejected = { ...approvedPost, id: '3', status: 'rejected' as const, submittedBy: '2' };
+
     expect(service.canEditPost(ownedApproved, user)).toBe(true);
+    expect(service.canEditPost(ownedRejected, user)).toBe(true);
     expect(service.canEditPost(pendingPost, user)).toBe(false);
     expect(service.canEditPost(ownedApproved, admin)).toBe(true);
   });

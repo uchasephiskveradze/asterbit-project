@@ -97,8 +97,15 @@ export class MyPostsStore {
   }
 
   private buildListQuery(): PostsListQuery {
-    return {
+    const query: PostsListQuery = {
       status: MY_POSTS_TAB_STATUS[this.activeTab()],
     };
+
+    if (this.activeTab() === 'rejected') {
+      query.sort = 'createdAt';
+      query.order = 'desc';
+    }
+
+    return query;
   }
 }

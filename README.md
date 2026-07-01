@@ -79,7 +79,7 @@ Tabs for the current user's submissions. Each tab fetches posts filtered by `sta
 - **Approved**
 - **Rejected** — inline callout shows `rejectionReason` when admin provided one
 
-Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details.
+Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details. **Rejected** posts can be revised and resubmitted for review (`pending`); the rejection reason is cleared on submit.
 
 **Rejection notifications** (regular users only):
 
@@ -163,7 +163,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | `/posts/moderation` | Admin | Pending review queue |
 | `/posts/new` | Authenticated | Create / submit post |
 | `/posts/:id` | Authenticated | Post details (+ admin moderation on pending) |
-| `/posts/:id/edit` | Admin or post owner (approved) | Edit form |
+| `/posts/:id/edit` | Admin or post owner (approved or rejected) | Edit form |
 
 - Lazy-loaded standalone routes
 - Route resolver preloads post data and enforces view access
@@ -220,6 +220,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 2. Login as **admin** → **Moderation** → **Reject** → enter a reason → confirm
 3. Login as **user** → main page loads → rejection modal appears → **View reasons** → **My Posts → Rejected** with inline reason callout
 4. Nav / tab badges clear after visiting the **Rejected** tab
+5. Click **Edit & Resubmit** → save → post moves to **Under Review** (rejection reason cleared)
 
 ### Logout
 

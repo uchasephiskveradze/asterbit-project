@@ -123,6 +123,14 @@
     color: var(--app-on-error-container);
   }
 
+  &__rejection-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
   &__rejection-icon {
     flex-shrink: 0;
     font-size: 1.25rem;
@@ -132,5 +140,11 @@
     margin: 0;
     font-size: 0.875rem;
     line-height: 1.5;
+  }
+
+  &__rejection-action {
+    @include secondary-button;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
   }
 }

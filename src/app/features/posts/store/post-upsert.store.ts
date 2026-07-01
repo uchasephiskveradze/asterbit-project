@@ -106,10 +106,16 @@ export class PostUpsertStore {
     }
 
     const payload: UpdatePostDto = { ...value };
-    const isOwnerResubmit =
-      !this.auth.isAdmin() && existingPost?.submittedBy === user.id && existingPost.status === POST_STATUS.approved;
+    const isOwnerApprovedResubmit =
+      !this.auth.isAdmin() &&
+      existingPost?.submittedBy === user.id &&
+      existingPost.status === POST_STATUS.approved;
+    const isOwnerRejectedResubmit =
+      !this.auth.isAdmin() &&
+      existingPost?.submittedBy === user.id &&
+      existingPost.status === POST_STATUS.rejected;
 
-    if (isOwnerResubmit) {
+    if (isOwnerApprovedResubmit) {
       payload.status = POST_STATUS.pending;
       payload.pendingReason = POST_PENDING_REASON.edited;
       payload.previousVersion = {
@@ -119,12 +125,19 @@ export class PostUpsertStore {
         content: existingPost.content,
         capturedAt: new Date().toISOString(),
       };
+    } else if (isOwnerRejectedResubmit) {
+      payload.status = POST_STATUS.pending;
+      payload.pendingReason = POST_PENDING_REASON.new;
+      payload.rejectionReason = null;
+      payload.previousVersion = null;
     }
+
+    const redirectToUnderReview = isOwnerApprovedResubmit || isOwnerRejectedResubmit;
 
     this.persist(
       () => this.api.updatePost(id, payload),
       (post) => {
-        if (isOwnerResubmit) {
+        if (redirectToUnderReview) {
           navigateSafely(this.router, ['/posts/my'], {
             queryParams: { tab: 'under-review' },
           });

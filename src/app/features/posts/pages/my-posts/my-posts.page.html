@@ -58,6 +58,7 @@
         [posts]="store.filteredPosts()"
         [showAdminActions]="false"
         [enableOwnerEdit]="showOwnerEdit()"
+        [enableOwnerResubmit]="showOwnerResubmit()"
         [showRejectionCallout]="showRejectionCallout()"
         [ownerId]="auth.currentUser()?.id ?? null"
         detailsFrom="my-posts"

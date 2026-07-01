@@ -21,6 +21,7 @@ import { PostUpsertStore } from '../../store/post-upsert.store';
 export class PostUpsertPage {
   public readonly id = input<string>();
   public readonly from = input<'list' | 'details' | 'my-posts'>();
+  public readonly tab = input<string>();
   public readonly resolvedPost = input<PostResolverResult>();
 
   public readonly auth = inject(AuthService);
@@ -28,15 +29,29 @@ export class PostUpsertPage {
 
   public readonly isEditMode = computed(() => this.id() !== undefined);
   public readonly hideAuthorField = computed(() => !this.isEditMode());
-  public readonly isOwnerResubmit = computed(
+  public readonly isOwnerApprovedResubmit = computed(
     () =>
       this.isEditMode() &&
       !this.auth.isAdmin() &&
       this.store.post()?.status === POST_STATUS.approved &&
       this.store.post()?.submittedBy === this.auth.currentUser()?.id,
   );
+  public readonly isOwnerRejectedResubmit = computed(
+    () =>
+      this.isEditMode() &&
+      !this.auth.isAdmin() &&
+      this.store.post()?.status === POST_STATUS.rejected &&
+      this.store.post()?.submittedBy === this.auth.currentUser()?.id,
+  );
+  public readonly isOwnerResubmit = computed(
+    () => this.isOwnerApprovedResubmit() || this.isOwnerRejectedResubmit(),
+  );
 
   public readonly pageTitle = computed(() => {
+    if (this.isOwnerRejectedResubmit()) {
+      return 'posts.upsert.ownerRejectedResubmitTitle';
+    }
+
     if (this.isEditMode()) {
       return 'posts.upsert.editTitle';
     }
@@ -45,7 +60,11 @@ export class PostUpsertPage {
   });
 
   public readonly pageSubtitle = computed(() => {
-    if (this.isOwnerResubmit()) {
+    if (this.isOwnerRejectedResubmit()) {
+      return 'posts.upsert.ownerRejectedResubmitSubtitle';
+    }
+
+    if (this.isOwnerApprovedResubmit()) {
       return 'posts.upsert.ownerResubmitSubtitle';
     }
 
@@ -69,6 +88,7 @@ export class PostUpsertPage {
 
     return this.auth.isAdmin() ? 'common.createPost' : 'posts.upsert.submitForReview';
   });
+
   public readonly cancelLink = computed(() => {
     if (!this.isEditMode()) {
       return '/posts';
@@ -81,9 +101,18 @@ export class PostUpsertPage {
     return this.from() === 'list' ? '/posts' : `/posts/${this.id()}`;
   });
 
+  public readonly cancelQueryParams = computed(() => {
+    if (this.from() === 'my-posts' && this.tab()) {
+      return { tab: this.tab() };
+    }
+
+    return null;
+  });
+
   public readonly showForm = computed(
     () => !this.isEditMode() || this.store.post() !== null,
   );
+
   public constructor() {
     effect(() => {
       const resolvedPost = this.resolvedPost();

@@ -25,6 +25,7 @@ export class PostsTableComponent {
   public readonly posts = input.required<Post[]>();
   public readonly showAdminActions = input(true);
   public readonly enableOwnerEdit = input(false);
+  public readonly enableOwnerResubmit = input(false);
   public readonly ownerId = input<string | null>(null);
   public readonly detailsFrom = input<PostNavigationSource>();
   public readonly detailsTab = input<string | null>(null);
@@ -34,6 +35,12 @@ export class PostsTableComponent {
     getPostDetailsQueryParams(this.detailsFrom(), this.detailsTab()),
   );
 
+  public readonly ownerEditQueryParams = computed(() => {
+    const tab = this.detailsTab();
+
+    return tab ? { from: 'my-posts' as const, tab } : { from: 'my-posts' as const };
+  });
+
   public canOwnerEdit(post: Post): boolean {
     const ownerId = this.ownerId();
     return (
@@ -41,6 +48,16 @@ export class PostsTableComponent {
       ownerId !== null &&
       post.submittedBy === ownerId &&
       post.status === POST_STATUS.approved
+    );
+  }
+
+  public canOwnerResubmit(post: Post): boolean {
+    const ownerId = this.ownerId();
+    return (
+      this.enableOwnerResubmit() &&
+      ownerId !== null &&
+      post.submittedBy === ownerId &&
+      post.status === POST_STATUS.rejected
     );
   }
 }
