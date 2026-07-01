@@ -163,6 +163,16 @@
         "underReview": "Under Review",
         "approved": "Approved",
         "rejected": "Rejected"
+      },
+      "rejectionNotice": {
+        "modalTitle": "Posts rejected",
+        "modalTitleSingle": "Post rejected",
+        "modalMessage": "{{count}} of your posts were rejected. View the reasons on the Rejected tab.",
+        "modalMessageSingle": "Your post \"{{title}}\" was rejected. View the reason on the Rejected tab.",
+        "viewReasons": "View reasons",
+        "dismiss": "Dismiss",
+        "calloutLabel": "Rejected:",
+        "navBadge": "{{count}} unseen rejected posts"
       }
     },
     "list": {

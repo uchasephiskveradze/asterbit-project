@@ -28,6 +28,7 @@ export class PostsTableComponent {
   public readonly ownerId = input<string | null>(null);
   public readonly detailsFrom = input<PostNavigationSource>();
   public readonly detailsTab = input<string | null>(null);
+  public readonly showRejectionCallout = input(false);
 
   public readonly detailsQueryParams = computed(() =>
     getPostDetailsQueryParams(this.detailsFrom(), this.detailsTab()),

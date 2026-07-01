@@ -23,6 +23,17 @@
               [routerLinkActiveOptions]="{ exact: false }"
             >
               {{ 'layout.myPosts' | translate }}
+              @if (rejectionNotice.unseenBadgeCount() > 0) {
+                <span
+                  class="layout__nav-badge"
+                  [attr.aria-label]="
+                    'posts.myPosts.rejectionNotice.navBadge'
+                      | translate: { count: rejectionNotice.unseenBadgeCount() }
+                  "
+                >
+                  {{ rejectionNotice.unseenBadgeCount() }}
+                </span>
+              }
             </a>
           }
           @if (auth.isAdmin()) {
@@ -78,3 +89,26 @@
     <router-outlet />
   </main>
 </div>
+
+@if (rejectionNoticePosts(); as posts) {
+  <app-modal
+    [titleKey]="rejectionNoticeTitleKey(posts)"
+    (closed)="dismissRejectionNotice()"
+  >
+    <p class="layout__rejection-message">
+      {{
+        rejectionNoticeMessageKey(posts)
+          | translate: rejectionNoticeMessageParams(posts)
+      }}
+    </p>
+
+    <div modalActions>
+      <button class="layout__rejection-dismiss" type="button" (click)="dismissRejectionNotice()">
+        {{ 'posts.myPosts.rejectionNotice.dismiss' | translate }}
+      </button>
+      <button class="layout__rejection-cta" type="button" (click)="viewRejectionReasons()">
+        {{ 'posts.myPosts.rejectionNotice.viewReasons' | translate }}
+      </button>
+    </div>
+  </app-modal>
+}

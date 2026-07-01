@@ -137,6 +137,7 @@
           [formControl]="rejectReasonControl"
           [placeholder]="'posts.moderation.rejectModal.reasonPlaceholder' | translate"
           [attr.maxlength]="rejectionValidation.maxLength"
+          (keydown)="onRejectReasonKeydown($event)"
         ></textarea>
         @if (getRejectReasonError(); as error) {
           <p class="post-details-page__reject-error">{{ error.key | translate: error.params }}</p>

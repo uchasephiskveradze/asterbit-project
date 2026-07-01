@@ -57,6 +57,21 @@
             }
           </td>
         </tr>
+        @if (showRejectionCallout() && post.rejectionReason) {
+          <tr class="posts-table__callout-row">
+            <td class="posts-table__callout-cell" colspan="4">
+              <div class="posts-table__rejection-callout">
+                <span class="material-symbols-outlined posts-table__rejection-icon" aria-hidden="true">
+                  cancel
+                </span>
+                <p class="posts-table__rejection-text">
+                  <strong>{{ 'posts.myPosts.rejectionNotice.calloutLabel' | translate }}</strong>
+                  {{ post.rejectionReason }}
+                </p>
+              </div>
+            </td>
+          </tr>
+        }
       }
     </tbody>
   </table>

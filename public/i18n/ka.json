@@ -163,6 +163,16 @@
         "underReview": "განხილვაში",
         "approved": "დამტკიცებული",
         "rejected": "უარყოფილი"
+      },
+      "rejectionNotice": {
+        "modalTitle": "პოსტები უარყოფილია",
+        "modalTitleSingle": "პოსტი უარყოფილია",
+        "modalMessage": "თქვენი {{count}} პოსტი უარყოფილია. მიზეზები იხილეთ უარყოფილი ჩანართზე.",
+        "modalMessageSingle": "თქვენი პოსტი \"{{title}}\" უარყოფილია. მიზეზი იხილეთ უარყოფილი ჩანართზე.",
+        "viewReasons": "მიზეზების ნახვა",
+        "dismiss": "დახურვა",
+        "calloutLabel": "უარყოფილი:",
+        "navBadge": "{{count}} უნახავი უარყოფილი პოსტი"
       }
     },
     "list": {

@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
 import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
 import { MY_POSTS_TAB_LABELS, MY_POSTS_TABS } from '../../models/post-status.model';
+import { RejectionNoticeService } from '../../services/rejection-notice.service';
 import { MyPostsStore } from '../../store/my-posts.store';
 
 @Component({
@@ -30,6 +31,7 @@ import { MyPostsStore } from '../../store/my-posts.store';
 export class MyPostsPage {
   public readonly store = inject(MyPostsStore);
   public readonly auth = inject(AuthService);
+  public readonly rejectionNotice = inject(RejectionNoticeService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -41,6 +43,7 @@ export class MyPostsPage {
   );
 
   public readonly showOwnerEdit = computed(() => this.store.activeTab() === 'approved');
+  public readonly showRejectionCallout = computed(() => this.store.activeTab() === 'rejected');
 
   public constructor() {
     this.route.queryParamMap
@@ -48,5 +51,22 @@ export class MyPostsPage {
       .subscribe((params) => {
         this.store.setTabFromQuery(params.get('tab'));
       });
+
+    effect(() => {
+      this.auth.currentUser();
+      this.rejectionNotice.refreshBadge();
+    });
+
+    effect(() => {
+      if (this.store.activeTab() !== 'rejected' || this.store.loading()) {
+        return;
+      }
+
+      const posts = this.store.filteredPosts();
+
+      if (posts.length > 0) {
+        this.rejectionNotice.markRejectedTabVisited(posts);
+      }
+    });
   }
 }

@@ -92,6 +92,15 @@ export class ModerationPage {
     this.closeRejectModal();
   }
 
+  public onRejectReasonKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' || event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+    this.confirmReject();
+  }
+
   public isRejectReasonInvalid(): boolean {
     const control = this.rejectReasonControl;
     return control.invalid && control.touched;

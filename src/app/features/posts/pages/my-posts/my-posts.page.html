@@ -23,6 +23,17 @@
         [attr.aria-current]="isActiveTab ? 'page' : null"
       >
         {{ tabLabels[tab] | translate }}
+        @if (tab === 'rejected' && rejectionNotice.unseenBadgeCount() > 0) {
+          <span
+            class="my-posts-page__tab-badge"
+            [attr.aria-label]="
+              'posts.myPosts.rejectionNotice.navBadge'
+                | translate: { count: rejectionNotice.unseenBadgeCount() }
+            "
+          >
+            {{ rejectionNotice.unseenBadgeCount() }}
+          </span>
+        }
       </a>
     }
   </nav>
@@ -47,6 +58,7 @@
         [posts]="store.filteredPosts()"
         [showAdminActions]="false"
         [enableOwnerEdit]="showOwnerEdit()"
+        [showRejectionCallout]="showRejectionCallout()"
         [ownerId]="auth.currentUser()?.id ?? null"
         detailsFrom="my-posts"
         [detailsTab]="store.activeTab()"

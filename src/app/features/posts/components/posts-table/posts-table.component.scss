@@ -100,4 +100,34 @@
       margin-left: 0.25rem;
     }
   }
+
+  &__callout-row {
+    border-bottom: 1px solid var(--app-border);
+    background: var(--app-surface);
+  }
+
+  &__callout-cell {
+    padding: 0 1.5rem 1rem;
+  }
+
+  &__rejection-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: $radius-md;
+    background: var(--app-error-container);
+    color: var(--app-on-error-container);
+  }
+
+  &__rejection-icon {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+  }
+
+  &__rejection-text {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
 }

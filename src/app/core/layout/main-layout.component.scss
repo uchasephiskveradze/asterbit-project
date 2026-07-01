@@ -59,10 +59,31 @@
 }
 
 .layout__nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
   color: var(--app-text-muted);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
+}
+
+.layout__nav-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.3125rem;
+  border-radius: 999px;
+  background: var(--app-error);
+  color: #ffffff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  box-sizing: border-box;
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.0625rem;
 }
 
 .layout__nav-link--active {
@@ -146,4 +167,32 @@
   .layout__main {
     padding: 2rem 2rem 3rem;
   }
+}
+
+.layout__rejection-message {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--app-text);
+}
+
+.layout__rejection-dismiss,
+.layout__rejection-cta {
+  padding: 0.625rem 1rem;
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.layout__rejection-dismiss {
+  border: 1px solid var(--app-border);
+  background: transparent;
+  color: var(--app-text-muted);
+}
+
+.layout__rejection-cta {
+  border: none;
+  background: var(--app-primary);
+  color: var(--app-on-primary);
 }
