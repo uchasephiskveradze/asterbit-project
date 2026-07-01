@@ -65,7 +65,7 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Shared **
 
 ### Posts (all logged-in users)
 
-- Browse **approved posts only** on `/posts` (`GET /posts?status=approved`) with debounced title search (`title:contains`), server-side date sort, and client-side pagination or infinite scroll (user preference)
+- Browse **approved posts only** on `/posts` (`GET /posts?status=approved`) with debounced title search (`title:contains`), server-side date sort, and server-side pagination or infinite scroll (user preference; `_page` / `_per_page`, total from API `items`)
 - Search refetches in the background without unmounting the list — the input keeps focus while a lightweight progress bar indicates filtering
 - **Pending** and **rejected** posts are not listed publicly; owners see them under **My Posts**, admins under **Moderation** or via direct URL when permitted
 - View post details (owners and admins can open non-approved posts they are allowed to see)
@@ -153,7 +153,7 @@ Signal stores per feature area (not NgRx):
 
 | Store | Responsibility |
 |-------|----------------|
-| **PostsListStore** | Fetch approved posts, debounced search, server-side sort, pagination or infinite scroll |
+| **PostsListStore** | Fetch approved posts, debounced search, server-side sort, server-side pagination or infinite scroll (`_page` / `_per_page`) |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
 | **PostUpsertStore** | Create/update, resolver seed for edit, re-review / rejected resubmit |
 | **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client, `rejectedAt` sort on Rejected) |
@@ -184,14 +184,15 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - Collections: `posts`, `users`
 - Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (edited resubmissions), `rejectionReason`, `rejectedAt` (set when admin rejects)
 - Post IDs are server-generated strings (json-server v1)
-- List queries use json-server v1 syntax (`title:contains=…`, `_sort=-createdAt`, etc.)
+- List queries use json-server v1 syntax (`title:contains=…`, `_sort=-createdAt`, `_page` / `_per_page` for paginated lists)
+- Paginated list responses return `{ data, items, pages, … }`; `PostsApiService` maps `data` → posts and `items` → total count
 - `PostsApiService` caches list responses per query key and individual posts in an LRU cache (max 100)
 
 Typical list queries:
 
 | Screen | API filter |
 |--------|------------|
-| `/posts` | `status=approved` (+ optional `title:contains`, `_sort`) |
+| `/posts` | `status=approved` (+ optional `title:contains`, `_sort`, `_page`, `_per_page=10`) |
 | `/posts/my` → Rejected | `status=rejected&_sort=-rejectedAt`, then client filter by `submittedBy` |
 | `/posts/my` → other tabs | `status=pending\|approved`, then client filter by `submittedBy` |
 | `/posts/moderation` | `status=pending` |
@@ -209,11 +210,11 @@ Typical list queries:
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `appInfiniteScroll` (intersection observer) |
-| **Unit Tests** | 54 focused tests — guards, stores, services, pipes, theme, revision utils |
+| **Unit Tests** | 56 focused tests — guards, stores, services, pipes, theme, revision utils |
 | **Responsive UI** | Posts table cards `<850px`; mobile header nav row; FAB for create on small screens |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session, theme, list view mode, rejection notice state per user |
-| **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
+| **List display** | Server-side pagination (default, 10 per page) or infinite scroll (growing `_per_page`) — persisted in `localStorage` |
 | **Authentication** | Mock login with roles (`user` / `admin`) |
 
 ### Intentionally not used
