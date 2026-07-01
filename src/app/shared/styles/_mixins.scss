@@ -1,5 +1,18 @@
 @use 'palette' as *;
 
+@mixin display-flex($direction: row, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+}
+
+@mixin flex-center($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
 @mixin focus-ring {
   outline: none;
   border-color: var(--app-primary);
@@ -14,7 +27,7 @@
 }
 
 @mixin secondary-button {
-  display: inline-flex;
+  @include display-flex(row);
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
@@ -43,7 +56,7 @@
 }
 
 @mixin danger-button {
-  display: inline-flex;
+  @include display-flex(row);
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
@@ -99,7 +112,7 @@
 }
 
 @mixin primary-button {
-  display: inline-flex;
+  @include display-flex(row);
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
