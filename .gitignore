@@ -46,7 +46,7 @@ Thumbs.db
 # Local workflow docs config
 DESIGN.md
 RULES.md
-/docs/
+/docs/AUTH-MODERATION.md
 
 .cursor/
 

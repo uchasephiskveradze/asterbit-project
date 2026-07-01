@@ -274,14 +274,24 @@ Typical list queries:
 
 ## Screenshots
 
-Local demo captures live under `docs/screenshots/` (gitignored, not published to the remote repo):
+### Posts list
 
-| File | Screen |
-|------|--------|
-| `01-posts-list-desktop.png` | Posts list — desktop |
-| `02-posts-list-mobile.png` | Posts list — mobile |
-| `03-moderation-queue.png` | Admin moderation queue |
-| `04-reject-modal.png` | Reject-with-reason modal |
-| `05-my-posts-rejected.png` | My Posts — Rejected tab |
-| `06-rejection-notice-modal.png` | Post-login rejection notice |
-| `07-post-details-diff.png` | Edited submission diff on post details |
+| Desktop | Mobile |
+|---------|--------|
+| ![Posts list — desktop](docs/screenshots/01-posts-list-desktop.png) | ![Posts list — mobile](docs/screenshots/02-posts-list-mobile.png) |
+
+### Moderation
+
+![Admin moderation queue](docs/screenshots/03-moderation-queue.png)
+
+![Reject with reason modal](docs/screenshots/04-reject-modal.png)
+
+### My Posts — Rejected
+
+![My Posts rejected tab](docs/screenshots/05-my-posts-rejected.png)
+
+![Post-login rejection notice](docs/screenshots/06-rejection-notice-modal.png)
+
+### Post details — edited submission diff
+
+![Edited submission diff on post details](docs/screenshots/07-post-details-diff.png)
