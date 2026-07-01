@@ -160,7 +160,13 @@
       "submitForReview": "Submit for Review",
       "updatePost": "Update Post",
       "ownerRejectedResubmitTitle": "Revise Rejected Post",
-      "ownerRejectedResubmitSubtitle": "Update your post and resubmit it for admin review. The rejection reason will be cleared once you submit."
+      "ownerRejectedResubmitSubtitle": "Update your post and resubmit it for admin review. The rejection reason will be cleared once you submit.",
+      "unsavedChanges": {
+        "title": "Unsaved changes",
+        "message": "You have unsaved changes. Submit your updates or discard them before leaving this page.",
+        "discard": "Discard changes",
+        "stay": "Keep editing"
+      }
     },
     "myPosts": {
       "title": "My Posts",

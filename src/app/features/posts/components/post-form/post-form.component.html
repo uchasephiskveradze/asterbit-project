@@ -121,6 +121,14 @@
 
   <div class="post-form__actions">
     <button
+      class="post-form__cancel"
+      type="button"
+      [disabled]="isSubmitting"
+      (click)="onCancelClick()"
+    >
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button
       class="post-form__submit"
       [class.post-form__submit--disabled]="!canSubmit()"
       type="submit"

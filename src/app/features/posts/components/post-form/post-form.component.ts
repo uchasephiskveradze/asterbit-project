@@ -32,6 +32,7 @@ export class PostFormComponent {
   public readonly submitLabel = input('form.post.savePost');
 
   public readonly formSubmit = output<PostFormValue>();
+  public readonly cancelClick = output<void>();
 
   public readonly validation = POST_FORM_VALIDATION;
 
@@ -83,19 +84,31 @@ export class PostFormComponent {
       }
 
       this.loadedPostId.set(value.id);
-      this.form.patchValue({
-        title: value.title,
-        author: value.author,
-        description: value.description,
-        content: value.content,
-      });
+      this.form.patchValue(
+        {
+          title: value.title,
+          author: value.author,
+          description: value.description,
+          content: value.content,
+        },
+        { emitEvent: false },
+      );
+      this.form.markAsPristine();
     });
 
     effect(() => {
       if (this.hideAuthor()) {
-        this.form.controls.author.setValue(this.authorDisplayName());
+        this.form.controls.author.setValue(this.authorDisplayName(), { emitEvent: false });
       }
     });
+  }
+
+  public hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  public trySubmit(): void {
+    this.onSubmit();
   }
 
   public onSubmit(): void {
@@ -118,6 +131,10 @@ export class PostFormComponent {
 
     event.preventDefault();
     this.form.markAllAsTouched();
+  }
+
+  public onCancelClick(): void {
+    this.cancelClick.emit();
   }
 
   public canSubmit(): boolean {

@@ -31,17 +31,7 @@
       <a class="post-upsert-page__back-link" routerLink="/posts">{{ 'common.backToPosts' | translate }}</a>
     </div>
   } @else {
-    <app-page-header
-      [title]="pageTitle()"
-      [subtitle]="pageSubtitle()"
-      actionsAlign="start"
-    >
-      <a
-        class="post-upsert-page__cancel"
-        [routerLink]="cancelLink()"
-        [queryParams]="cancelQueryParams()"
-      >{{ 'common.cancel' | translate }}</a>
-    </app-page-header>
+    <app-page-header [title]="pageTitle()" [subtitle]="pageSubtitle()" />
 
     @if (errorMessage) {
       <div class="post-upsert-page__error" role="alert">{{ errorMessage | translate }}</div>
@@ -55,9 +45,52 @@
           [authorDisplayName]="auth.currentUser()?.name ?? ''"
           [submitting]="store.saving()"
           [submitLabel]="submitLabel()"
+          (cancelClick)="onCancelClick()"
           (formSubmit)="onSubmit($event)"
         />
       </div>
     }
   }
 </section>
+
+@if (unsavedChangesModalOpen()) {
+  <app-modal
+    titleKey="posts.upsert.unsavedChanges.title"
+    (closed)="onStayOnPage()"
+  >
+    <p class="post-upsert-page__unsaved-message">
+      {{ 'posts.upsert.unsavedChanges.message' | translate }}
+    </p>
+
+    <div class="post-upsert-page__unsaved-actions" modalActions>
+      <button
+        class="post-upsert-page__unsaved-action post-upsert-page__unsaved-action--primary"
+        type="button"
+        [disabled]="store.saving()"
+        (click)="onSubmitFromModal()"
+      >
+        @if (store.saving()) {
+          {{ 'common.saving' | translate }}
+        } @else {
+          {{ submitLabel() | translate }}
+        }
+      </button>
+      <button
+        class="post-upsert-page__unsaved-action post-upsert-page__unsaved-action--discard"
+        type="button"
+        [disabled]="store.saving()"
+        (click)="onDiscardChanges()"
+      >
+        {{ 'posts.upsert.unsavedChanges.discard' | translate }}
+      </button>
+      <button
+        class="post-upsert-page__unsaved-action post-upsert-page__unsaved-action--stay"
+        type="button"
+        [disabled]="store.saving()"
+        (click)="onStayOnPage()"
+      >
+        {{ 'posts.upsert.unsavedChanges.stay' | translate }}
+      </button>
+    </div>
+  </app-modal>
+}
