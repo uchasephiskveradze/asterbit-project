@@ -34,9 +34,9 @@ Open [http://localhost:4200](http://localhost:4200). You will be redirected to *
 | Email | Password | Role |
 |-------|----------|------|
 | `admin@blog.com` | `admin123` | Admin — moderate, edit/delete any post, auto-approved creates |
-| `user@blog.com` | `user123` | User — submit posts for review, edit own approved posts (re-review), resubmit rejected posts |
+| `user@blog.com` | `user123` | User — submit posts for review, edit/resubmit own posts, delete own posts |
 
-Demo passwords are validated in `AuthApiService` (not stored in `db.json`).
+Demo passwords are validated in `AuthApiService` (not stored in `db.json`). json-server exposes `GET /users` without authentication, so storing plaintext passwords in the mock database would leak them to any local consumer; credentials are checked client-side while user identity and role come from the API.
 
 ### Other Scripts
 
@@ -54,7 +54,7 @@ npm test        # unit tests (Vitest)
 | Library | Purpose |
 |---------|---------|
 | **ngx-translate** | UI strings in English and Georgian (`public/i18n/en.json`, `ka.json`) |
-| Angular Material | `MatButton`, `MatProgressSpinner` on moderation and loading states |
+| Angular Material | `MatButton`, `MatProgressSpinner` on moderation and initial loading states |
 | RxJS | HTTP streams, operators in signal stores |
 | json-server | Mock REST API (`db.json`) for posts and users |
 | Vitest | Unit testing |
@@ -65,12 +65,14 @@ Custom Stitch-styled UI is used for lists, filters, forms, and layout. Shared **
 
 ### Posts (all logged-in users)
 
-- Browse **approved posts only** on `/posts` (`GET /posts?status=approved`) with debounced search, server-side date sort, and client-side pagination or infinite scroll (user preference)
+- Browse **approved posts only** on `/posts` (`GET /posts?status=approved`) with debounced title search (`title:contains`), server-side date sort, and client-side pagination or infinite scroll (user preference)
+- Search refetches in the background without unmounting the list — the input keeps focus while a lightweight progress bar indicates filtering
 - **Pending** and **rejected** posts are not listed publicly; owners see them under **My Posts**, admins under **Moderation** or via direct URL when permitted
 - View post details (owners and admins can open non-approved posts they are allowed to see)
 - **Users** submit new posts → `pending` until admin approval
 - **Admins** create posts → immediately `approved`
 - Header **locale toggle** (EN / KA) and **dark / light theme**
+- **Responsive layout** — posts table switches to stacked cards below **850px**; mobile header uses a compact top bar plus scrollable nav links
 
 ### My Posts (`/posts/my`)
 
@@ -78,9 +80,11 @@ Tabs for the current user's submissions. Each tab fetches posts filtered by `sta
 
 - **Under Review** — `pending`
 - **Approved**
-- **Rejected** — inline callout shows `rejectionReason` when admin provided one
+- **Rejected** — sorted by `rejectedAt` descending (newest rejection first); inline callout shows `rejectionReason` and is part of the same card on narrow screens
 
-Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details. **Rejected** posts can be revised and resubmitted for review (`pending`); the rejection reason is cleared on submit.
+Users can edit their own **approved** posts; changes return to `pending` for admin re-review with a before/after diff on post details. **Rejected** posts can be revised and resubmitted for review (`pending`); `rejectionReason` and `rejectedAt` are cleared on submit.
+
+Owners can **delete their own posts** (any status) from post details using the same confirmation modal as admins.
 
 **Rejection notifications** (regular users only):
 
@@ -93,7 +97,7 @@ Users can edit their own **approved** posts; changes return to `pending` for adm
 
 - Fetches only `pending` posts from the API (`GET /posts?status=pending`)
 - Approve or reject from the queue or directly on post details
-- **Reject** opens `app-modal` with a required reason (10–500 chars); reason is stored as `rejectionReason` on the post
+- **Reject** opens `app-modal` with a required reason (10–500 chars); stores `rejectionReason` and `rejectedAt` on the post
 - **New submission** vs **Edited submission** badges on the queue (posts without a reason show **Pending review**)
 
 ### Auth
@@ -118,10 +122,13 @@ src/app/
 │   │   └── models/        # User, session, roles
 │   ├── i18n/              # LocaleService, translate testing helpers
 │   ├── interceptors/      # authInterceptor, httpErrorInterceptor
-│   ├── layout/            # Main shell, rejection notice modal, logout modal
+│   ├── layout/            # Main shell (responsive header), rejection modal, logout modal
 │   ├── config.ts          # API base URL
 │   ├── error-handler.ts   # GlobalErrorHandler
-│   └── theme/             # ThemeService, ThemeStorageService, app-theme model
+│   └── theme/
+│       ├── theme.service.ts
+│       ├── theme-storage.service.ts
+│       └── models/        # app-theme model
 ├── features/
 │   ├── auth/pages/        # Login
 │   └── posts/
@@ -148,8 +155,8 @@ Signal stores per feature area (not NgRx):
 |-------|----------------|
 | **PostsListStore** | Fetch approved posts, debounced search, server-side sort, pagination or infinite scroll |
 | **PostDetailsStore** | Resolved post, delete, moderation actions, retry |
-| **PostUpsertStore** | Create/update, resolver seed for edit, re-review snapshot |
-| **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client) |
+| **PostUpsertStore** | Create/update, resolver seed for edit, re-review / rejected resubmit |
+| **MyPostsStore** | User's posts per tab (`status` filter on API, owner filter on client, `rejectedAt` sort on Rejected) |
 | **ModerationStore** | Pending queue (`status=pending` on API), approve/reject with reason |
 
 RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `tap`, and `finalize`.
@@ -163,7 +170,7 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 | `/posts/my` | Authenticated | Own posts by status tab (`?tab=under-review\|approved\|rejected`) |
 | `/posts/moderation` | Admin | Pending review queue |
 | `/posts/new` | Authenticated | Create / submit post |
-| `/posts/:id` | Authenticated | Post details (+ admin moderation on pending) |
+| `/posts/:id` | Authenticated | Post details (+ admin moderation on pending; delete for owner/admin) |
 | `/posts/:id/edit` | Admin or post owner (approved or rejected) | Edit form |
 
 - Lazy-loaded standalone routes
@@ -175,17 +182,18 @@ RxJS integrates via `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchE
 - `npm run api` serves `db.json` at `http://localhost:3000`
 - Angular proxy (`proxy.conf.json`) maps `/api/*` → `http://localhost:3000/*`
 - Collections: `posts`, `users`
-- Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (for edited resubmissions), `rejectionReason` (set when admin rejects)
+- Post fields include `status`, `submittedBy`, `pendingReason`, `previousVersion` (edited resubmissions), `rejectionReason`, `rejectedAt` (set when admin rejects)
 - Post IDs are server-generated strings (json-server v1)
-- List queries use json-server v1 sort syntax (`_sort=-createdAt` for descending)
+- List queries use json-server v1 syntax (`title:contains=…`, `_sort=-createdAt`, etc.)
 - `PostsApiService` caches list responses per query key and individual posts in an LRU cache (max 100)
 
 Typical list queries:
 
 | Screen | API filter |
 |--------|------------|
-| `/posts` | `status=approved` (+ optional `q`, `_sort`) |
-| `/posts/my` | `status=pending\|approved\|rejected` (per tab), then client filter by `submittedBy` |
+| `/posts` | `status=approved` (+ optional `title:contains`, `_sort`) |
+| `/posts/my` → Rejected | `status=rejected&_sort=-rejectedAt`, then client filter by `submittedBy` |
+| `/posts/my` → other tabs | `status=pending\|approved`, then client filter by `submittedBy` |
 | `/posts/moderation` | `status=pending` |
 
 ## Technical Highlights
@@ -195,12 +203,14 @@ Typical list queries:
 | **i18n** | `ngx-translate` + `LocaleService`; templates use translation keys, stores emit error keys |
 | **Shared modal** | `app-modal` — backdrop/Escape close, projected actions, body scroll lock |
 | **Rejection notices** | `RejectionNoticeService` + `localStorage` per user (`seen` vs `acknowledged`) |
+| **Permissions** | `PostsPermissionService` — view, edit, delete rules for owners and admins |
 | **Route Guards** | `authGuard`, `adminGuard`, `guestGuard`, `postEditGuard` |
 | **HTTP Interceptor** | `authInterceptor` (bearer token), `httpErrorInterceptor` (401 logout, error logging) |
 | **Error handling** | `GlobalErrorHandler` for uncaught client errors |
 | **Custom Pipes** | `postStatusLabel`, `truncate` |
 | **Custom Directives** | `appInfiniteScroll` (intersection observer) |
-| **Unit Tests** | 50 focused tests — guards, stores, services, pipes, theme, revision utils |
+| **Unit Tests** | 54 focused tests — guards, stores, services, pipes, theme, revision utils |
+| **Responsive UI** | Posts table cards `<850px`; mobile header nav row; FAB for create on small screens |
 | **Dark / Light Theme** | `ThemeService` + header toggle, `localStorage` persistence |
 | **Local Storage** | Auth session, theme, list view mode, rejection notice state per user |
 | **List display** | Pagination (default) or infinite scroll — persisted in `localStorage` |
@@ -227,9 +237,14 @@ Typical list queries:
 
 1. Login as **user** → create a post (or use one already under review)
 2. Login as **admin** → **Moderation** → **Reject** → enter a reason → confirm
-3. Login as **user** → main page loads → rejection modal appears → **View reasons** → **My Posts → Rejected** with inline reason callout
+3. Login as **user** → main page loads → rejection modal appears → **View reasons** → **My Posts → Rejected** (newest rejection at top, inline reason callout on the card)
 4. Nav / tab badges clear after visiting the **Rejected** tab
-5. Click **Edit & Resubmit** → save → post moves to **Under Review** (rejection reason cleared)
+5. Click **Edit & Resubmit** → save → post moves to **Under Review** (`rejectionReason` and `rejectedAt` cleared)
+
+### Owner delete
+
+1. Login as **user** → **My Posts** → open own post → **Delete** → confirm in modal
+2. Post is removed; you return to the tab you came from
 
 ### Logout
 
