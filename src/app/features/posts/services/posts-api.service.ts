@@ -129,12 +129,22 @@ export class PostsApiService {
     );
   }
 
-  public updatePostStatus(id: string, status: PostStatus): Observable<Post> {
+  public updatePostStatus(
+    id: string,
+    status: PostStatus,
+    options?: { rejectionReason?: string },
+  ): Observable<Post> {
     const payload: UpdatePostDto = { status };
 
     if (status === POST_STATUS.approved || status === POST_STATUS.rejected) {
       payload.previousVersion = null;
       payload.pendingReason = null;
+    }
+
+    if (status === POST_STATUS.rejected) {
+      payload.rejectionReason = options?.rejectionReason ?? null;
+    } else {
+      payload.rejectionReason = null;
     }
 
     return this.updatePost(id, payload);

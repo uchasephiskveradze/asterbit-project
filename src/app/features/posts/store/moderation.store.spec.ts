@@ -51,7 +51,11 @@ describe('ModerationStore', () => {
 
     store.moderatePost('1', POST_STATUS.approved);
 
-    await vi.waitFor(() => expect(api.updatePostStatus).toHaveBeenCalledWith('1', POST_STATUS.approved));
+    await vi.waitFor(() =>
+      expect(api.updatePostStatus).toHaveBeenCalledWith('1', POST_STATUS.approved, {
+        rejectionReason: undefined,
+      }),
+    );
 
     expect(store.pendingPosts()).toEqual([]);
   });

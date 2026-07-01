@@ -87,7 +87,10 @@ export class PostDetailsStore {
     );
   }
 
-  public moderatePost(status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected): void {
+  public moderatePost(
+    status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected,
+    rejectionReason?: string,
+  ): void {
     const post = this.post();
     if (!post || this.moderating()) {
       return;
@@ -97,7 +100,9 @@ export class PostDetailsStore {
     this.error.set(null);
 
     this.api
-      .updatePostStatus(post.id, status)
+      .updatePostStatus(post.id, status, {
+        rejectionReason: status === POST_STATUS.rejected ? rejectionReason : undefined,
+      })
       .pipe(
         catchError(() => {
           this.error.set('errors.posts.updateStatus');

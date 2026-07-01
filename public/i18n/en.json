@@ -4,6 +4,7 @@
     "createPost": "Create Post",
     "newPost": "New Post",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "email": "Email",
     "password": "Password",
     "delete": "Delete",
@@ -27,6 +28,12 @@
     "switchToGeorgian": "Switch to Georgian",
     "switchToEnglish": "Switch to English"
   },
+  "notFound": {
+    "badge": "404",
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or may have been removed.",
+    "action": "Return to Posts"
+  },
   "auth": {
     "signInTitle": "Sign in",
     "signInSubtitle": "Access your blog management account.",
@@ -49,11 +56,8 @@
       "updateStatus": "Unable to update post status. Please try again."
     }
   },
-  "notFound": {
-    "badge": "404",
-    "title": "Page not found",
-    "description": "The page you are looking for does not exist or may have been removed.",
-    "action": "Return to Posts"
+  "modal": {
+    "close": "Close dialog"
   },
   "navigation": {
     "backToPosts": "Back to Posts",
@@ -173,7 +177,14 @@
     },
     "moderation": {
       "title": "Moderation",
-      "subtitle": "Review pending posts submitted by users."
+      "subtitle": "Review pending posts submitted by users.",
+      "rejectModal": {
+        "title": "Reject post?",
+        "message": "Provide a reason for rejecting \"{{title}}\". The author will be able to read it.",
+        "reasonLabel": "Rejection reason",
+        "reasonPlaceholder": "Explain why this post was rejected...",
+        "confirm": "Reject post"
+      }
     }
   }
 }

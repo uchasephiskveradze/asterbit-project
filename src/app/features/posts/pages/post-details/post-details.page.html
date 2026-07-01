@@ -19,7 +19,7 @@
             <app-moderation-actions
               [loading]="store.moderating()"
               (approve)="approvePost()"
-              (reject)="rejectPost()"
+              (reject)="openRejectModal()"
             />
           }
           @if (canEdit()) {
@@ -113,3 +113,44 @@
     </article>
   }
 </section>
+
+@if (rejectModalOpen(); as isOpen) {
+  @let post = store.post();
+  @if (isOpen && post) {
+    <app-modal
+      titleKey="posts.moderation.rejectModal.title"
+      (closed)="closeRejectModal()"
+    >
+      <p class="post-details-page__reject-message">
+        {{ 'posts.moderation.rejectModal.message' | translate: { title: post.title } }}
+      </p>
+
+      <div class="post-details-page__reject-field">
+        <label class="post-details-page__reject-label" for="post-details-reject-reason">
+          {{ 'posts.moderation.rejectModal.reasonLabel' | translate }}
+        </label>
+        <textarea
+          id="post-details-reject-reason"
+          class="post-details-page__reject-control"
+          [class.post-details-page__reject-control--invalid]="isRejectReasonInvalid()"
+          rows="4"
+          [formControl]="rejectReasonControl"
+          [placeholder]="'posts.moderation.rejectModal.reasonPlaceholder' | translate"
+          [attr.maxlength]="rejectionValidation.maxLength"
+        ></textarea>
+        @if (getRejectReasonError(); as error) {
+          <p class="post-details-page__reject-error">{{ error.key | translate: error.params }}</p>
+        }
+      </div>
+
+      <div modalActions>
+        <button mat-stroked-button type="button" (click)="closeRejectModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button mat-flat-button color="warn" type="button" (click)="confirmReject()">
+          {{ 'posts.moderation.rejectModal.confirm' | translate }}
+        </button>
+      </div>
+    </app-modal>
+  }
+}

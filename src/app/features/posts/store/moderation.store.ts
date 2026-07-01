@@ -40,12 +40,18 @@ export class ModerationStore {
       .subscribe((posts) => this.posts.set(posts));
   }
 
-  public moderatePost(id: string, status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected): void {
+  public moderatePost(
+    id: string,
+    status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected,
+    rejectionReason?: string,
+  ): void {
     this.actingOnId.set(id);
     this.error.set(null);
 
     this.api
-      .updatePostStatus(id, status)
+      .updatePostStatus(id, status, {
+        rejectionReason: status === POST_STATUS.rejected ? rejectionReason : undefined,
+      })
       .pipe(
         catchError(() => {
           this.error.set('errors.posts.updateStatus');

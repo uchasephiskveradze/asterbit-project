@@ -1,17 +1,22 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, Injector, input } from '@angular/core';
+import { Component, computed, effect, inject, Injector, input, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { LocaleService } from '../../../../core/i18n/locale.service';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
+import { getPostFormControlError } from '../../components/post-form/post-form-error.messages';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
-import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { PostsPermissionService } from '../../services/posts-permission.service';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
+import { REJECTION_REASON_VALIDATION } from '../../models/rejection-reason.validation';
 import { POST_STATUS } from '../../models/post-status.model';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { PostStatusLabelPipe } from '../../pipes/post-status-label.pipe';
@@ -23,7 +28,18 @@ import {
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, TranslatePipe, ErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
+  imports: [
+    DatePipe,
+    RouterLink,
+    ReactiveFormsModule,
+    MatButtonModule,
+    TranslatePipe,
+    ModalComponent,
+    ErrorStateComponent,
+    PostRevisionPanelComponent,
+    ModerationActionsComponent,
+    PostStatusLabelPipe,
+  ],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',
@@ -37,6 +53,18 @@ export class PostDetailsPage {
   public readonly store = inject(PostDetailsStore);
   public readonly locale = inject(LocaleService);
   public readonly postStatus = POST_STATUS;
+  public readonly rejectionValidation = REJECTION_REASON_VALIDATION;
+
+  public readonly rejectModalOpen = signal(false);
+
+  public readonly rejectReasonControl = new FormControl('', {
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(REJECTION_REASON_VALIDATION.minLength),
+      Validators.maxLength(REJECTION_REASON_VALIDATION.maxLength),
+    ],
+  });
 
   private readonly auth = inject(AuthService);
   private readonly access = inject(PostsPermissionService);
@@ -92,8 +120,36 @@ export class PostDetailsPage {
     this.store.moderatePost(POST_STATUS.approved);
   }
 
-  public rejectPost(): void {
-    this.store.moderatePost(POST_STATUS.rejected);
+  public openRejectModal(): void {
+    this.rejectReasonControl.reset();
+    this.rejectModalOpen.set(true);
+  }
+
+  public closeRejectModal(): void {
+    this.rejectModalOpen.set(false);
+  }
+
+  public confirmReject(): void {
+    this.rejectReasonControl.markAsTouched();
+    if (this.rejectReasonControl.invalid) {
+      return;
+    }
+
+    this.store.moderatePost(POST_STATUS.rejected, this.rejectReasonControl.value.trim());
+    this.closeRejectModal();
+  }
+
+  public isRejectReasonInvalid(): boolean {
+    const control = this.rejectReasonControl;
+    return control.invalid && control.touched;
+  }
+
+  public getRejectReasonError() {
+    if (!this.isRejectReasonInvalid()) {
+      return null;
+    }
+
+    return getPostFormControlError(this.rejectReasonControl.errors);
   }
 
   public openDeleteDialog(): void {

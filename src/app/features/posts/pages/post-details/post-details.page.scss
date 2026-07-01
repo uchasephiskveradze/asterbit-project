@@ -190,4 +190,43 @@
     white-space: pre-line;
     @include break-long-words;
   }
+
+  &__reject-message {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--app-text-muted);
+  }
+
+  &__reject-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__reject-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--app-heading);
+  }
+
+  &__reject-control {
+    @include form-control;
+    resize: vertical;
+    min-height: 6rem;
+
+    &--invalid {
+      border-color: var(--app-error);
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2);
+      }
+    }
+  }
+
+  &__reject-error {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--app-error);
+  }
 }

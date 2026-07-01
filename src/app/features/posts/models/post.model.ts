@@ -12,4 +12,5 @@ export interface Post {
   submittedBy?: string;
   pendingReason?: PostPendingReason;
   previousVersion?: PostRevisionSnapshot;
+  rejectionReason?: string | null;
 }

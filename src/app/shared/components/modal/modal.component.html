@@ -1,0 +1,22 @@
+<div class="modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="titleKey() ? titleId : null">
+  <button
+    class="modal__backdrop"
+    type="button"
+    [attr.aria-label]="'modal.close' | translate"
+    (click)="onBackdropClick()"
+  ></button>
+
+  <div class="modal__panel">
+    @if (titleKey(); as title) {
+      <h2 [id]="titleId" class="modal__title">{{ title | translate }}</h2>
+    }
+
+    <div class="modal__body">
+      <ng-content />
+    </div>
+
+    <div class="modal__actions">
+      <ng-content select="[modalActions]" />
+    </div>
+  </div>
+</div>
