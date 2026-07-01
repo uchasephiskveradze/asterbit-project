@@ -1,4 +1,11 @@
-<div class="modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="titleKey() ? titleId : null">
+<div
+  class="modal"
+  [class.modal--open]="isOpen()"
+  [class.modal--closing]="isClosing()"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="titleKey() ? titleId : null"
+>
   <button
     class="modal__backdrop"
     type="button"

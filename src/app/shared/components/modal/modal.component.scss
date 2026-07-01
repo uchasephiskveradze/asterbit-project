@@ -1,6 +1,13 @@
 @use 'palette' as *;
 @use 'mixins' as *;
 
+$modal-enter-ms: 220ms;
+$modal-leave-ms: 180ms;
+
+:host {
+  display: block;
+}
+
 .modal {
   position: fixed;
   inset: 0;
@@ -16,6 +23,8 @@
     border: none;
     background: rgba(15, 23, 42, 0.55);
     cursor: pointer;
+    opacity: 0;
+    transition: opacity $modal-enter-ms ease-out;
   }
 
   &__panel {
@@ -25,7 +34,34 @@
     max-height: min(90vh, 40rem);
     overflow: auto;
     padding: 1.5rem;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition:
+      opacity $modal-enter-ms ease-out,
+      transform $modal-enter-ms ease-out;
     @include card-shell;
+  }
+
+  &--open:not(&--closing) &__backdrop {
+    opacity: 1;
+  }
+
+  &--open:not(&--closing) &__panel {
+    opacity: 1;
+    transform: none;
+  }
+
+  &--closing &__backdrop {
+    opacity: 0;
+    transition-duration: $modal-leave-ms;
+    transition-timing-function: ease-in;
+  }
+
+  &--closing &__panel {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+    transition-duration: $modal-leave-ms;
+    transition-timing-function: ease-in;
   }
 
   &__title {
@@ -53,5 +89,12 @@
       gap: 0.75rem;
       width: 100%;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__backdrop,
+  .modal__panel {
+    transition-duration: 0.01ms !important;
   }
 }

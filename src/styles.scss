@@ -71,3 +71,9 @@ body {
   background: var(--app-background);
   color: var(--app-text);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
