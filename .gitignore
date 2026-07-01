@@ -46,6 +46,7 @@ Thumbs.db
 # Local workflow docs config
 DESIGN.md
 RULES.md
+/docs/
 
 .cursor/
 

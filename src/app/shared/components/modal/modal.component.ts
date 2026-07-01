@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { lockBodyScroll, unlockBodyScroll } from '../../utils/body-scroll-lock.util';
+
 @Component({
   selector: 'app-modal',
   imports: [TranslatePipe],
@@ -23,11 +25,11 @@ export class ModalComponent implements OnInit, OnDestroy {
   public readonly titleId = `modal-title-${Math.random().toString(36).slice(2, 9)}`;
 
   public ngOnInit(): void {
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
   }
 
   public ngOnDestroy(): void {
-    document.body.style.overflow = '';
+    unlockBodyScroll();
   }
 
   @HostListener('document:keydown.escape')

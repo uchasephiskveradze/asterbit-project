@@ -25,6 +25,8 @@
 html {
   @include app-material-theme(light);
 
+  background: var(--app-background);
+
   &[data-theme='dark'] {
     @include app-material-theme(dark);
 
