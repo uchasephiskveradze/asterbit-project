@@ -1,0 +1,179 @@
+{
+  "common": {
+    "tryAgain": "Try again",
+    "createPost": "Create Post",
+    "newPost": "New Post",
+    "cancel": "Cancel",
+    "email": "Email",
+    "password": "Password",
+    "delete": "Delete",
+    "editPost": "Edit Post",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reloadPage": "Reload page",
+    "backToPosts": "Back to Posts",
+    "saving": "Saving..."
+  },
+  "layout": {
+    "brand": "Blog Management",
+    "navLabel": "Main navigation",
+    "posts": "Posts",
+    "myPosts": "My Posts",
+    "moderation": "Moderation",
+    "login": "Login",
+    "logout": "Logout",
+    "switchToLightTheme": "Switch to light theme",
+    "switchToDarkTheme": "Switch to dark theme",
+    "switchToGeorgian": "Switch to Georgian",
+    "switchToEnglish": "Switch to English"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signInSubtitle": "Access your blog management account.",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "invalidCredentials": "Invalid email or password.",
+    "passwordPlaceholder": "Your password",
+    "demoHint": "Demo: <strong>admin@blog.com</strong> / admin123 or <strong>user@blog.com</strong> / user123"
+  },
+  "errors": {
+    "genericTitle": "Something went wrong",
+    "genericMessage": "Unable to load content. Please try again.",
+    "posts": {
+      "load": "Unable to load posts. Please try again.",
+      "myPostsLoad": "Unable to load your posts. Please try again.",
+      "moderationLoad": "Unable to load moderation queue. Please try again.",
+      "loadOne": "Unable to load post. Please try again.",
+      "save": "Unable to save post. Please try again.",
+      "delete": "Unable to delete post. Please try again.",
+      "updateStatus": "Unable to update post status. Please try again."
+    }
+  },
+  "notFound": {
+    "badge": "404",
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or may have been removed.",
+    "action": "Return to Posts"
+  },
+  "navigation": {
+    "backToPosts": "Back to Posts",
+    "backToMyPosts": "Back to My Posts",
+    "backToModeration": "Back to Moderation"
+  },
+  "form": {
+    "errors": {
+      "invalid": "Invalid value.",
+      "required": "This field is required.",
+      "minLength": "Must be at least {{count}} characters.",
+      "maxLength": "Must be at most {{count}} characters."
+    },
+    "post": {
+      "titleLabel": "Post Title",
+      "titlePlaceholder": "e.g. The Future of Content Management",
+      "authorLabel": "Author Name",
+      "authorPlaceholder": "John Doe",
+      "descriptionLabel": "Short Description",
+      "descriptionPlaceholder": "Provide a brief summary for the preview card...",
+      "contentLabel": "Post Content",
+      "contentPlaceholder": "Write your post content here...",
+      "savePost": "Save Post"
+    }
+  },
+  "posts": {
+    "status": {
+      "underReview": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "underReviewEdited": "Under Review (Edited)",
+      "pendingReview": "Pending review",
+      "newSubmission": "New submission",
+      "editedSubmission": "Edited submission"
+    },
+    "table": {
+      "title": "Title",
+      "author": "Author",
+      "date": "Date",
+      "actions": "Actions",
+      "viewPost": "View post",
+      "editPost": "Edit post"
+    },
+    "filters": {
+      "searchPlaceholder": "Search posts...",
+      "searchAria": "Search posts by title",
+      "sortLabel": "Sort by:",
+      "sortAria": "Sort posts by date",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first",
+      "viewModeLabel": "View:",
+      "viewModeAria": "Posts list display mode",
+      "pagination": "Pages",
+      "infiniteScroll": "Infinite scroll"
+    },
+    "pagination": {
+      "summary": "Showing {{start}} to {{end}} of {{total}} posts",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "loading": {
+      "posts": "Loading posts",
+      "post": "Loading post"
+    },
+    "notFound": {
+      "title": "Post not found",
+      "detailsDescription": "The post you are looking for does not exist or may have been removed.",
+      "editDescription": "The post you are trying to edit does not exist or may have been removed."
+    },
+    "details": {
+      "editPost": "Edit Post",
+      "delete": "Delete"
+    },
+    "revision": {
+      "aria": "Edited post changes",
+      "title": "Edited submission under review",
+      "subtitle": "Submitted for review on {{date}}. Compare the previous version with the requested changes below.",
+      "before": "Before",
+      "after": "After"
+    },
+    "deleteDialog": {
+      "title": "Delete post?",
+      "message": "Are you sure you want to delete <span class=\"delete-post-dialog__post-title\">{{title}}</span>? This action cannot be undone.",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
+    },
+    "upsert": {
+      "editTitle": "Edit Post",
+      "createAdminTitle": "Create New Post",
+      "submitTitle": "Submit Post",
+      "ownerResubmitSubtitle": "Your changes will be reviewed by an admin before the post is published again.",
+      "editSubtitle": "Update your post and save changes.",
+      "createAdminSubtitle": "Publish a new post immediately.",
+      "submitSubtitle": "Your post will be reviewed by an admin before publication.",
+      "submitForReview": "Submit for Review",
+      "updatePost": "Update Post"
+    },
+    "myPosts": {
+      "title": "My Posts",
+      "subtitle": "Track submissions under review, approved, and rejected.",
+      "tabsAria": "Post status tabs",
+      "tabs": {
+        "underReview": "Under Review",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "list": {
+      "title": "Posts",
+      "subtitle": "Manage and organize your blog publications.",
+      "emptyTitle": "No posts found",
+      "emptyDescription": "Your editorial calendar is currently empty. Get started by creating your first post to engage your audience.",
+      "noResultsTitle": "No matching posts",
+      "noResultsDescription": "We could not find any posts matching your search. Try a different title keyword or clear the search field.",
+      "showingRange": "Showing {{end}} of {{total}} posts",
+      "showingAll": "Showing all {{total}} posts"
+    },
+    "moderation": {
+      "title": "Moderation",
+      "subtitle": "Review pending posts submitted by users."
+    }
+  }
+}
