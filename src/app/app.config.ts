@@ -9,6 +9,7 @@ import {
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -29,6 +30,7 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: 'en',
     }),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    provideAnimations(),
     provideRouter(routes, withComponentInputBinding()),
     provideAppInitializer(() => {
       inject(ThemeService);

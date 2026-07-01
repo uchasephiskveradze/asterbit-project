@@ -10,6 +10,7 @@ import { ErrorStateComponent } from '../../../../shared/components/error-state/e
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { LocaleService } from '../../../../core/i18n/locale.service';
+import { moderationQueueItemAnimation } from '../../../../core/animations/ui.animations';
 import { TruncatePipe } from '../../../../shared/truncate.pipe';
 import { getPostFormControlError } from '../../components/post-form/post-form-error.messages';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
@@ -41,6 +42,7 @@ type RejectModalTarget = Pick<Post, 'id' | 'title'>;
   providers: [ModerationStore],
   templateUrl: './moderation.page.html',
   styleUrl: './moderation.page.scss',
+  animations: [moderationQueueItemAnimation],
 })
 export class ModerationPage {
   public readonly store = inject(ModerationStore);

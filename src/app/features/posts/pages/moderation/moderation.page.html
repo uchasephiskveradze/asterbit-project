@@ -26,7 +26,7 @@
         @let reason = post.pendingReason;
         @let isEdited = reason === pendingReason.edited;
 
-        <article class="moderation-page__card">
+        <article class="moderation-page__card" @queueItem>
           <div class="moderation-page__card-body">
             <div class="moderation-page__card-heading">
               <a
