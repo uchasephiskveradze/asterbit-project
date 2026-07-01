@@ -1,9 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 import { PostFormComponent } from './post-form.component';
 import { POST_FORM_VALIDATION } from './post-form.validation';
+
+const translateTesting = provideTranslateService({
+  fallbackLang: 'en',
+  lang: 'en',
+  loader: { provide: TranslateLoader, useValue: { getTranslation: () => of({}) } },
+});
 
 describe('PostFormComponent', () => {
   let component: PostFormComponent;
@@ -12,7 +18,7 @@ describe('PostFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PostFormComponent],
-      providers: [provideTranslateTesting()],
+      providers: [translateTesting],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostFormComponent);

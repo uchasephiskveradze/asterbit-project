@@ -1,10 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
-import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { LoginPage } from './login.page';
+
+const translateTesting = provideTranslateService({
+  fallbackLang: 'en',
+  lang: 'en',
+  loader: { provide: TranslateLoader, useValue: { getTranslation: () => of({}) } },
+});
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -20,7 +26,7 @@ describe('LoginPage', () => {
       imports: [LoginPage],
       providers: [
         provideRouter([]),
-        provideTranslateTesting(),
+        translateTesting,
         { provide: AuthService, useValue: auth },
       ],
     }).compileComponents();

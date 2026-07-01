@@ -1,8 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateService, provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
-import { provideTranslateTesting } from '../../../core/i18n/testing/provide-translate-testing';
 import { PostStatusLabelPipe } from './post-status-label.pipe';
+
+const translateTesting = provideTranslateService({
+  fallbackLang: 'en',
+  lang: 'en',
+  loader: { provide: TranslateLoader, useValue: { getTranslation: () => of({}) } },
+});
 
 describe('PostStatusLabelPipe', () => {
   let pipe: PostStatusLabelPipe;
@@ -10,7 +16,7 @@ describe('PostStatusLabelPipe', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideTranslateTesting(), PostStatusLabelPipe],
+      providers: [translateTesting, PostStatusLabelPipe],
     });
 
     pipe = TestBed.inject(PostStatusLabelPipe);
