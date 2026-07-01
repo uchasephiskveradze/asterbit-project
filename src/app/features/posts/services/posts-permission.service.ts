@@ -42,4 +42,16 @@ export class PostsPermissionService {
       (post.status === POST_STATUS.approved || post.status === POST_STATUS.rejected)
     );
   }
+
+  public canDeletePost(post: Post, user: User | null): boolean {
+    if (!user) {
+      return false;
+    }
+
+    if (user.role === 'admin') {
+      return true;
+    }
+
+    return post.submittedBy === user.id;
+  }
 }

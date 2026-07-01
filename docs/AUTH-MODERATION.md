@@ -5,7 +5,7 @@
 | Role | Permissions |
 |------|-------------|
 | **Guest** | Login only — must sign in before accessing the app |
-| **User** | View approved posts, submit posts (pending), edit own approved posts (re-review), My Posts tabs |
+| **User** | View approved posts, submit posts (pending), edit own approved/rejected posts, delete own posts (with confirmation), My Posts tabs |
 | **Admin** | User + auto-approved creates, edit/delete any post, Moderation queue |
 
 ## Navigation
@@ -40,8 +40,13 @@
 ## Edit rules
 
 - **Admin** can edit any post; changes stay approved
-- **User** can edit only their own `approved` posts; save sets `status: pending` for admin re-review
+- **User** can edit only their own `approved` or `rejected` posts; approved edits set `status: pending` for admin re-review
 - Edited resubmissions store `previousVersion` and show a before/after diff on post details
+
+## Delete rules
+
+- **Admin** can delete any post from post details (`app-modal` confirmation)
+- **User** can delete only their own posts (any status) from post details — same confirmation dialog
 
 ## Moderation (admin)
 

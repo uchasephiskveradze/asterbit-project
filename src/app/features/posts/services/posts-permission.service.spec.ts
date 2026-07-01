@@ -59,4 +59,16 @@ describe('PostsPermissionService', () => {
     expect(service.canEditPost(pendingPost, user)).toBe(false);
     expect(service.canEditPost(ownedApproved, admin)).toBe(true);
   });
+
+  it('should allow owners to delete their own posts and admins to delete any post', () => {
+    const ownedApproved = { ...approvedPost, submittedBy: '2' };
+    const ownedPending = { ...pendingPost, submittedBy: '2' };
+    const otherPending = { ...pendingPost, submittedBy: '99' };
+
+    expect(service.canDeletePost(ownedApproved, user)).toBe(true);
+    expect(service.canDeletePost(ownedPending, user)).toBe(true);
+    expect(service.canDeletePost(otherPending, user)).toBe(false);
+    expect(service.canDeletePost(otherPending, admin)).toBe(true);
+    expect(service.canDeletePost(ownedApproved, null)).toBe(false);
+  });
 });

@@ -17,6 +17,8 @@ import { PostDetailsStore } from '../../store/post-details.store';
 export class DeletePostDialogComponent {
   public readonly postId = input.required<string>();
   public readonly postTitle = input.required<string>();
+  public readonly redirectLink = input<string[]>(['/posts']);
+  public readonly redirectQueryParams = input<Record<string, string> | undefined>();
   public readonly closed = output<void>();
 
   public readonly store = inject(PostDetailsStore);
@@ -39,7 +41,9 @@ export class DeletePostDialogComponent {
     this.store.deletePost(this.postId()).subscribe({
       next: () => {
         this.closed.emit();
-        navigateSafely(this.router, ['/posts']);
+        navigateSafely(this.router, this.redirectLink(), {
+          queryParams: this.redirectQueryParams(),
+        });
       },
     });
   }

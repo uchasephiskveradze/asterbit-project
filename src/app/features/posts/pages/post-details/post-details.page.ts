@@ -79,7 +79,10 @@ export class PostDetailsPage {
     return post ? this.access.canEditPost(post, this.auth.currentUser()) : false;
   });
 
-  public readonly canDelete = computed(() => this.auth.isAdmin());
+  public readonly canDelete = computed(() => {
+    const post = this.store.post();
+    return post ? this.access.canDeletePost(post, this.auth.currentUser()) : false;
+  });
 
   public readonly canModerate = computed(() => {
     const post = this.store.post();

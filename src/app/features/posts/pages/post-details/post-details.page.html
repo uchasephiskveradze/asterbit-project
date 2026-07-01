@@ -162,6 +162,8 @@
     <app-delete-post-dialog
       [postId]="post.id"
       [postTitle]="post.title"
+      [redirectLink]="backNavigation().link"
+      [redirectQueryParams]="backNavigation().queryParams"
       (closed)="closeDeleteDialog()"
     />
   }
