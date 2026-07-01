@@ -3,9 +3,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { InfiniteScrollDirective } from '../../../../shared/infinite-scroll.directive';
-import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
-import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { PostsFiltersComponent } from '../../components/posts-filters/posts-filters.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
 import { PostsPaginationComponent } from '../../components/posts-pagination/posts-pagination.component';
@@ -24,8 +25,9 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
     PostsPaginationComponent,
     PostsTableComponent,
     PostsLoadingStateComponent,
-    PostsEmptyStateComponent,
-    PostsErrorStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    PageHeaderComponent,
   ],
   providers: [PostsListStore],
   templateUrl: './posts-list.page.html',

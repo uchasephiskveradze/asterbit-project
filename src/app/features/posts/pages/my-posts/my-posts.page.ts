@@ -3,8 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
-import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
 import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
 import { MY_POSTS_TAB_LABELS, MY_POSTS_TABS } from '../../models/post-status.model';
@@ -16,8 +17,9 @@ import { MyPostsStore } from '../../store/my-posts.store';
     RouterLink,
     PostsTableComponent,
     PostsLoadingStateComponent,
-    PostsEmptyStateComponent,
-    PostsErrorStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    PageHeaderComponent,
   ],
   providers: [MyPostsStore],
   templateUrl: './my-posts.page.html',

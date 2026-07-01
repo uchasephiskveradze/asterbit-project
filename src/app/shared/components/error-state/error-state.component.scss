@@ -1,7 +1,7 @@
 @use 'palette' as *;
 @use 'mixins' as *;
 
-.posts-error-state {
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;

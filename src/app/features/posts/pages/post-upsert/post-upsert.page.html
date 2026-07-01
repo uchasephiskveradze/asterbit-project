@@ -27,17 +27,17 @@
     </div>
   } @else if (editMode && errorMessage && !post) {
     <div class="post-upsert-page__load-error">
-      <app-posts-error-state [message]="errorMessage" (retry)="reloadPage()" />
+      <app-error-state [message]="errorMessage" (retry)="reloadPage()" />
       <a class="post-upsert-page__back-link" routerLink="/posts">Back to Posts</a>
     </div>
   } @else {
-    <header class="post-upsert-page__header">
-      <div class="post-upsert-page__intro">
-        <h1 class="post-upsert-page__title">{{ pageTitle() }}</h1>
-        <p class="post-upsert-page__subtitle">{{ pageSubtitle() }}</p>
-      </div>
+    <app-page-header
+      [title]="pageTitle()"
+      [subtitle]="pageSubtitle()"
+      actionsAlign="start"
+    >
       <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
-    </header>
+    </app-page-header>
 
     @if (errorMessage) {
       <div class="post-upsert-page__error" role="alert">{{ errorMessage }}</div>

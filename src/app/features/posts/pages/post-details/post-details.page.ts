@@ -7,7 +7,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
-import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { PostsPermissionService } from '../../services/posts-permission.service';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { POST_STATUS } from '../../models/post-status.model';
@@ -21,7 +21,7 @@ import {
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, PostsErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
+  imports: [DatePipe, RouterLink, ErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',

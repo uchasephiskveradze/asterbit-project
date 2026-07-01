@@ -2,29 +2,35 @@
   @let listViewState = viewState();
   @let isAuthenticated = auth.isAuthenticated();
 
-  <header class="posts-list-page__header">
-    <div class="posts-list-page__intro">
-      <h1 class="posts-list-page__title">Posts</h1>
-      <p class="posts-list-page__subtitle">Manage and organize your blog publications.</p>
-    </div>
-
+  <app-page-header
+    title="Posts"
+    subtitle="Manage and organize your blog publications."
+  >
     @if (listViewState === 'content' && isAuthenticated) {
       <a class="posts-list-page__action posts-list-page__action--desktop" routerLink="/posts/new">
         <span class="material-symbols-outlined">add</span>
         Create Post
       </a>
     }
-  </header>
+  </app-page-header>
 
   @switch (listViewState) {
     @case ('loading') {
       <app-posts-loading-state />
     }
     @case ('error') {
-      <app-posts-error-state [message]="store.error()!" (retry)="store.retry()" />
+      <app-error-state [message]="store.error()!" (retry)="store.retry()" />
     }
     @case ('empty') {
-      <app-posts-empty-state variant="no-posts" />
+      <app-empty-state
+        title="No posts found"
+        description="Your editorial calendar is currently empty. Get started by creating your first post to engage your audience."
+      >
+        <a routerLink="/posts/new">
+          <span class="material-symbols-outlined">post_add</span>
+          Create Post
+        </a>
+      </app-empty-state>
     }
     @default {
       @let isFiltering = store.filtering();
@@ -44,7 +50,11 @@
       </div>
 
       @if (store.isEmptySearch()) {
-        <app-posts-empty-state variant="no-results" />
+        <app-empty-state
+          title="No matching posts"
+          description="We could not find any posts matching your search. Try a different title keyword or clear the search field."
+          [badgeIcon]="null"
+        />
       } @else {
         <div class="posts-list-page__content">
           @if (isFiltering) {

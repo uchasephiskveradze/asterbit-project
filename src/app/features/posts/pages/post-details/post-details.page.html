@@ -59,7 +59,7 @@
       ></div>
     </div>
   } @else if (errorMessage) {
-    <app-posts-error-state [message]="errorMessage" (retry)="store.retry()" />
+    <app-error-state [message]="errorMessage" (retry)="store.retry()" />
   } @else if (store.notFound()) {
     <div class="post-details-page__not-found">
       <h2 class="post-details-page__not-found-title">Post not found</h2>

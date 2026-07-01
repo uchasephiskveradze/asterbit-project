@@ -1,17 +1,25 @@
 <section class="moderation-page">
   @let errorMessage = store.error();
 
-  <header class="moderation-page__header">
-    <h1 class="moderation-page__title">Moderation</h1>
-    <p class="moderation-page__subtitle">Review pending posts submitted by users.</p>
-  </header>
+  <app-page-header
+    title="Moderation"
+    subtitle="Review pending posts submitted by users."
+  />
 
   @if (store.loading()) {
     <app-posts-loading-state />
   } @else if (errorMessage) {
-    <app-posts-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
+    <app-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
   } @else if (isEmpty()) {
-    <app-posts-empty-state variant="no-posts" />
+    <app-empty-state
+      title="No posts found"
+      description="Your editorial calendar is currently empty. Get started by creating your first post to engage your audience."
+    >
+      <a routerLink="/posts/new">
+        <span class="material-symbols-outlined">post_add</span>
+        Create Post
+      </a>
+    </app-empty-state>
   } @else {
     <div class="moderation-page__list">
       @for (post of store.pendingPosts(); track post.id) {

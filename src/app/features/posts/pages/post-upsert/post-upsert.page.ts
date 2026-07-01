@@ -4,14 +4,15 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { PostFormComponent } from '../../components/post-form/post-form.component';
 import { PostFormValue } from '../../components/post-form/types/post-form.types';
-import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { PostResolverResult } from '../../models/post-resolver-result.model';
 import { POST_STATUS } from '../../models/post-status.model';
 import { PostUpsertStore } from '../../store/post-upsert.store';
 
 @Component({
   selector: 'app-post-upsert-page',
-  imports: [RouterLink, PostFormComponent, PostsErrorStateComponent],
+  imports: [RouterLink, PostFormComponent, ErrorStateComponent, PageHeaderComponent],
   providers: [PostUpsertStore],
   templateUrl: './post-upsert.page.html',
   styleUrl: './post-upsert.page.scss',

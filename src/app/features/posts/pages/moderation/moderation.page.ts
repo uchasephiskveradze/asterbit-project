@@ -2,14 +2,15 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { PostsEmptyStateComponent } from '../../components/posts-empty-state/posts-empty-state.component';
-import { PostsErrorStateComponent } from '../../components/posts-error-state/posts-error-state.component';
-import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
-import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
-import { getPendingReasonLabel, POST_STATUS } from '../../models/post-status.model';
-import { POST_PENDING_REASON } from '../../models/post-revision.model';
-import { ModerationStore } from '../../store/moderation.store';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { TruncatePipe } from '../../../../shared/truncate.pipe';
+import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
+import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
+import { POST_PENDING_REASON } from '../../models/post-revision.model';
+import { getPendingReasonLabel, POST_STATUS } from '../../models/post-status.model';
+import { ModerationStore } from '../../store/moderation.store';
 
 @Component({
   selector: 'app-moderation-page',
@@ -17,8 +18,9 @@ import { TruncatePipe } from '../../../../shared/truncate.pipe';
     DatePipe,
     RouterLink,
     PostsLoadingStateComponent,
-    PostsEmptyStateComponent,
-    PostsErrorStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    PageHeaderComponent,
     ModerationActionsComponent,
     TruncatePipe,
   ],

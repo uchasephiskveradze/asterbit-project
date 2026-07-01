@@ -1,0 +1,22 @@
+<div class="empty-state">
+  @if (showVisual()) {
+    <div class="empty-state__visual" aria-hidden="true">
+      <div class="empty-state__glow"></div>
+      <div class="empty-state__icon-wrap">
+        <span class="material-symbols-outlined empty-state__icon">{{ icon() }}</span>
+        @if (badgeIcon()) {
+          <div class="empty-state__badge">
+            <span class="material-symbols-outlined">{{ badgeIcon() }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <h2 class="empty-state__title">{{ title() }}</h2>
+  <p class="empty-state__text">{{ description() }}</p>
+
+  <div class="empty-state__actions">
+    <ng-content />
+  </div>
+</div>

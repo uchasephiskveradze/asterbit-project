@@ -122,8 +122,9 @@ src/app/
 │       ├── store/         # Signal stores per page/flow
 │       └── utils/         # Revision diff, json-server query helpers
 └── shared/
-    ├── infinite-scroll.directive.ts   # appInfiniteScroll
-    └── truncate.pipe.ts               # truncate
+    ├── components/          # error-state, empty-state, page-header
+    ├── infinite-scroll.directive.ts
+    └── truncate.pipe.ts
 ```
 
 ### State Management

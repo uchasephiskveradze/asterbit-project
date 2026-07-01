@@ -2,30 +2,6 @@
 @use 'mixins' as *;
 
 .posts-list-page {
-  &__header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  &__title {
-    margin: 0;
-    font-family: $font-family-headline;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--app-heading);
-  }
-
-  &__subtitle {
-    margin: 0.5rem 0 0;
-    font-size: 1rem;
-    color: var(--app-text-muted);
-  }
-
   &__action {
     @include primary-button;
 
