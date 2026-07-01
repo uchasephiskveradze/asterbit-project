@@ -8,6 +8,7 @@ export interface Post {
   description: string;
   content: string;
   createdAt: string;
+  rejectedAt?: string | null;
   status: PostStatus;
   submittedBy?: string;
   pendingReason?: PostPendingReason;

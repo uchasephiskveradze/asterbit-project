@@ -94,8 +94,33 @@ describe('MyPostsStore', () => {
     expect(store.activeTab()).toBe('rejected');
     expect(api.getPosts).toHaveBeenLastCalledWith({
       force: false,
-      query: { status: POST_STATUS.rejected, sort: 'createdAt', order: 'desc' },
+      query: { status: POST_STATUS.rejected, sort: 'rejectedAt', order: 'desc' },
     });
     expect(store.filteredPosts()).toEqual([rejectedPost]);
+  });
+
+  it('should sort rejected posts by rejection time with newest first', async () => {
+    const olderRejected: Post = {
+      ...userPost,
+      id: '3',
+      title: 'Older rejection',
+      status: POST_STATUS.rejected,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      rejectedAt: '2026-01-10T00:00:00.000Z',
+    };
+    const newerRejected: Post = {
+      ...userPost,
+      id: '4',
+      title: 'Newer rejection',
+      status: POST_STATUS.rejected,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      rejectedAt: '2026-01-20T00:00:00.000Z',
+    };
+
+    api.getPosts.mockReturnValue(of([olderRejected, newerRejected]));
+    store.setTab('rejected');
+    await vi.waitFor(() => expect(store.loading()).toBe(false));
+
+    expect(store.filteredPosts().map((post) => post.id)).toEqual(['4', '3']);
   });
 });

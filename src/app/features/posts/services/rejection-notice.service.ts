@@ -93,9 +93,13 @@ export class RejectionNoticeService {
   }
 
   private fetchRejectedWithReasonForUser(userId: string): Observable<Post[]> {
-    return this.api.getPosts({ query: { status: POST_STATUS.rejected } }).pipe(
-      map((posts) => filterRejectedWithReasonForUser(posts, userId)),
-      tap(() => this.refreshBadge()),
-    );
+    return this.api
+      .getPosts({
+        query: { status: POST_STATUS.rejected, sort: 'rejectedAt', order: 'desc' },
+      })
+      .pipe(
+        map((posts) => filterRejectedWithReasonForUser(posts, userId)),
+        tap(() => this.refreshBadge()),
+      );
   }
 }

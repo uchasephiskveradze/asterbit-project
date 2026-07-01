@@ -74,6 +74,7 @@ describe('PostUpsertStore', () => {
       status: POST_STATUS.pending,
       pendingReason: POST_PENDING_REASON.new,
       rejectionReason: null,
+      rejectedAt: null,
       previousVersion: null,
     });
     expect(router.navigate).toHaveBeenCalledWith(['/posts/my'], {

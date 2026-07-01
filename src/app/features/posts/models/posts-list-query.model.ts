@@ -4,7 +4,7 @@ import { PostStatus } from './post-status.model';
 export type PostsListQuery = {
   status?: PostStatus;
   titleLike?: string;
-  sort?: 'createdAt';
+  sort?: 'createdAt' | 'rejectedAt';
   order?: PostDateSort;
   page?: number;
   limit?: number;

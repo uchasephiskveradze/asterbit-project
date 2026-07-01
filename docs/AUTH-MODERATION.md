@@ -31,6 +31,8 @@
 - `submittedBy`: user id (string)
 - `pendingReason`: `new` | `edited` (why a pending post is under review)
 - `previousVersion`: snapshot of content before an edited resubmission
+- `rejectionReason`: admin-provided text when a post is rejected
+- `rejectedAt`: ISO timestamp set when admin rejects; used to sort the Rejected tab (newest first)
 
 ## Create rules
 
@@ -51,7 +53,7 @@
 ## Moderation (admin)
 
 - Approve → `status: approved` → visible on public Posts
-- Reject → `status: rejected` → visible in submitter's My Posts → Rejected
+- Reject → `status: rejected`, `rejectionReason`, `rejectedAt` → visible in submitter's My Posts → Rejected (sorted by `rejectedAt` desc)
 - Available on Moderation queue and on post details when `status: pending`
 
 ## Demo users (`db.json`)

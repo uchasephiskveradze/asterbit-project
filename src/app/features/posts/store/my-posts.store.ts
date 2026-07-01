@@ -32,7 +32,18 @@ export class MyPostsStore {
       return [];
     }
 
-    return this.posts().filter((post) => post.submittedBy === user.id);
+    const owned = this.posts().filter((post) => post.submittedBy === user.id);
+
+    if (this.activeTab() !== 'rejected') {
+      return owned;
+    }
+
+    return [...owned].sort((left, right) => {
+      const leftTime = Date.parse(left.rejectedAt ?? left.createdAt);
+      const rightTime = Date.parse(right.rejectedAt ?? right.createdAt);
+
+      return rightTime - leftTime;
+    });
   });
 
   public initializeTab(tab: string | null): void {
@@ -102,7 +113,7 @@ export class MyPostsStore {
     };
 
     if (this.activeTab() === 'rejected') {
-      query.sort = 'createdAt';
+      query.sort = 'rejectedAt';
       query.order = 'desc';
     }
 

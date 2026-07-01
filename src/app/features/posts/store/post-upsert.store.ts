@@ -129,6 +129,7 @@ export class PostUpsertStore {
       payload.status = POST_STATUS.pending;
       payload.pendingReason = POST_PENDING_REASON.new;
       payload.rejectionReason = null;
+      payload.rejectedAt = null;
       payload.previousVersion = null;
     }
 

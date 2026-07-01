@@ -127,9 +127,12 @@
       "description": "A sample post waiting for admin review before it can appear on the public list.",
       "content": "This pending post demonstrates the moderation workflow. Regular users submit content that stays hidden from guests until an administrator approves it. Admins can approve or reject from the moderation queue.",
       "createdAt": "2024-10-26T09:00:00.000Z",
-      "status": "pending",
+      "status": "rejected",
       "submittedBy": "2",
-      "pendingReason": "new"
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "testset stset set set set setseset set est set set",
+      "rejectedAt": "2024-10-28T10:00:00.000Z"
     },
     {
       "id": "14",
@@ -138,19 +141,26 @@
       "description": "Another user submission currently in the moderation queue for testing.",
       "content": "Building side projects is a great way to learn new frameworks. This post is intentionally left pending so reviewers can practice approving or rejecting submissions without affecting the main public catalog of approved articles.",
       "createdAt": "2024-10-27T11:30:00.000Z",
-      "status": "pending",
+      "status": "rejected",
       "submittedBy": "2",
-      "pendingReason": "new"
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "ტესტი ეს არის მიზეზი",
+      "rejectedAt": "2024-11-01T14:00:00.000Z"
     },
     {
       "id": "15",
       "title": "Editorial QA — Part 1",
       "author": "James Wilson",
-      "description": "Seed article #15 about editorial qa for infinite scroll testing.",
+      "description": "Seed article #15 about editorial qa for infinite scroll testing. testsetsetsetstsetset",
       "content": "This expanded seed post (15) exists to validate client-side infinite scroll. The posts list loads five items per batch and should reveal more rows as you scroll. Topic focus: Editorial QA.",
       "createdAt": "2024-03-18T11:30:00.000Z",
-      "status": "approved",
-      "submittedBy": "2"
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "ტესტსეტსეტსეტს  ტსეტ",
+      "rejectedAt": "2024-11-05T09:00:00.000Z"
     },
     {
       "id": "16",
@@ -199,8 +209,16 @@
       "description": "Seed article #20 about angular signals for infinite scroll testing.",
       "content": "This expanded seed post (20) exists to validate client-side infinite scroll. The posts list loads five items per batch and should reveal more rows as you scroll. Topic focus: Angular Signals.",
       "createdAt": "2024-08-05T16:30:00.000Z",
-      "status": "approved",
-      "submittedBy": "2"
+      "status": "pending",
+      "submittedBy": "2",
+      "pendingReason": "edited",
+      "previousVersion": {
+        "title": "Angular Signals — Part 2",
+        "author": "Elena Rodriguez",
+        "description": "Seed article #20 about angular signals for infinite scroll testing.",
+        "content": "This expanded seed post (20) exists to validate client-side infinite scroll. The posts list loads five items per batch and should reveal more rows as you scroll. Topic focus: Angular Signals.",
+        "capturedAt": "2026-07-01T19:16:29.341Z"
+      }
     },
     {
       "id": "21",
@@ -447,10 +465,14 @@
       "title": "RxJS Operators — Part 3",
       "author": "James Wilson",
       "description": "Seed article #45 about rxjs operators for infinite scroll testing.",
-      "content": "This expanded seed post (45) exists to validate client-side infinite scroll. The posts list loads five items per batch and should reveal more rows as you scroll. Topic focus: RxJS Operators.",
+      "content": "This expanded seed post (45) exists to validate client-side infinite scroll. The posts list loads five items per batch and should reveal more rows as you scroll. Topic focus: RxJS Operators.http://localhost:4200/posts/newhttp://localhost:4200/posts/newhttp://localhost:4200/posts/new",
       "createdAt": "2024-09-24T17:30:00.000Z",
-      "status": "approved",
-      "submittedBy": "2"
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "ზანაძე არ არის",
+      "rejectedAt": "2025-06-15T16:00:00.000Z"
     },
     {
       "id": "46",
@@ -641,6 +663,47 @@
       "createdAt": "2024-04-25T12:30:00.000Z",
       "status": "approved",
       "submittedBy": "1"
+    },
+    {
+      "title": "tsett  settset",
+      "author": "Demo User",
+      "description": "tsettsettsettsettsettset  tsettsettsettsettsettset tsettsettsettsettsettsettsettsettsettsettsettset ",
+      "content": "tsettsettsettsettsettset tsettsettsettsettsettsettsettsettsettsettsettsettsettsettsettsettsettset tsettsettsettsettsettsettsettsettsettsettsettset tsettsettsettsettsettset tsettsettsettsettsettsettsettsettsettsettsettset tsettsettsettsettsettset",
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "createdAt": "2026-06-30T19:10:10.984Z",
+      "id": "jAPWSAeLsw0",
+      "previousVersion": null,
+      "rejectionReason": "Content needs a clearer title and description before review.",
+      "rejectedAt": "2026-06-30T20:30:00.000Z"
+    },
+    {
+      "title": " Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ)",
+      "author": "Demo User",
+      "description": " Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ)",
+      "content": " Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ) Rejected resubmit (permission + upsert ფლოუ)",
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "createdAt": "2026-07-01T18:57:31.052Z",
+      "id": "_GWRKLlM19Q",
+      "previousVersion": null,
+      "rejectionReason": "Rejected resubmit (permission + upsert ფლოუ)",
+      "rejectedAt": "2026-07-01T19:05:00.000Z"
+    },
+    {
+      "title": "http://localhost:4200/posts/new",
+      "author": "Demo User",
+      "description": "http://localhost:4200/posts/newhttp://localhost:4200/posts/new",
+      "content": "http://localhost:4200/posts/newhttp://localhost:4200/posts/newhttp://localhost:4200/posts/newhttp://localhost:4200/posts/new  http://localhost:4200/posts/new",
+      "status": "approved",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "createdAt": "2026-07-01T19:24:58.375Z",
+      "id": "7ps9o3DK-AY",
+      "previousVersion": null,
+      "rejectionReason": null
     }
   ],
   "users": [
