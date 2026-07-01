@@ -52,7 +52,7 @@
     background: var(--app-surface-raised);
     border-bottom: 1px solid var(--app-border);
 
-    @media (min-width: 768px) {
+    @media (min-width: 850px) {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 0.5fr;
     }
@@ -68,7 +68,7 @@
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--app-border);
 
-    @media (min-width: 768px) {
+    @media (min-width: 850px) {
       grid-template-columns: 2fr 1fr 1fr 0.5fr;
       align-items: center;
     }

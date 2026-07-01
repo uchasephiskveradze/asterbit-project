@@ -1,3 +1,26 @@
+<ng-template #rejectionCallout let-post="post">
+  <div class="posts-table__rejection-callout">
+    <span class="material-symbols-outlined posts-table__rejection-icon" aria-hidden="true">
+      cancel
+    </span>
+    <div class="posts-table__rejection-content">
+      <p class="posts-table__rejection-text">
+        <strong>{{ 'posts.myPosts.rejectionNotice.calloutLabel' | translate }}</strong>
+        {{ post.rejectionReason }}
+      </p>
+      @if (canOwnerResubmit(post)) {
+        <a
+          class="posts-table__rejection-action"
+          [routerLink]="['/posts', post.id, 'edit']"
+          [queryParams]="ownerEditQueryParams()"
+        >
+          {{ 'posts.myPosts.rejectionNotice.editResubmit' | translate }}
+        </a>
+      }
+    </div>
+  </div>
+</ng-template>
+
 <div class="posts-table__scroll">
   <table class="posts-table">
     <thead class="posts-table__head">
@@ -10,8 +33,11 @@
     </thead>
     <tbody class="posts-table__body">
       @for (post of posts(); track post.id) {
-        <tr class="posts-table__row">
-          <td class="posts-table__cell">
+        <tr
+          class="posts-table__row"
+          [class.posts-table__row--with-rejection]="showRejectionCallout() && post.rejectionReason"
+        >
+          <td class="posts-table__cell posts-table__cell--primary">
             <a
               class="posts-table__title-link"
               [routerLink]="['/posts', post.id]"
@@ -20,75 +46,68 @@
               <span class="posts-table__title">{{ post.title }}</span>
               <span class="posts-table__description">{{ post.description }}</span>
             </a>
+            <div class="posts-table__meta">
+              <span class="posts-table__author">{{ post.author }}</span>
+              <span class="posts-table__meta-separator" aria-hidden="true">·</span>
+              <time class="posts-table__date">{{ post.createdAt | date: 'MMM d, y':undefined:locale.dateLocale() }}</time>
+            </div>
           </td>
-          <td class="posts-table__cell">
+          <td class="posts-table__cell posts-table__cell--desktop">
             <span class="posts-table__author">{{ post.author }}</span>
           </td>
-          <td class="posts-table__cell">
-            <span class="posts-table__date">{{ post.createdAt | date: 'MMM d, y':undefined:locale.dateLocale() }}</span>
+          <td class="posts-table__cell posts-table__cell--desktop">
+            <time class="posts-table__date">{{ post.createdAt | date: 'MMM d, y':undefined:locale.dateLocale() }}</time>
           </td>
           <td class="posts-table__cell posts-table__cell--actions">
-            <a
-              class="posts-table__action"
-              [routerLink]="['/posts', post.id]"
-              [queryParams]="detailsQueryParams()"
-              [attr.aria-label]="'posts.table.viewPost' | translate"
-            >
-              <span class="material-symbols-outlined">visibility</span>
-            </a>
-            @if (showAdminActions() && auth.isAdmin()) {
+            <div class="posts-table__actions-bar">
               <a
                 class="posts-table__action"
-                [routerLink]="['/posts', post.id, 'edit']"
-                [queryParams]="{ from: 'list' }"
-                [attr.aria-label]="'posts.table.editPost' | translate"
+                [routerLink]="['/posts', post.id]"
+                [queryParams]="detailsQueryParams()"
+                [attr.aria-label]="'posts.table.viewPost' | translate"
               >
-                <span class="material-symbols-outlined">edit</span>
+                <span class="material-symbols-outlined">visibility</span>
               </a>
-            } @else if (canOwnerEdit(post)) {
-              <a
-                class="posts-table__action"
-                [routerLink]="['/posts', post.id, 'edit']"
-                [queryParams]="ownerEditQueryParams()"
-                [attr.aria-label]="'posts.table.editPost' | translate"
-              >
-                <span class="material-symbols-outlined">edit</span>
-              </a>
-            } @else if (canOwnerResubmit(post)) {
-              <a
-                class="posts-table__action"
-                [routerLink]="['/posts', post.id, 'edit']"
-                [queryParams]="ownerEditQueryParams()"
-                [attr.aria-label]="'posts.myPosts.rejectionNotice.editResubmit' | translate"
-              >
-                <span class="material-symbols-outlined">edit</span>
-              </a>
+              @if (showAdminActions() && auth.isAdmin()) {
+                <a
+                  class="posts-table__action"
+                  [routerLink]="['/posts', post.id, 'edit']"
+                  [queryParams]="{ from: 'list' }"
+                  [attr.aria-label]="'posts.table.editPost' | translate"
+                >
+                  <span class="material-symbols-outlined">edit</span>
+                </a>
+              } @else if (canOwnerEdit(post)) {
+                <a
+                  class="posts-table__action"
+                  [routerLink]="['/posts', post.id, 'edit']"
+                  [queryParams]="ownerEditQueryParams()"
+                  [attr.aria-label]="'posts.table.editPost' | translate"
+                >
+                  <span class="material-symbols-outlined">edit</span>
+                </a>
+              } @else if (canOwnerResubmit(post)) {
+                <a
+                  class="posts-table__action"
+                  [routerLink]="['/posts', post.id, 'edit']"
+                  [queryParams]="ownerEditQueryParams()"
+                  [attr.aria-label]="'posts.myPosts.rejectionNotice.editResubmit' | translate"
+                >
+                  <span class="material-symbols-outlined">edit</span>
+                </a>
+              }
+            </div>
+            @if (showRejectionCallout() && post.rejectionReason) {
+              <div class="posts-table__rejection-host posts-table__rejection-host--mobile">
+                <ng-container *ngTemplateOutlet="rejectionCallout; context: { post }" />
+              </div>
             }
           </td>
         </tr>
         @if (showRejectionCallout() && post.rejectionReason) {
-          <tr class="posts-table__callout-row">
+          <tr class="posts-table__callout-row posts-table__callout-row--desktop">
             <td class="posts-table__callout-cell" colspan="4">
-              <div class="posts-table__rejection-callout">
-                <span class="material-symbols-outlined posts-table__rejection-icon" aria-hidden="true">
-                  cancel
-                </span>
-                <div class="posts-table__rejection-content">
-                  <p class="posts-table__rejection-text">
-                    <strong>{{ 'posts.myPosts.rejectionNotice.calloutLabel' | translate }}</strong>
-                    {{ post.rejectionReason }}
-                  </p>
-                  @if (canOwnerResubmit(post)) {
-                    <a
-                      class="posts-table__rejection-action"
-                      [routerLink]="['/posts', post.id, 'edit']"
-                      [queryParams]="ownerEditQueryParams()"
-                    >
-                      {{ 'posts.myPosts.rejectionNotice.editResubmit' | translate }}
-                    </a>
-                  }
-                </div>
-              </div>
+              <ng-container *ngTemplateOutlet="rejectionCallout; context: { post }" />
             </td>
           </tr>
         }

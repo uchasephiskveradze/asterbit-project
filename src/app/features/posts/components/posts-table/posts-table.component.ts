@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -14,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-posts-table',
-  imports: [DatePipe, RouterLink, TranslatePipe],
+  imports: [DatePipe, NgTemplateOutlet, RouterLink, TranslatePipe],
   templateUrl: './posts-table.component.html',
   styleUrl: './posts-table.component.scss',
 })
