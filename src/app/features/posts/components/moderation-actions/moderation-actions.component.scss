@@ -1,14 +1,13 @@
+@use 'mixins' as *;
+
 .moderation-actions {
-  display: flex;
-  flex-wrap: wrap;
+  @include display-flex(row, wrap);
   gap: 0.5rem;
 
   &__approve,
   &__reject {
     ::ng-deep .mdc-button__label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       gap: 0.5rem;
       line-height: 1;
     }

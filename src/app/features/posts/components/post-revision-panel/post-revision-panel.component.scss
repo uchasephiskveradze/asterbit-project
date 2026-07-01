@@ -26,8 +26,7 @@
   }
 
   &__changes {
-    display: flex;
-    flex-direction: column;
+    @include display-flex(column);
     gap: 1rem;
   }
 

@@ -22,8 +22,7 @@
   }
 
   &__filters {
-    display: flex;
-    flex-wrap: wrap;
+    @include display-flex(row, wrap);
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
@@ -75,7 +74,7 @@
   }
 
   &__row-main {
-    display: flex;
+    @include display-flex(row);
     align-items: center;
     gap: 1rem;
   }

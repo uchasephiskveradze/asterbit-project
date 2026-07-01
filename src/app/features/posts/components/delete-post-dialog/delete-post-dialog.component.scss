@@ -3,9 +3,7 @@
 
 .delete-post-dialog {
   &__icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     width: 3rem;
     height: 3rem;
     margin-bottom: 1rem;

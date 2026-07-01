@@ -7,8 +7,7 @@
   }
 
   &__tabs {
-    display: flex;
-    flex-wrap: wrap;
+    @include display-flex(row, wrap);
     gap: 0.5rem;
     margin-bottom: 1.5rem;
   }

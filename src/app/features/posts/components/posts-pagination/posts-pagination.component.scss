@@ -1,10 +1,9 @@
 @use 'palette' as *;
+@use 'mixins' as *;
 
 .posts-pagination {
-  display: flex;
+  @include flex-center(row, space-between, center);
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.5rem;
   background: var(--app-surface-muted);
@@ -29,7 +28,7 @@
   }
 
   &__controls {
-    display: flex;
+    @include display-flex(row);
     align-items: center;
     gap: 0.5rem;
 

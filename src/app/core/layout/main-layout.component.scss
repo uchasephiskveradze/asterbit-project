@@ -19,8 +19,7 @@ $layout-desktop-min: 768px;
 }
 
 .layout__header-inner {
-  display: flex;
-  flex-direction: column;
+  @include display-flex(column);
   gap: 0.625rem;
   max-width: 1280px;
   margin: 0 auto;
@@ -37,9 +36,7 @@ $layout-desktop-min: 768px;
 }
 
 .layout__header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include flex-center(row, space-between, center);
   gap: 0.5rem;
   min-width: 0;
 
@@ -73,7 +70,7 @@ $layout-desktop-min: 768px;
 }
 
 .layout__nav {
-  display: flex;
+  @include display-flex(row);
   align-items: center;
   gap: 0.375rem;
   margin: 0 -1rem;
@@ -178,7 +175,7 @@ $layout-desktop-min: 768px;
 }
 
 .layout__actions {
-  display: flex;
+  @include display-flex(row);
   flex-shrink: 0;
   align-items: center;
   gap: 0.375rem;

@@ -2,8 +2,7 @@
 @use "mixins" as *;
 
 .posts-filters {
-  display: flex;
-  flex-direction: column;
+  @include display-flex(column);
   gap: 1rem;
 
   @media (min-width: 640px) {
@@ -85,7 +84,7 @@
   }
 
   &__sort {
-    display: flex;
+    @include display-flex(row);
     align-items: center;
     gap: 0.75rem;
 
@@ -154,7 +153,7 @@
   }
 
   &__view-mode {
-    display: flex;
+    @include display-flex(row);
     align-items: center;
     gap: 0.75rem;
     flex: 1 1 auto;
