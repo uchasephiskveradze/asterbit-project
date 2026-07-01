@@ -16,22 +16,22 @@
     <input
       class="posts-filters__search-input"
       type="search"
-      placeholder="Search posts..."
+      [placeholder]="'posts.filters.searchPlaceholder' | translate"
       [formControl]="searchControl"
-      aria-label="Search posts by title"
+      [attr.aria-label]="'posts.filters.searchAria' | translate"
     />
   </div>
 
   <div class="posts-filters__sort">
-    <span class="posts-filters__sort-label">Sort by:</span>
+    <span class="posts-filters__sort-label">{{ 'posts.filters.sortLabel' | translate }}</span>
     <div class="posts-filters__sort-control">
       <select
         class="posts-filters__sort-select"
         [formControl]="sortControl"
-        aria-label="Sort posts by date"
+        [attr.aria-label]="'posts.filters.sortAria' | translate"
       >
-        <option value="desc">Newest first</option>
-        <option value="asc">Oldest first</option>
+        <option value="desc">{{ 'posts.filters.sortNewest' | translate }}</option>
+        <option value="asc">{{ 'posts.filters.sortOldest' | translate }}</option>
       </select>
       <span class="material-symbols-outlined posts-filters__sort-icon" aria-hidden="true">
         expand_more
@@ -42,9 +42,9 @@
   <div
     class="posts-filters__view-mode"
     role="group"
-    aria-label="Posts list display mode"
+    [attr.aria-label]="'posts.filters.viewModeAria' | translate"
   >
-    <span class="posts-filters__view-mode-label">View:</span>
+    <span class="posts-filters__view-mode-label">{{ 'posts.filters.viewModeLabel' | translate }}</span>
     <div class="posts-filters__view-mode-options">
       <button
         type="button"
@@ -56,7 +56,7 @@
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
           view_list
         </span>
-        Pages
+        {{ 'posts.filters.pagination' | translate }}
       </button>
       <button
         type="button"
@@ -68,7 +68,7 @@
         <span class="material-symbols-outlined posts-filters__view-mode-icon" aria-hidden="true">
           unfold_more
         </span>
-        Infinite scroll
+        {{ 'posts.filters.infiniteScroll' | translate }}
       </button>
     </div>
   </div>

@@ -1,9 +1,11 @@
 import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export type PageHeaderActionsAlign = 'end' | 'start';
 
 @Component({
   selector: 'app-page-header',
+  imports: [TranslatePipe],
   templateUrl: './page-header.component.html',
   styleUrl: './page-header.component.scss',
 })

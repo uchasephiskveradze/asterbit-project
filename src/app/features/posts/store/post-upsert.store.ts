@@ -55,7 +55,7 @@ export class PostUpsertStore {
       .getPostById(id, { force: true })
       .pipe(
         catchError(() => {
-          this.error.set('Unable to load post. Please try again.');
+          this.error.set('errors.posts.loadOne');
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -146,7 +146,7 @@ export class PostUpsertStore {
     request()
       .pipe(
         catchError((err: HttpErrorResponse) => {
-          this.error.set('Unable to save post. Please try again.');
+          this.error.set('errors.posts.save');
           return of(null);
         }),
         finalize(() => this.saving.set(false)),

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+
 import { Post } from '../../models/post.model';
 import { PostsTableComponent } from './posts-table.component';
 
@@ -22,7 +24,7 @@ describe('PostsTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PostsTableComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostsTableComponent);

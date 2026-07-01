@@ -3,7 +3,10 @@
   @let pages = totalPages();
 
   <span class="posts-pagination__summary">
-    Showing {{ rangeStart() }} to {{ rangeEnd() }} of {{ totalItems() }} posts
+    {{
+      'posts.pagination.summary'
+        | translate: { start: rangeStart(), end: rangeEnd(), total: totalItems() }
+    }}
   </span>
 
   <div class="posts-pagination__controls">
@@ -12,7 +15,7 @@
       class="posts-pagination__nav"
       [disabled]="page <= 1"
       (click)="pageChange.emit(page - 1)"
-      aria-label="Previous page"
+      [attr.aria-label]="'posts.pagination.previous' | translate"
     >
       <span class="material-symbols-outlined">chevron_left</span>
     </button>
@@ -37,7 +40,7 @@
       class="posts-pagination__nav"
       [disabled]="page >= pages"
       (click)="pageChange.emit(page + 1)"
-      aria-label="Next page"
+      [attr.aria-label]="'posts.pagination.next' | translate"
     >
       <span class="material-symbols-outlined">chevron_right</span>
     </button>

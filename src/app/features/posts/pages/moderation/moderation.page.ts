@@ -1,15 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
+import { LocaleService } from '../../../../core/i18n/locale.service';
 import { TruncatePipe } from '../../../../shared/truncate.pipe';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostsLoadingStateComponent } from '../../components/posts-loading-state/posts-loading-state.component';
 import { POST_PENDING_REASON } from '../../models/post-revision.model';
-import { getPendingReasonLabel, POST_STATUS } from '../../models/post-status.model';
+import { getPendingReasonLabelKey, POST_STATUS } from '../../models/post-status.model';
 import { ModerationStore } from '../../store/moderation.store';
 
 @Component({
@@ -17,6 +19,7 @@ import { ModerationStore } from '../../store/moderation.store';
   imports: [
     DatePipe,
     RouterLink,
+    TranslatePipe,
     PostsLoadingStateComponent,
     EmptyStateComponent,
     ErrorStateComponent,
@@ -30,8 +33,9 @@ import { ModerationStore } from '../../store/moderation.store';
 })
 export class ModerationPage {
   public readonly store = inject(ModerationStore);
+  public readonly locale = inject(LocaleService);
   public readonly pendingReason = POST_PENDING_REASON;
-  public readonly getPendingReasonLabel = getPendingReasonLabel;
+  public readonly getPendingReasonLabelKey = getPendingReasonLabelKey;
 
   public readonly isEmpty = computed(
     () => !this.store.loading() && !this.store.error() && this.store.pendingPosts().length === 0,

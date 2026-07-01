@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateTesting } from '../../../core/i18n/testing/provide-translate-testing';
 
 import { EmptyStateComponent } from './empty-state.component';
 
@@ -9,11 +10,12 @@ describe('EmptyStateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EmptyStateComponent],
+      providers: [provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmptyStateComponent);
-    fixture.componentRef.setInput('title', 'No items');
-    fixture.componentRef.setInput('description', 'Nothing here yet.');
+    fixture.componentRef.setInput('title', 'posts.list.emptyTitle');
+    fixture.componentRef.setInput('description', 'posts.list.emptyDescription');
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -3,13 +3,13 @@
   @let isAuthenticated = auth.isAuthenticated();
 
   <app-page-header
-    title="Posts"
-    subtitle="Manage and organize your blog publications."
+    title="posts.list.title"
+    subtitle="posts.list.subtitle"
   >
     @if (listViewState === 'content' && isAuthenticated) {
       <a class="posts-list-page__action posts-list-page__action--desktop" routerLink="/posts/new">
         <span class="material-symbols-outlined">add</span>
-        Create Post
+        {{ 'common.createPost' | translate }}
       </a>
     }
   </app-page-header>
@@ -23,12 +23,12 @@
     }
     @case ('empty') {
       <app-empty-state
-        title="No posts found"
-        description="Your editorial calendar is currently empty. Get started by creating your first post to engage your audience."
+        title="posts.list.emptyTitle"
+        description="posts.list.emptyDescription"
       >
         <a routerLink="/posts/new">
           <span class="material-symbols-outlined">post_add</span>
-          Create Post
+          {{ 'common.createPost' | translate }}
         </a>
       </app-empty-state>
     }
@@ -51,8 +51,8 @@
 
       @if (store.isEmptySearch()) {
         <app-empty-state
-          title="No matching posts"
-          description="We could not find any posts matching your search. Try a different title keyword or clear the search field."
+          title="posts.list.noResultsTitle"
+          description="posts.list.noResultsDescription"
           [badgeIcon]="null"
         />
       } @else {
@@ -83,11 +83,11 @@
                 (reached)="store.loadMore()"
               >
                 <mat-progress-spinner mode="indeterminate" diameter="28" />
-                <span>Showing {{ rangeEnd }} of {{ totalItems }} posts</span>
+                <span>{{ 'posts.list.showingRange' | translate: { end: rangeEnd, total: totalItems } }}</span>
               </div>
             } @else {
               <p class="posts-list-page__end">
-                Showing all {{ totalItems }} posts
+                {{ 'posts.list.showingAll' | translate: { total: totalItems } }}
               </p>
             }
           }
@@ -97,7 +97,11 @@
   }
 
   @if (listViewState !== 'loading' && listViewState !== 'error' && isAuthenticated) {
-    <a class="posts-list-page__fab" routerLink="/posts/new" aria-label="Create post">
+    <a
+      class="posts-list-page__fab"
+      routerLink="/posts/new"
+      [attr.aria-label]="'common.createPost' | translate"
+    >
       <span class="material-symbols-outlined">add</span>
     </a>
   }

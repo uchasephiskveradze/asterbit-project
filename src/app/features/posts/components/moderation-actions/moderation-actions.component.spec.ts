@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+
 import { ModerationActionsComponent } from './moderation-actions.component';
 
 describe('ModerationActionsComponent', () => {
@@ -10,7 +12,7 @@ describe('ModerationActionsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ModerationActionsComponent],
-      providers: [provideNoopAnimations()],
+      providers: [provideNoopAnimations(), provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ModerationActionsComponent);

@@ -2,8 +2,8 @@
   @let errorMessage = store.error();
 
   <app-page-header
-    title="Moderation"
-    subtitle="Review pending posts submitted by users."
+    title="posts.moderation.title"
+    subtitle="posts.moderation.subtitle"
   />
 
   @if (store.loading()) {
@@ -12,12 +12,12 @@
     <app-error-state [message]="errorMessage" (retry)="store.loadPosts()" />
   } @else if (isEmpty()) {
     <app-empty-state
-      title="No posts found"
-      description="Your editorial calendar is currently empty. Get started by creating your first post to engage your audience."
+      title="posts.list.emptyTitle"
+      description="posts.list.emptyDescription"
     >
       <a routerLink="/posts/new">
         <span class="material-symbols-outlined">post_add</span>
-        Create Post
+        {{ 'common.createPost' | translate }}
       </a>
     </app-empty-state>
   } @else {
@@ -47,13 +47,13 @@
                     fiber_new
                   </span>
                 }
-                {{ getPendingReasonLabel(reason) }}
+                {{ getPendingReasonLabelKey(reason) | translate }}
               </span>
             </div>
             <p class="moderation-page__description">{{ post.description | truncate: 140 }}</p>
             <p class="moderation-page__meta">
               <span>{{ post.author }}</span>
-              <span>{{ post.createdAt | date: 'MMM d, y' }}</span>
+              <span>{{ post.createdAt | date: 'MMM d, y':undefined:locale.dateLocale() }}</span>
             </p>
           </div>
 

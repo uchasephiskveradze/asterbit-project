@@ -148,7 +148,7 @@ export class PostsListStore {
 
           return this.api.getPosts({ force, query: this.buildListQuery() }).pipe(
             catchError(() => {
-              this.error.set('Unable to load posts. Please try again.');
+              this.error.set('errors.posts.load');
               return of([] as Post[]);
             }),
             finalize(() => this.loading.set(false)),

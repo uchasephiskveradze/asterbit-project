@@ -6,6 +6,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { API_BASE_URL } from '../../../../core/config';
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { PostDetailsStore } from '../../store/post-details.store';
 import { DeletePostDialogComponent } from './delete-post-dialog.component';
 
@@ -21,6 +22,7 @@ describe('DeletePostDialogComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
+        provideTranslateTesting(),
         PostDetailsStore,
         { provide: MatDialogRef, useValue: { close: () => undefined, disableClose: false } },
         {

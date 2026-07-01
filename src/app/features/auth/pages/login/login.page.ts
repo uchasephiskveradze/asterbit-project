@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss',
 })
@@ -41,7 +42,7 @@ export class LoginPage {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((success) => {
         if (!success) {
-          this.error.set('Invalid email or password.');
+          this.error.set('auth.invalidCredentials');
           return;
         }
 

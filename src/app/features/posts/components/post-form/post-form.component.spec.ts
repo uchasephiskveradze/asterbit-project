@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+
 import { Post } from '../../models/post.model';
 import { PostFormComponent } from './post-form.component';
 import { POST_FORM_VALIDATION } from './post-form.validation';
@@ -11,6 +13,7 @@ describe('PostFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PostFormComponent],
+      providers: [provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostFormComponent);
@@ -45,15 +48,18 @@ describe('PostFormComponent', () => {
     component.form.markAllAsTouched();
 
     expect(component.form.invalid).toBe(true);
-    expect(component.getError('title')).toContain(
-      String(POST_FORM_VALIDATION.title.minLength),
-    );
-    expect(component.getError('description')).toContain(
-      String(POST_FORM_VALIDATION.description.minLength),
-    );
-    expect(component.getError('content')).toContain(
-      String(POST_FORM_VALIDATION.content.minLength),
-    );
+    expect(component.getError('title')).toEqual({
+      key: 'form.errors.minLength',
+      params: { count: POST_FORM_VALIDATION.title.minLength },
+    });
+    expect(component.getError('description')).toEqual({
+      key: 'form.errors.minLength',
+      params: { count: POST_FORM_VALIDATION.description.minLength },
+    });
+    expect(component.getError('content')).toEqual({
+      key: 'form.errors.minLength',
+      params: { count: POST_FORM_VALIDATION.content.minLength },
+    });
   });
 
   it('should emit valid form values when all rules pass', () => {

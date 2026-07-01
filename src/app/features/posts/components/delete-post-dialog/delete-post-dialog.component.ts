@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 
 import { navigateSafely } from '../../../../core/router/navigate.util';
@@ -11,7 +12,7 @@ import { DeletePostDialogData } from './types/delete-post-dialog.types';
 
 @Component({
   selector: 'app-delete-post-dialog',
-  imports: [MatDialogClose, MatButtonModule, MatProgressSpinnerModule],
+  imports: [MatDialogClose, MatButtonModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './delete-post-dialog.component.html',
   styleUrl: './delete-post-dialog.component.scss',
 })

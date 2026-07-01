@@ -62,7 +62,7 @@ describe('ModerationStore', () => {
 
     await vi.waitFor(() => expect(failingStore.loading()).toBe(false));
 
-    expect(failingStore.error()).toBe('Unable to load moderation queue. Please try again.');
+    expect(failingStore.error()).toBe('errors.posts.moderationLoad');
   });
 
   it('should remove moderated posts from the local queue', async () => {

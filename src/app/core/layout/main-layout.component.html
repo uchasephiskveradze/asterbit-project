@@ -1,18 +1,19 @@
 <div class="layout">
   @let isDarkTheme = theme.isDark();
+  @let language = locale.currentLanguage();
 
   <header class="layout__header">
     <div class="layout__header-inner">
       <div class="layout__brand-group">
-        <a class="layout__brand" routerLink="/posts">Blog Management</a>
-        <nav class="layout__nav" aria-label="Main navigation">
+        <a class="layout__brand" routerLink="/posts">{{ 'layout.brand' | translate }}</a>
+        <nav class="layout__nav" [attr.aria-label]="'layout.navLabel' | translate">
           <a
             class="layout__nav-link"
             routerLink="/posts"
             routerLinkActive="layout__nav-link--active"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            Posts
+            {{ 'layout.posts' | translate }}
           </a>
           @if (auth.isAuthenticated()) {
             <a
@@ -21,7 +22,7 @@
               routerLinkActive="layout__nav-link--active"
               [routerLinkActiveOptions]="{ exact: false }"
             >
-              My Posts
+              {{ 'layout.myPosts' | translate }}
             </a>
           }
           @if (auth.isAdmin()) {
@@ -30,7 +31,7 @@
               routerLink="/posts/moderation"
               routerLinkActive="layout__nav-link--active"
             >
-              Moderation
+              {{ 'layout.moderation' | translate }}
             </a>
           }
         </nav>
@@ -38,10 +39,23 @@
 
       <div class="layout__actions">
         <button
+          class="layout__locale-toggle"
+          type="button"
+          (click)="locale.toggle()"
+          [attr.aria-label]="
+            language === 'ka' ? ('layout.switchToEnglish' | translate) : ('layout.switchToGeorgian' | translate)
+          "
+        >
+          {{ locale.languageLabel(language) }}
+        </button>
+
+        <button
           class="layout__theme-toggle"
           type="button"
           (click)="theme.toggle()"
-          [attr.aria-label]="isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+          [attr.aria-label]="
+            isDarkTheme ? ('layout.switchToLightTheme' | translate) : ('layout.switchToDarkTheme' | translate)
+          "
         >
           <span class="material-symbols-outlined" aria-hidden="true">
             {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
@@ -49,10 +63,12 @@
         </button>
 
         @if (auth.isAuthenticated()) {
-          <a class="layout__cta" routerLink="/posts/new">Create Post</a>
-          <button class="layout__auth-link" type="button" (click)="auth.logout()">Logout</button>
+          <a class="layout__cta" routerLink="/posts/new">{{ 'common.createPost' | translate }}</a>
+          <button class="layout__auth-link" type="button" (click)="auth.logout()">
+            {{ 'layout.logout' | translate }}
+          </button>
         } @else {
-          <a class="layout__cta" routerLink="/login">Login</a>
+          <a class="layout__cta" routerLink="/login">{{ 'layout.login' | translate }}</a>
         }
       </div>
     </div>

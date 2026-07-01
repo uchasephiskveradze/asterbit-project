@@ -5,16 +5,17 @@
     <span class="material-symbols-outlined delete-post-dialog__icon">delete_forever</span>
   </div>
 
-  <h2 id="delete-post-dialog-title" class="delete-post-dialog__title">Delete post?</h2>
+  <h2 id="delete-post-dialog-title" class="delete-post-dialog__title">
+    {{ 'posts.deleteDialog.title' | translate }}
+  </h2>
 
-  <p class="delete-post-dialog__message">
-    Are you sure you want to delete
-    <span class="delete-post-dialog__post-title">{{ data.postTitle }}</span
-    >? This action cannot be undone.
-  </p>
+  <p
+    class="delete-post-dialog__message"
+    [innerHTML]="'posts.deleteDialog.message' | translate: { title: data.postTitle }"
+  ></p>
 
   @if (store.error()) {
-    <p class="delete-post-dialog__error" role="alert">{{ store.error() }}</p>
+    <p class="delete-post-dialog__error" role="alert">{{ store.error() | translate }}</p>
   }
 
   <div class="delete-post-dialog__actions">
@@ -24,7 +25,7 @@
       mat-dialog-close
       [disabled]="isDeleting"
     >
-      Cancel
+      {{ 'common.cancel' | translate }}
     </button>
     <button
       mat-flat-button
@@ -40,9 +41,9 @@
           mode="indeterminate"
           diameter="18"
         />
-        Deleting...
+        {{ 'posts.deleteDialog.deleting' | translate }}
       } @else {
-        Delete
+        {{ 'posts.deleteDialog.confirm' | translate }}
       }
     </button>
   </div>

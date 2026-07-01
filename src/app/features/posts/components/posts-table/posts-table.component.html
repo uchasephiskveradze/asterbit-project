@@ -2,10 +2,10 @@
   <table class="posts-table">
     <thead class="posts-table__head">
       <tr class="posts-table__head-row">
-        <th class="posts-table__head-cell">Title</th>
-        <th class="posts-table__head-cell">Author</th>
-        <th class="posts-table__head-cell">Date</th>
-        <th class="posts-table__head-cell posts-table__head-cell--actions">Actions</th>
+        <th class="posts-table__head-cell">{{ 'posts.table.title' | translate }}</th>
+        <th class="posts-table__head-cell">{{ 'posts.table.author' | translate }}</th>
+        <th class="posts-table__head-cell">{{ 'posts.table.date' | translate }}</th>
+        <th class="posts-table__head-cell posts-table__head-cell--actions">{{ 'posts.table.actions' | translate }}</th>
       </tr>
     </thead>
     <tbody class="posts-table__body">
@@ -25,14 +25,14 @@
             <span class="posts-table__author">{{ post.author }}</span>
           </td>
           <td class="posts-table__cell">
-            <span class="posts-table__date">{{ post.createdAt | date: 'MMM d, y' }}</span>
+            <span class="posts-table__date">{{ post.createdAt | date: 'MMM d, y':undefined:locale.dateLocale() }}</span>
           </td>
           <td class="posts-table__cell posts-table__cell--actions">
             <a
               class="posts-table__action"
               [routerLink]="['/posts', post.id]"
               [queryParams]="detailsQueryParams()"
-              aria-label="View post"
+              [attr.aria-label]="'posts.table.viewPost' | translate"
             >
               <span class="material-symbols-outlined">visibility</span>
             </a>
@@ -41,7 +41,7 @@
                 class="posts-table__action"
                 [routerLink]="['/posts', post.id, 'edit']"
                 [queryParams]="{ from: 'list' }"
-                aria-label="Edit post"
+                [attr.aria-label]="'posts.table.editPost' | translate"
               >
                 <span class="material-symbols-outlined">edit</span>
               </a>
@@ -50,7 +50,7 @@
                 class="posts-table__action"
                 [routerLink]="['/posts', post.id, 'edit']"
                 [queryParams]="{ from: 'my-posts' }"
-                aria-label="Edit post"
+                [attr.aria-label]="'posts.table.editPost' | translate"
               >
                 <span class="material-symbols-outlined">edit</span>
               </a>

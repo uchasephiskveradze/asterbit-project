@@ -31,7 +31,7 @@ export class ModerationStore {
       .getPosts({ force, query: this.buildListQuery() })
       .pipe(
         catchError(() => {
-          this.error.set('Unable to load moderation queue. Please try again.');
+          this.error.set('errors.posts.moderationLoad');
           return of([]);
         }),
         finalize(() => this.loading.set(false)),
@@ -48,7 +48,7 @@ export class ModerationStore {
       .updatePostStatus(id, status)
       .pipe(
         catchError(() => {
-          this.error.set('Unable to update post status. Please try again.');
+          this.error.set('errors.posts.updateStatus');
           return of(null);
         }),
         finalize(() => this.actingOnId.set(null)),

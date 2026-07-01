@@ -1,5 +1,6 @@
 import { Component, computed, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
@@ -15,6 +16,7 @@ import { MyPostsStore } from '../../store/my-posts.store';
   selector: 'app-my-posts-page',
   imports: [
     RouterLink,
+    TranslatePipe,
     PostsTableComponent,
     PostsLoadingStateComponent,
     EmptyStateComponent,

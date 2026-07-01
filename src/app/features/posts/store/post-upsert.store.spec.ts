@@ -69,7 +69,7 @@ describe('PostUpsertStore', () => {
 
     await vi.waitFor(() => expect(store.saving()).toBe(false));
 
-    expect(store.error()).toBe('Unable to save post. Please try again.');
+    expect(store.error()).toBe('errors.posts.save');
     expect(store.post()?.title).toBe('Existing Post');
   });
 });

@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+
 import { PostsPaginationComponent } from './posts-pagination.component';
 
 describe('PostsPaginationComponent', () => {
@@ -9,6 +11,7 @@ describe('PostsPaginationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PostsPaginationComponent],
+      providers: [provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostsPaginationComponent);

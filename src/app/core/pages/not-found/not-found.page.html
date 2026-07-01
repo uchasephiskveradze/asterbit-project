@@ -1,16 +1,16 @@
 <section class="not-found-page">
   <div class="not-found-page__content">
-    <p class="not-found-page__badge">404</p>
+    <p class="not-found-page__badge">{{ 'notFound.badge' | translate }}</p>
 
-    <h1 #heading class="not-found-page__title" tabindex="-1">Page not found</h1>
+    <h1 #heading class="not-found-page__title" tabindex="-1">{{ 'notFound.title' | translate }}</h1>
 
     <p class="not-found-page__text">
-      The page you are looking for does not exist or may have been removed.
+      {{ 'notFound.description' | translate }}
     </p>
 
     <a class="not-found-page__action" routerLink="/posts">
       <span class="material-symbols-outlined">arrow_back</span>
-      Return to Posts
+      {{ 'notFound.action' | translate }}
     </a>
   </div>
 </section>

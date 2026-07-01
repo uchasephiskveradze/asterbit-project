@@ -41,7 +41,7 @@ export class PostDetailsStore {
                 return of(null);
               }
 
-              this.error.set('Unable to load post. Please try again.');
+              this.error.set('errors.posts.loadOne');
               return of(null);
             }),
             finalize(() => this.loading.set(false)),
@@ -80,7 +80,7 @@ export class PostDetailsStore {
 
     return this.api.deletePost(id).pipe(
       catchError(() => {
-        this.error.set('Unable to delete post. Please try again.');
+        this.error.set('errors.posts.delete');
         return EMPTY;
       }),
       finalize(() => this.deleting.set(false)),
@@ -100,7 +100,7 @@ export class PostDetailsStore {
       .updatePostStatus(post.id, status)
       .pipe(
         catchError(() => {
-          this.error.set('Unable to update post status. Please try again.');
+          this.error.set('errors.posts.updateStatus');
           return of(null);
         }),
         finalize(() => this.moderating.set(false)),

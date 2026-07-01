@@ -63,7 +63,7 @@ export class MyPostsStore {
       .getPosts({ force, query: this.buildListQuery() })
       .pipe(
         catchError(() => {
-          this.error.set('Unable to load your posts. Please try again.');
+          this.error.set('errors.posts.myPostsLoad');
           return of([]);
         }),
         finalize(() => this.loading.set(false)),

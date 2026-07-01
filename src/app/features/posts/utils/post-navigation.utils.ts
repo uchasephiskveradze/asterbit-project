@@ -3,7 +3,7 @@ export type PostNavigationSource = 'list' | 'my-posts' | 'moderation';
 export type PostBackNavigation = {
   link: string[];
   queryParams?: Record<string, string>;
-  label: string;
+  labelKey: string;
 };
 
 export function isPostNavigationSource(value: string | null | undefined): value is PostNavigationSource {
@@ -17,7 +17,7 @@ export function getPostBackNavigation(
   if (!isPostNavigationSource(from) || from === 'list') {
     return {
       link: ['/posts'],
-      label: 'Back to Posts',
+      labelKey: 'navigation.backToPosts',
     };
   }
 
@@ -26,12 +26,12 @@ export function getPostBackNavigation(
       return {
         link: ['/posts/my'],
         queryParams: options?.tab ? { tab: options.tab } : undefined,
-        label: 'Back to My Posts',
+        labelKey: 'navigation.backToMyPosts',
       };
     case 'moderation':
       return {
         link: ['/posts/moderation'],
-        label: 'Back to Moderation',
+        labelKey: 'navigation.backToModeration',
       };
   }
 }

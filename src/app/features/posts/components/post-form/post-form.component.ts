@@ -11,15 +11,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { Post } from '../../models/post.model';
-import { getPostFormControlError } from './post-form-error.messages';
+import { getPostFormControlError, PostFormControlError } from './post-form-error.messages';
 import { PostFormControls, PostFormValue } from './types/post-form.types';
 import { POST_FORM_VALIDATION } from './post-form.validation';
 
 @Component({
   selector: 'app-post-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './post-form.component.html',
   styleUrl: './post-form.component.scss',
 })
@@ -28,7 +29,7 @@ export class PostFormComponent {
   public readonly hideAuthor = input(false);
   public readonly authorDisplayName = input('');
   public readonly submitting = input(false);
-  public readonly submitLabel = input('Save Post');
+  public readonly submitLabel = input('form.post.savePost');
 
   public readonly formSubmit = output<PostFormValue>();
 
@@ -139,7 +140,7 @@ export class PostFormComponent {
     return this.getLength(controlName) < rules.minLength;
   }
 
-  public getError(controlName: keyof PostFormValue): string {
+  public getError(controlName: keyof PostFormValue): PostFormControlError | null {
     return getPostFormControlError(this.form.controls[controlName].errors);
   }
 }

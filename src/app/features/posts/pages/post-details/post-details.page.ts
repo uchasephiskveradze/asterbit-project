@@ -4,6 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { LocaleService } from '../../../../core/i18n/locale.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DeletePostDialogComponent } from '../../components/delete-post-dialog/delete-post-dialog.component';
 import { ModerationActionsComponent } from '../../components/moderation-actions/moderation-actions.component';
 import { PostRevisionPanelComponent } from '../../components/post-revision-panel/post-revision-panel.component';
@@ -21,7 +23,7 @@ import {
 
 @Component({
   selector: 'app-post-details-page',
-  imports: [DatePipe, RouterLink, ErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
+  imports: [DatePipe, RouterLink, TranslatePipe, ErrorStateComponent, PostRevisionPanelComponent, ModerationActionsComponent, PostStatusLabelPipe],
   providers: [PostDetailsStore],
   templateUrl: './post-details.page.html',
   styleUrl: './post-details.page.scss',
@@ -33,6 +35,7 @@ export class PostDetailsPage {
   public readonly resolvedPost = input.required<PostResolverResult>();
 
   public readonly store = inject(PostDetailsStore);
+  public readonly locale = inject(LocaleService);
   public readonly postStatus = POST_STATUS;
 
   private readonly auth = inject(AuthService);

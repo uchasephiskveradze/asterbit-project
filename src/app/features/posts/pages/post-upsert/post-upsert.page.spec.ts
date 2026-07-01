@@ -4,6 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 import { API_BASE_URL } from '../../../../core/config';
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { PostUpsertPage } from './post-upsert.page';
 
 describe('PostUpsertPage', () => {
@@ -17,6 +18,7 @@ describe('PostUpsertPage', () => {
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideTranslateTesting(),
         { provide: API_BASE_URL, useValue: '/api' },
       ],
     }).compileComponents();

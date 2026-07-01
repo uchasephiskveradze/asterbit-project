@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { LoginPage } from './login.page';
 
@@ -19,6 +20,7 @@ describe('LoginPage', () => {
       imports: [LoginPage],
       providers: [
         provideRouter([]),
+        provideTranslateTesting(),
         { provide: AuthService, useValue: auth },
       ],
     }).compileComponents();
@@ -48,6 +50,6 @@ describe('LoginPage', () => {
     component.onSubmit();
 
     expect(auth.login).toHaveBeenCalledWith('admin@blog.com', 'admin123');
-    expect(component.error()).toBe('Invalid email or password.');
+    expect(component.error()).toBe('auth.invalidCredentials');
   });
 });

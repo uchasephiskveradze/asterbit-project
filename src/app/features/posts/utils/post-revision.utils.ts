@@ -1,5 +1,5 @@
 import {
-  POST_REVISION_FIELD_LABELS,
+  POST_REVISION_FIELD_LABEL_KEYS,
   POST_PENDING_REASON,
   PostFieldChange,
   PostRevisionField,
@@ -26,7 +26,7 @@ export function getPostRevisionChanges(post: Post): PostFieldChange[] {
     return [
       {
         field,
-        label: POST_REVISION_FIELD_LABELS[field],
+        labelKey: POST_REVISION_FIELD_LABEL_KEYS[field],
         previous,
         current,
       },

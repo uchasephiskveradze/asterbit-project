@@ -69,7 +69,7 @@ describe('PostsListStore', () => {
 
     await vi.waitFor(() => expect(store.loading()).toBe(false));
 
-    expect(store.error()).toBe('Unable to load posts. Please try again.');
+    expect(store.error()).toBe('errors.posts.load');
     expect(store.posts()).toEqual([]);
   });
 

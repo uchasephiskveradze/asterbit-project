@@ -3,17 +3,17 @@
 
   <div class="login-page__card">
     <header class="login-page__header">
-      <h1 class="login-page__title">Sign in</h1>
-      <p class="login-page__subtitle">Access your blog management account.</p>
+      <h1 class="login-page__title">{{ 'auth.signInTitle' | translate }}</h1>
+      <p class="login-page__subtitle">{{ 'auth.signInSubtitle' | translate }}</p>
     </header>
 
     @if (error()) {
-      <p class="login-page__error" role="alert">{{ error() }}</p>
+      <p class="login-page__error" role="alert">{{ error() | translate }}</p>
     }
 
     <form class="login-page__form" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="login-page__field">
-        <label class="login-page__label" for="login-email">Email</label>
+        <label class="login-page__label" for="login-email">{{ 'common.email' | translate }}</label>
         <input
           id="login-email"
           class="login-page__control"
@@ -25,28 +25,26 @@
       </div>
 
       <div class="login-page__field">
-        <label class="login-page__label" for="login-password">Password</label>
+        <label class="login-page__label" for="login-password">{{ 'common.password' | translate }}</label>
         <input
           id="login-password"
           class="login-page__control"
           type="password"
           formControlName="password"
           autocomplete="current-password"
-          placeholder="Your password"
+          [placeholder]="'auth.passwordPlaceholder' | translate"
         />
       </div>
 
       <button class="login-page__submit" type="submit" [disabled]="isLoading">
         @if (isLoading) {
-          Signing in...
+          {{ 'auth.signingIn' | translate }}
         } @else {
-          Sign in
+          {{ 'auth.signIn' | translate }}
         }
       </button>
     </form>
 
-    <p class="login-page__hint">
-      Demo: <strong>admin@blog.com</strong> / admin123 or <strong>user@blog.com</strong> / user123
-    </p>
+    <p class="login-page__hint" [innerHTML]="'auth.demoHint' | translate"></p>
   </div>
 </section>

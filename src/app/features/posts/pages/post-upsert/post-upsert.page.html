@@ -5,9 +5,9 @@
 
   @if (editMode && store.notFound()) {
     <div class="post-upsert-page__not-found">
-      <h2 class="post-upsert-page__not-found-title">Post not found</h2>
+      <h2 class="post-upsert-page__not-found-title">{{ 'posts.notFound.title' | translate }}</h2>
       <p class="post-upsert-page__not-found-text">
-        The post you are trying to edit does not exist or may have been removed.
+        {{ 'posts.notFound.editDescription' | translate }}
       </p>
       <div class="post-upsert-page__not-found-actions">
         <button
@@ -15,20 +15,20 @@
           type="button"
           (click)="reloadPage()"
         >
-          Reload page
+          {{ 'common.reloadPage' | translate }}
         </button>
         <a
           class="post-upsert-page__not-found-action post-upsert-page__not-found-action--primary"
           routerLink="/posts"
         >
-          Back to Posts
+          {{ 'common.backToPosts' | translate }}
         </a>
       </div>
     </div>
   } @else if (editMode && errorMessage && !post) {
     <div class="post-upsert-page__load-error">
       <app-error-state [message]="errorMessage" (retry)="reloadPage()" />
-      <a class="post-upsert-page__back-link" routerLink="/posts">Back to Posts</a>
+      <a class="post-upsert-page__back-link" routerLink="/posts">{{ 'common.backToPosts' | translate }}</a>
     </div>
   } @else {
     <app-page-header
@@ -36,11 +36,11 @@
       [subtitle]="pageSubtitle()"
       actionsAlign="start"
     >
-      <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">Cancel</a>
+      <a class="post-upsert-page__cancel" [routerLink]="cancelLink()">{{ 'common.cancel' | translate }}</a>
     </app-page-header>
 
     @if (errorMessage) {
-      <div class="post-upsert-page__error" role="alert">{{ errorMessage }}</div>
+      <div class="post-upsert-page__error" role="alert">{{ errorMessage | translate }}</div>
     }
 
     @if (showForm()) {

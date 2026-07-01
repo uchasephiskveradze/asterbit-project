@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { PostFormComponent } from '../../components/post-form/post-form.component';
@@ -12,7 +13,7 @@ import { PostUpsertStore } from '../../store/post-upsert.store';
 
 @Component({
   selector: 'app-post-upsert-page',
-  imports: [RouterLink, PostFormComponent, ErrorStateComponent, PageHeaderComponent],
+  imports: [RouterLink, TranslatePipe, PostFormComponent, ErrorStateComponent, PageHeaderComponent],
   providers: [PostUpsertStore],
   templateUrl: './post-upsert.page.html',
   styleUrl: './post-upsert.page.scss',
@@ -37,36 +38,36 @@ export class PostUpsertPage {
 
   public readonly pageTitle = computed(() => {
     if (this.isEditMode()) {
-      return 'Edit Post';
+      return 'posts.upsert.editTitle';
     }
 
-    return this.auth.isAdmin() ? 'Create New Post' : 'Submit Post';
+    return this.auth.isAdmin() ? 'posts.upsert.createAdminTitle' : 'posts.upsert.submitTitle';
   });
 
   public readonly pageSubtitle = computed(() => {
     if (this.isOwnerResubmit()) {
-      return 'Your changes will be reviewed by an admin before the post is published again.';
+      return 'posts.upsert.ownerResubmitSubtitle';
     }
 
     if (this.isEditMode()) {
-      return 'Update your post and save changes.';
+      return 'posts.upsert.editSubtitle';
     }
 
     return this.auth.isAdmin()
-      ? 'Publish a new post immediately.'
-      : 'Your post will be reviewed by an admin before publication.';
+      ? 'posts.upsert.createAdminSubtitle'
+      : 'posts.upsert.submitSubtitle';
   });
 
   public readonly submitLabel = computed(() => {
     if (this.isOwnerResubmit()) {
-      return 'Submit for Review';
+      return 'posts.upsert.submitForReview';
     }
 
     if (this.isEditMode()) {
-      return 'Update Post';
+      return 'posts.upsert.updatePost';
     }
 
-    return this.auth.isAdmin() ? 'Create Post' : 'Submit for Review';
+    return this.auth.isAdmin() ? 'common.createPost' : 'posts.upsert.submitForReview';
   });
   public readonly cancelLink = computed(() => {
     if (!this.isEditMode()) {

@@ -68,7 +68,7 @@ describe('PostDetailsStore', () => {
 
     await vi.waitFor(() => expect(store.moderating()).toBe(false));
 
-    expect(store.error()).toBe('Unable to update post status. Please try again.');
+    expect(store.error()).toBe('errors.posts.updateStatus');
     expect(store.post()?.status).toBe('pending');
   });
 });

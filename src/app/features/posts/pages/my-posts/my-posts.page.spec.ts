@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { PostsApiService } from '../../services/posts-api.service';
 import { MyPostsStore } from '../../store/my-posts.store';
 import { MyPostsPage } from './my-posts.page';
@@ -16,6 +17,7 @@ describe('MyPostsPage', () => {
       imports: [MyPostsPage],
       providers: [
         provideRouter([]),
+        provideTranslateTesting(),
         {
           provide: PostsApiService,
           useValue: { getPosts: () => of([]) },

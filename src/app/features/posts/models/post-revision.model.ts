@@ -17,14 +17,14 @@ export type PostRevisionField = keyof Pick<PostRevisionSnapshot, 'title' | 'auth
 
 export interface PostFieldChange {
   field: PostRevisionField;
-  label: string;
+  labelKey: string;
   previous: string;
   current: string;
 }
 
-export const POST_REVISION_FIELD_LABELS: Record<PostRevisionField, string> = {
-  title: 'Title',
-  author: 'Author',
-  description: 'Description',
-  content: 'Content',
+export const POST_REVISION_FIELD_LABEL_KEYS: Record<PostRevisionField, string> = {
+  title: 'form.post.titleLabel',
+  author: 'form.post.authorLabel',
+  description: 'form.post.descriptionLabel',
+  content: 'form.post.contentLabel',
 };

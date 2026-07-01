@@ -105,18 +105,21 @@
   }
 }
 
-.layout__theme-toggle {
+.layout__theme-toggle,
+.layout__locale-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
+  min-width: 2.25rem;
   height: 2.25rem;
-  padding: 0;
+  padding: 0 0.5rem;
   border: 1px solid var(--app-border);
   border-radius: $radius-md;
   background: var(--app-surface-muted);
   color: var(--app-text-muted);
   cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
   transition:
     background-color 0.2s,
     color 0.2s,
@@ -126,6 +129,11 @@
     color: var(--app-primary);
     border-color: var(--app-primary);
   }
+}
+
+.layout__theme-toggle {
+  width: 2.25rem;
+  padding: 0;
 }
 
 .layout__main {

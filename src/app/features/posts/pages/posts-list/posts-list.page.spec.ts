@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { API_BASE_URL } from '../../../../core/config';
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
 import { PostsListPage } from './posts-list.page';
 
 describe('PostsListPage', () => {
@@ -16,6 +17,7 @@ describe('PostsListPage', () => {
         provideRouter([]),
         provideHttpClient(),
         provideNoopAnimations(),
+        provideTranslateTesting(),
         { provide: API_BASE_URL, useValue: '/api' },
       ],
     }).compileComponents();

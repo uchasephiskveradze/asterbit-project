@@ -1,27 +1,32 @@
-<section class="post-revision-panel" aria-label="Edited post changes">
+<section class="post-revision-panel" [attr.aria-label]="'posts.revision.aria' | translate">
   <header class="post-revision-panel__header">
-    <h2 class="post-revision-panel__title">Edited submission under review</h2>
+    <h2 class="post-revision-panel__title">{{ 'posts.revision.title' | translate }}</h2>
     <p class="post-revision-panel__subtitle">
-      Submitted for review on {{ previousVersion().capturedAt | date: 'MMMM d, y, h:mm a' }}.
-      Compare the previous version with the requested changes below.
+      {{
+        'posts.revision.subtitle'
+          | translate
+            : {
+                date: (previousVersion().capturedAt | date: 'MMMM d, y, h:mm a':undefined:locale.dateLocale()),
+              }
+      }}
     </p>
   </header>
 
   <div class="post-revision-panel__changes">
     @for (change of changes(); track change.field) {
       <article class="post-revision-panel__change">
-        <h3 class="post-revision-panel__field-label">{{ change.label }}</h3>
+        <h3 class="post-revision-panel__field-label">{{ change.labelKey | translate }}</h3>
 
         <div class="post-revision-panel__compare">
           <div class="post-revision-panel__column">
-            <span class="post-revision-panel__column-label">Before</span>
+            <span class="post-revision-panel__column-label">{{ 'posts.revision.before' | translate }}</span>
             <p class="post-revision-panel__value post-revision-panel__value--previous">
               {{ change.previous }}
             </p>
           </div>
 
           <div class="post-revision-panel__column">
-            <span class="post-revision-panel__column-label">After</span>
+            <span class="post-revision-panel__column-label">{{ 'posts.revision.after' | translate }}</span>
             <p class="post-revision-panel__value post-revision-panel__value--current">
               {{ change.current }}
             </p>

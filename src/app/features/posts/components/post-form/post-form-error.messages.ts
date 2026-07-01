@@ -1,23 +1,32 @@
 import { ValidationErrors } from '@angular/forms';
 
-export function getPostFormControlError(errors: ValidationErrors | null): string {
+export type PostFormControlError = {
+  key: string;
+  params?: Record<string, number>;
+};
+
+export function getPostFormControlError(errors: ValidationErrors | null): PostFormControlError | null {
   if (!errors) {
-    return 'Invalid value.';
+    return null;
   }
 
   if (errors['required']) {
-    return 'This field is required.';
+    return { key: 'form.errors.required' };
   }
 
   if (errors['minlength']) {
-    const required = errors['minlength'].requiredLength;
-    return `Must be at least ${required} characters.`;
+    return {
+      key: 'form.errors.minLength',
+      params: { count: errors['minlength'].requiredLength },
+    };
   }
 
   if (errors['maxlength']) {
-    const required = errors['maxlength'].requiredLength;
-    return `Must be at most ${required} characters.`;
+    return {
+      key: 'form.errors.maxLength',
+      params: { count: errors['maxlength'].requiredLength },
+    };
   }
 
-  return 'Invalid value.';
+  return { key: 'form.errors.invalid' };
 }

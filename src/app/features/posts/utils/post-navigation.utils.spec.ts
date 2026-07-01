@@ -4,7 +4,7 @@ describe('getPostBackNavigation', () => {
   it('should default to the posts list for undefined, null, list, and unknown values', () => {
     const expected = {
       link: ['/posts'],
-      label: 'Back to Posts',
+      labelKey: 'navigation.backToPosts',
     };
 
     expect(getPostBackNavigation(undefined)).toEqual(expected);
@@ -17,14 +17,14 @@ describe('getPostBackNavigation', () => {
     expect(getPostBackNavigation('my-posts', { tab: 'approved' })).toEqual({
       link: ['/posts/my'],
       queryParams: { tab: 'approved' },
-      label: 'Back to My Posts',
+      labelKey: 'navigation.backToMyPosts',
     });
   });
 
   it('should return moderation', () => {
     expect(getPostBackNavigation('moderation')).toEqual({
       link: ['/posts/moderation'],
-      label: 'Back to Moderation',
+      labelKey: 'navigation.backToModeration',
     });
   });
 });

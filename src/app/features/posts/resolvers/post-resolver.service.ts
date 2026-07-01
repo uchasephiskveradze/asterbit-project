@@ -55,7 +55,7 @@ export class PostResolver {
         return of({
           post: null,
           notFound: false,
-          error: 'Unable to load post. Please try again.',
+          error: 'errors.posts.loadOne',
         });
       }),
     );

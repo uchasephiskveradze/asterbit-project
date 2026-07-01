@@ -127,6 +127,6 @@ describe('MyPostsStore', () => {
 
     await vi.waitFor(() => expect(failingStore.loading()).toBe(false));
 
-    expect(failingStore.error()).toBe('Unable to load your posts. Please try again.');
+    expect(failingStore.error()).toBe('errors.posts.myPostsLoad');
   });
 });

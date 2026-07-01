@@ -96,7 +96,7 @@ describe('postResolver', () => {
     await expect(resultPromise).resolves.toEqual({
       post: null,
       notFound: false,
-      error: 'Unable to load post. Please try again.',
+      error: 'errors.posts.loadOne',
     });
   });
 

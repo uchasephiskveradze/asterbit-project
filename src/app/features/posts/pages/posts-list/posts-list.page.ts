@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
@@ -19,6 +20,7 @@ export type PostsListViewState = 'loading' | 'error' | 'empty' | 'content';
   selector: 'app-posts-list-page',
   imports: [
     RouterLink,
+    TranslatePipe,
     MatProgressSpinnerModule,
     InfiniteScrollDirective,
     PostsFiltersComponent,

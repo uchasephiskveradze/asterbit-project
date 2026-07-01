@@ -3,6 +3,8 @@ import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { LocaleService } from '../../../../core/i18n/locale.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Post } from '../../models/post.model';
 import { POST_STATUS } from '../../models/post-status.model';
 import {
@@ -12,12 +14,13 @@ import {
 
 @Component({
   selector: 'app-posts-table',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, TranslatePipe],
   templateUrl: './posts-table.component.html',
   styleUrl: './posts-table.component.scss',
 })
 export class PostsTableComponent {
   protected readonly auth = inject(AuthService);
+  protected readonly locale = inject(LocaleService);
 
   public readonly posts = input.required<Post[]>();
   public readonly showAdminActions = input(true);

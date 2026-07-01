@@ -4,7 +4,7 @@
   <div class="post-form__card">
     <div class="post-form__field">
       <div class="post-form__label-row">
-        <label class="post-form__label" for="post-title">Post Title</label>
+        <label class="post-form__label" for="post-title">{{ 'form.post.titleLabel' | translate }}</label>
         @if (showCounter('title')) {
           <span
             class="post-form__counter"
@@ -20,21 +20,21 @@
         [class.post-form__control--invalid]="isInvalid('title')"
         type="text"
         formControlName="title"
-        placeholder="e.g. The Future of Content Management"
+        [placeholder]="'form.post.titlePlaceholder' | translate"
         autocomplete="off"
         [attr.maxlength]="validation.title.maxLength"
         (focus)="onFieldFocus('title')"
         (blur)="onFieldBlur('title')"
       />
-      @if (isInvalid('title')) {
-        <p class="post-form__error">{{ getError('title') }}</p>
+      @if (getError('title'); as error) {
+        <p class="post-form__error">{{ error.key | translate: error.params }}</p>
       }
     </div>
 
     @if (!hideAuthor()) {
       <div class="post-form__field">
         <div class="post-form__label-row">
-          <label class="post-form__label" for="post-author">Author Name</label>
+          <label class="post-form__label" for="post-author">{{ 'form.post.authorLabel' | translate }}</label>
           @if (showCounter('author')) {
             <span
               class="post-form__counter"
@@ -50,21 +50,21 @@
           [class.post-form__control--invalid]="isInvalid('author')"
           type="text"
           formControlName="author"
-          placeholder="John Doe"
+          [placeholder]="'form.post.authorPlaceholder' | translate"
           autocomplete="name"
           [attr.maxlength]="validation.author.maxLength"
           (focus)="onFieldFocus('author')"
           (blur)="onFieldBlur('author')"
         />
-        @if (isInvalid('author')) {
-          <p class="post-form__error">{{ getError('author') }}</p>
+        @if (getError('author'); as error) {
+          <p class="post-form__error">{{ error.key | translate: error.params }}</p>
         }
       </div>
     }
 
     <div class="post-form__field">
       <div class="post-form__label-row">
-        <label class="post-form__label" for="post-description">Short Description</label>
+        <label class="post-form__label" for="post-description">{{ 'form.post.descriptionLabel' | translate }}</label>
         @if (showCounter('description')) {
           <span
             class="post-form__counter"
@@ -80,19 +80,19 @@
         [class.post-form__control--invalid]="isInvalid('description')"
         formControlName="description"
         rows="3"
-        placeholder="Provide a brief summary for the preview card..."
+        [placeholder]="'form.post.descriptionPlaceholder' | translate"
         [attr.maxlength]="validation.description.maxLength"
         (focus)="onFieldFocus('description')"
         (blur)="onFieldBlur('description')"
       ></textarea>
-      @if (isInvalid('description')) {
-        <p class="post-form__error">{{ getError('description') }}</p>
+      @if (getError('description'); as error) {
+        <p class="post-form__error">{{ error.key | translate: error.params }}</p>
       }
     </div>
 
     <div class="post-form__field">
       <div class="post-form__label-row">
-        <label class="post-form__label" for="post-content">Post Content</label>
+        <label class="post-form__label" for="post-content">{{ 'form.post.contentLabel' | translate }}</label>
         @if (showCounter('content')) {
           <span
             class="post-form__counter"
@@ -108,13 +108,13 @@
         [class.post-form__control--invalid]="isInvalid('content')"
         formControlName="content"
         rows="12"
-        placeholder="Write your post content here..."
+        [placeholder]="'form.post.contentPlaceholder' | translate"
         [attr.maxlength]="validation.content.maxLength"
         (focus)="onFieldFocus('content')"
         (blur)="onFieldBlur('content')"
       ></textarea>
-      @if (isInvalid('content')) {
-        <p class="post-form__error">{{ getError('content') }}</p>
+      @if (getError('content'); as error) {
+        <p class="post-form__error">{{ error.key | translate: error.params }}</p>
       }
     </div>
   </div>
@@ -126,9 +126,9 @@
       [disabled]="isSubmitting"
     >
       @if (isSubmitting) {
-        Saving...
+        {{ 'common.saving' | translate }}
       } @else {
-        {{ submitLabel() }}
+        {{ submitLabel() | translate }}
       }
     </button>
   </div>

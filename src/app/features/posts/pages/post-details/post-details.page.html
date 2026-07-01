@@ -9,7 +9,7 @@
       [queryParams]="backNavigation().queryParams"
     >
       <span class="material-symbols-outlined">arrow_back</span>
-      {{ backNavigation().label }}
+      {{ backNavigation().labelKey | translate }}
     </a>
 
     @if (post) {
@@ -29,7 +29,7 @@
               [queryParams]="{ from: 'details' }"
             >
               <span class="material-symbols-outlined">edit</span>
-              Edit Post
+              {{ 'posts.details.editPost' | translate }}
             </a>
           }
           @if (canDelete()) {
@@ -40,7 +40,7 @@
               (click)="openDeleteDialog()"
             >
               <span class="material-symbols-outlined">delete</span>
-              Delete
+              {{ 'posts.details.delete' | translate }}
             </button>
           }
         </div>
@@ -49,7 +49,7 @@
   </div>
 
   @if (store.loading()) {
-    <div class="post-details-page__loading" aria-busy="true" aria-label="Loading post">
+    <div class="post-details-page__loading" aria-busy="true" [attr.aria-label]="'posts.loading.post' | translate">
       <div class="post-details-page__skeleton post-details-page__skeleton--title"></div>
       <div class="post-details-page__skeleton post-details-page__skeleton--meta"></div>
       <div class="post-details-page__skeleton post-details-page__skeleton--line"></div>
@@ -62,16 +62,16 @@
     <app-error-state [message]="errorMessage" (retry)="store.retry()" />
   } @else if (store.notFound()) {
     <div class="post-details-page__not-found">
-      <h2 class="post-details-page__not-found-title">Post not found</h2>
+      <h2 class="post-details-page__not-found-title">{{ 'posts.notFound.title' | translate }}</h2>
       <p class="post-details-page__not-found-text">
-        The post you are looking for does not exist or may have been removed.
+        {{ 'posts.notFound.detailsDescription' | translate }}
       </p>
       <a
         class="post-details-page__not-found-link"
         [routerLink]="backNavigation().link"
         [queryParams]="backNavigation().queryParams"
       >
-        {{ backNavigation().label }}
+        {{ backNavigation().labelKey | translate }}
       </a>
     </div>
   } @else if (post) {
@@ -92,7 +92,7 @@
           <div class="post-details-page__meta-author">
             <span class="post-details-page__author">{{ post.author }}</span>
             <span class="post-details-page__date">{{
-              post.createdAt | date: 'MMMM d, y'
+              post.createdAt | date: 'MMMM d, y':undefined:locale.dateLocale()
             }}</span>
           </div>
           @if (post.status !== postStatus.approved) {

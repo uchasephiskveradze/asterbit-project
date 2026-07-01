@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting } from '../../../../core/i18n/testing/provide-translate-testing';
+
 import { PostRevisionPanelComponent } from './post-revision-panel.component';
 
 describe('PostRevisionPanelComponent', () => {
@@ -9,6 +11,7 @@ describe('PostRevisionPanelComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PostRevisionPanelComponent],
+      providers: [provideTranslateTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostRevisionPanelComponent);
@@ -16,7 +19,7 @@ describe('PostRevisionPanelComponent', () => {
     fixture.componentRef.setInput('changes', [
       {
         field: 'title',
-        label: 'Title',
+        labelKey: 'form.post.titleLabel',
         previous: 'Old title',
         current: 'New title',
       },

@@ -1,7 +1,9 @@
 import { Component, computed, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-posts-pagination',
+  imports: [TranslatePipe],
   templateUrl: './posts-pagination.component.html',
   styleUrl: './posts-pagination.component.scss',
 })

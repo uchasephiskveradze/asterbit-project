@@ -9,6 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { distinctUntilChanged } from 'rxjs';
 
 import { PostDateSort } from '../../store/posts-list.types';
@@ -16,7 +17,7 @@ import { PostsListViewMode } from '../../models/posts-list-view-mode.model';
 
 @Component({
   selector: 'app-posts-filters',
-  imports: [ReactiveFormsModule, MatProgressSpinnerModule],
+  imports: [ReactiveFormsModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './posts-filters.component.html',
   styleUrl: './posts-filters.component.scss',
 })
