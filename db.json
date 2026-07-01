@@ -641,6 +641,48 @@
       "createdAt": "2024-04-25T12:30:00.000Z",
       "status": "approved",
       "submittedBy": "1"
+    },
+    {
+      "id": "65",
+      "title": "Draft: Content Calendar Basics",
+      "author": "Demo User",
+      "description": "An overview of planning editorial content one quarter at a time.",
+      "content": "A content calendar helps teams align on topics, owners, and publication dates before work begins. This draft was rejected because it needed clearer examples and a stronger conclusion for the target audience.",
+      "createdAt": "2024-09-01T10:00:00.000Z",
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "Please add two concrete calendar examples and shorten the introduction.",
+      "rejectedAt": "2024-11-10T14:00:00.000Z"
+    },
+    {
+      "id": "66",
+      "title": "Draft: Writing for Developers",
+      "author": "Demo User",
+      "description": "Tips for technical posts that stay practical without oversimplifying.",
+      "content": "Developer-focused articles work best when they show a real problem, a concrete solution, and trade-offs the reader should understand. This submission was returned for revision so the examples match the headline more closely.",
+      "createdAt": "2024-10-05T11:00:00.000Z",
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "The opening section is too generic. Start with the debugging scenario from paragraph three.",
+      "rejectedAt": "2025-03-15T09:30:00.000Z"
+    },
+    {
+      "id": "67",
+      "title": "Draft: Moderation Workflow Notes",
+      "author": "Demo User",
+      "description": "A short guide to how posts move from submission to approval in this demo app.",
+      "content": "Regular users submit posts as pending, admins approve or reject them, and rejected posts return to the owner with a reason. This draft is useful for testing the rejected tab, notification badges, and resubmit flow in the blog management UI.",
+      "createdAt": "2025-05-20T08:00:00.000Z",
+      "status": "rejected",
+      "submittedBy": "2",
+      "pendingReason": null,
+      "previousVersion": null,
+      "rejectionReason": "Good topic, but merge the moderation steps into a numbered list and remove duplicate sentences.",
+      "rejectedAt": "2025-06-01T16:45:00.000Z"
     }
   ],
   "users": [
