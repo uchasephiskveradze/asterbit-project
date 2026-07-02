@@ -8,7 +8,16 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, debounceTime, distinctUntilChanged, finalize, of, pipe, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  of,
+  pipe,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { PostsViewStorageService } from '../services/posts-view-storage.service';
@@ -97,126 +106,128 @@ export const PostsListStore = signalStore(
         store.posts().length === 0,
     ),
   })),
-  withMethods((store, api = inject(PostsApiService), viewStorage = inject(PostsViewStorageService)) => {
-    const loadPostsRx = rxMethod<boolean>(
-      pipe(
-        tap(() => {
-          patchState(store, {
-            loading: !store.initialized(),
-            filtering: store.initialized(),
-            error: null,
-          });
-        }),
-        switchMap((force) =>
-          api.getPosts({ force, query: buildListQuery(store) }).pipe(
-            catchError(() => {
-              patchState(store, { error: 'errors.posts.load' });
-              return of(emptyListResult());
-            }),
-            finalize(() => {
-              patchState(store, {
-                loading: false,
-                filtering: false,
-                initialized: true,
-              });
-            }),
+  withMethods(
+    (store, api = inject(PostsApiService), viewStorage = inject(PostsViewStorageService)) => {
+      const loadPostsRx = rxMethod<boolean>(
+        pipe(
+          tap(() => {
+            patchState(store, {
+              loading: !store.initialized(),
+              filtering: store.initialized(),
+              error: null,
+            });
+          }),
+          switchMap((force) =>
+            api.getPosts({ force, query: buildListQuery(store) }).pipe(
+              catchError(() => {
+                patchState(store, { error: 'errors.posts.load' });
+                return of(emptyListResult());
+              }),
+              finalize(() => {
+                patchState(store, {
+                  loading: false,
+                  filtering: false,
+                  initialized: true,
+                });
+              }),
+            ),
           ),
+          tap((result) => {
+            patchState(store, {
+              posts: result.posts,
+              totalItems: result.totalItems,
+            });
+          }),
         ),
-        tap((result) => {
-          patchState(store, {
-            posts: result.posts,
-            totalItems: result.totalItems,
-          });
-        }),
-      ),
-    );
+      );
 
-    const applySearchRx = rxMethod<string>(
-      pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        tap((query) => {
+      const applySearchRx = rxMethod<string>(
+        pipe(
+          debounceTime(400),
+          distinctUntilChanged(),
+          tap((query) => {
+            if (query === store.searchQuery()) {
+              patchState(store, { filtering: false });
+              return;
+            }
+
+            patchState(store, {
+              searchQuery: query,
+              currentPage: 1,
+              visibleCount: store.pageSize,
+            });
+            loadPostsRx(false);
+          }),
+        ),
+      );
+
+      return {
+        loadPosts(force = false): void {
+          loadPostsRx(force);
+        },
+        setSearchInput(query: string): void {
+          patchState(store, { searchInput: query });
+
           if (query === store.searchQuery()) {
             patchState(store, { filtering: false });
             return;
           }
 
+          patchState(store, { filtering: true });
+          applySearchRx(query);
+        },
+        setSortOrder(order: PostDateSort): void {
+          if (store.sortOrder() === order) {
+            return;
+          }
+
           patchState(store, {
-            searchQuery: query,
+            filtering: true,
+            sortOrder: order,
             currentPage: 1,
             visibleCount: store.pageSize,
           });
           loadPostsRx(false);
-        }),
-      ),
-    );
+        },
+        setViewMode(mode: PostsListViewMode): void {
+          if (store.viewMode() === mode) {
+            return;
+          }
 
-    return {
-      loadPosts(force = false): void {
-        loadPostsRx(force);
-      },
-      setSearchInput(query: string): void {
-        patchState(store, { searchInput: query });
+          viewStorage.write(mode);
+          patchState(store, {
+            viewMode: mode,
+            currentPage: 1,
+            visibleCount: store.pageSize,
+          });
+          loadPostsRx(false);
+        },
+        setPage(page: number): void {
+          const nextPage = Math.min(Math.max(1, page), store.totalPages());
 
-        if (query === store.searchQuery()) {
-          patchState(store, { filtering: false });
-          return;
-        }
+          if (nextPage === store.currentPage()) {
+            return;
+          }
 
-        patchState(store, { filtering: true });
-        applySearchRx(query);
-      },
-      setSortOrder(order: PostDateSort): void {
-        if (store.sortOrder() === order) {
-          return;
-        }
+          patchState(store, { currentPage: nextPage });
+          loadPostsRx(false);
+        },
+        loadMore(): void {
+          if (!store.hasMorePosts()) {
+            return;
+          }
 
-        patchState(store, {
-          filtering: true,
-          sortOrder: order,
-          currentPage: 1,
-          visibleCount: store.pageSize,
-        });
-        loadPostsRx(false);
-      },
-      setViewMode(mode: PostsListViewMode): void {
-        if (store.viewMode() === mode) {
-          return;
-        }
-
-        viewStorage.write(mode);
-        patchState(store, {
-          viewMode: mode,
-          currentPage: 1,
-          visibleCount: store.pageSize,
-        });
-        loadPostsRx(false);
-      },
-      setPage(page: number): void {
-        const nextPage = Math.min(Math.max(1, page), store.totalPages());
-
-        if (nextPage === store.currentPage()) {
-          return;
-        }
-
-        patchState(store, { currentPage: nextPage });
-        loadPostsRx(false);
-      },
-      loadMore(): void {
-        if (!store.hasMorePosts()) {
-          return;
-        }
-
-        patchState(store, {
-          visibleCount: Math.min(store.visibleCount() + store.pageSize, store.totalItems()),
-        });
-        loadPostsRx(false);
-      },
-      retry(): void {
-        loadPostsRx(true);
-      },
-    };
-  }),
+          patchState(store, {
+            visibleCount: Math.min(store.visibleCount() + store.pageSize, store.totalItems()),
+          });
+          loadPostsRx(false);
+        },
+        retry(): void {
+          loadPostsRx(true);
+        },
+      };
+    },
+  ),
 );
 
 function buildListQuery(store: {
