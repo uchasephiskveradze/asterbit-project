@@ -47,13 +47,14 @@ export class PostDetailsStore {
             finalize(() => this.loading.set(false)),
           ),
         ),
+        tap((post) => {
+          if (post) {
+            this.post.set(post);
+          }
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((post) => {
-        if (post) {
-          this.post.set(post);
-        }
-      });
+      .subscribe();
   }
 
   public loadPost(id: string, options?: { force?: boolean }): void {
@@ -109,11 +110,13 @@ export class PostDetailsStore {
           return of(null);
         }),
         finalize(() => this.moderating.set(false)),
+        tap((updated) => {
+          if (updated) {
+            this.post.set(updated);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((updated) => {
-        if (updated) {
-          this.post.set(updated);
-        }
-      });
+      .subscribe();
   }
 }

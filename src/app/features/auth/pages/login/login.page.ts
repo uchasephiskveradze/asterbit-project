@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 
@@ -17,6 +18,7 @@ export class LoginPage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   public readonly loading = signal(false);
   public readonly error = signal<string | null>(null);
@@ -39,15 +41,19 @@ export class LoginPage {
 
     this.auth
       .login(email, password)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((success) => {
-        if (!success) {
-          this.error.set('auth.invalidCredentials');
-          return;
-        }
+      .pipe(
+        tap((success) => {
+          if (!success) {
+            this.error.set('auth.invalidCredentials');
+            return;
+          }
 
-        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/posts';
-        void this.router.navigateByUrl(returnUrl);
-      });
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/posts';
+          void this.router.navigateByUrl(returnUrl);
+        }),
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }

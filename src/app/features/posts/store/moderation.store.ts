@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, of, tap } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
@@ -35,9 +35,10 @@ export class ModerationStore {
           return of({ posts: [], totalItems: 0 });
         }),
         finalize(() => this.loading.set(false)),
+        tap((result) => this.posts.set(result.posts)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((result) => this.posts.set(result.posts));
+      .subscribe();
   }
 
   public moderatePost(
@@ -58,15 +59,16 @@ export class ModerationStore {
           return of(null);
         }),
         finalize(() => this.actingOnId.set(null)),
+        tap((post) => {
+          if (!post) {
+            return;
+          }
+
+          this.posts.update((items) => items.filter((item) => item.id !== post.id));
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((post) => {
-        if (!post) {
-          return;
-        }
-
-        this.posts.update((items) => items.filter((item) => item.id !== post.id));
-      });
+      .subscribe();
   }
 
   private buildListQuery(): PostsListQuery {

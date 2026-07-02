@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, of, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostsApiService } from '../services/posts-api.service';
@@ -92,15 +92,16 @@ export class MyPostsStore {
             this.loading.set(false);
           }
         }),
+        tap((result) => {
+          if (generation !== this.loadGeneration) {
+            return;
+          }
+
+          this.posts.set(result.posts);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((result) => {
-        if (generation !== this.loadGeneration) {
-          return;
-        }
-
-        this.posts.set(result.posts);
-      });
+      .subscribe();
   }
 
   public retry(): void {

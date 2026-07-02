@@ -3,8 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs';
 
-import { navigateSafely } from '../../../../core/router/navigate.util';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PostDetailsStore } from '../../store/post-details.store';
 
@@ -38,13 +38,16 @@ export class DeletePostDialogComponent {
       return;
     }
 
-    this.store.deletePost(this.postId()).subscribe({
-      next: () => {
+    this.store
+      .deletePost(this.postId())
+      .pipe(
+        tap(() => {
         this.closed.emit();
-        navigateSafely(this.router, this.redirectLink(), {
+        void this.router.navigate(this.redirectLink(), {
           queryParams: this.redirectQueryParams(),
         });
-      },
-    });
+        }),
+      )
+      .subscribe();
   }
 }

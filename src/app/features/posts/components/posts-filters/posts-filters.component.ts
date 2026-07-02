@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, tap } from 'rxjs';
 
 import { PostDateSort } from '../../store/posts-list.types';
 import { PostsListViewMode } from '../../models/posts-list-view-mode.model';
@@ -53,12 +53,20 @@ export class PostsFiltersComponent {
     });
 
     this.searchControl.valueChanges
-      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.searchChange.emit(value));
+      .pipe(
+        distinctUntilChanged(),
+        tap((value) => this.searchChange.emit(value)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
 
     this.sortControl.valueChanges
-      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.sortChange.emit(value));
+      .pipe(
+        distinctUntilChanged(),
+        tap((value) => this.sortChange.emit(value)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   public selectViewMode(mode: PostsListViewMode): void {

@@ -1,8 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
-import { LruCache } from '../../../core/utils/lru-cache';
 import { API_BASE_URL } from '../../../core/config';
 import { CreatePostDto } from '../models/create-post.dto';
 import { JsonServerPostsListResponse } from '../models/json-server-paginated-response.model';
@@ -16,9 +15,6 @@ import { isPostStatus, POST_STATUS, PostStatus } from '../models/post-status.mod
 import { UpdatePostDto } from '../models/update-post.dto';
 import { buildJsonServerSortParam } from '../utils/json-server-query.utils';
 
-const POST_BY_ID_CACHE_MAX_SIZE = 100;
-const ALL_POSTS_CACHE_KEY = '__all__';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -26,84 +22,19 @@ export class PostsApiService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
-  private readonly listQueryCache = new Map<string, PostsListResult>();
-  private readonly listQueryInFlight = new Map<string, Observable<PostsListResult>>();
-  private readonly postByIdCache = new LruCache<string, Post>(POST_BY_ID_CACHE_MAX_SIZE);
-  private readonly postByIdInFlight = new Map<string, Observable<Post>>();
-
   public getPosts(options?: PostsRequestOptions): Observable<PostsListResult> {
-    const force = options?.force ?? false;
-    const cacheKey = this.getListCacheKey(options?.query);
-
-    if (!force) {
-      const cached = this.listQueryCache.get(cacheKey);
-
-      if (cached) {
-        return of(cached);
-      }
-
-      const inFlight = this.listQueryInFlight.get(cacheKey);
-
-      if (inFlight) {
-        return inFlight;
-      }
-    }
-
-    const request$ = this.http
+    return this.http
       .get<JsonServerPostsListResponse>(`${this.apiBaseUrl}/posts`, {
         params: this.buildQueryParams(options?.query),
       })
-      .pipe(
-        map((response) => this.normalizeListResponse(response)),
-        tap((result) => {
-          this.listQueryCache.set(cacheKey, result);
-          result.posts.forEach((post) => this.postByIdCache.set(post.id, post));
-        }),
-        shareReplay({ bufferSize: 1, refCount: true }),
-        finalize(() => {
-          this.listQueryInFlight.delete(cacheKey);
-        }),
-      );
-
-    this.listQueryInFlight.set(cacheKey, request$);
-
-    return request$;
+      .pipe(map((response) => this.normalizeListResponse(response)));
   }
 
   public getPostById(id: string, options?: PostsRequestOptions): Observable<Post> {
-    const force = options?.force ?? false;
-
-    if (!force) {
-      const cached = this.postByIdCache.get(id);
-
-      if (cached) {
-        return of(cached);
-      }
-
-      const fromList = this.findPostInListCaches(id);
-
-      if (fromList) {
-        return of(fromList);
-      }
-
-      const inFlight = this.postByIdInFlight.get(id);
-
-      if (inFlight) {
-        return inFlight;
-      }
-    }
-
-    const request$ = this.http.get<PostResponse>(`${this.apiBaseUrl}/posts/${id}`).pipe(
+    void options;
+    return this.http.get<PostResponse>(`${this.apiBaseUrl}/posts/${id}`).pipe(
       map((post) => this.normalizePost(post)),
-      tap((post) => this.postByIdCache.set(id, post)),
-      shareReplay({ bufferSize: 1, refCount: true }),
-      finalize(() => {
-        this.postByIdInFlight.delete(id);
-      }),
     );
-
-    this.postByIdInFlight.set(id, request$);
-    return request$;
   }
 
   public createPost(payload: CreatePostDto): Observable<Post> {
@@ -112,23 +43,13 @@ export class PostsApiService {
         ...payload,
         createdAt: new Date().toISOString(),
       })
-      .pipe(
-        map((post) => this.normalizePost(post)),
-        tap((post) => {
-          this.postByIdCache.set(post.id, post);
-          this.invalidateListCaches();
-        }),
-      );
+      .pipe(map((post) => this.normalizePost(post)));
   }
 
   public updatePost(id: string, payload: UpdatePostDto): Observable<Post> {
-    return this.http.patch<PostResponse>(`${this.apiBaseUrl}/posts/${id}`, payload).pipe(
-      map((post) => this.normalizePost(post)),
-      tap((post) => {
-        this.postByIdCache.set(post.id, post);
-        this.invalidateListCaches();
-      }),
-    );
+    return this.http
+      .patch<PostResponse>(`${this.apiBaseUrl}/posts/${id}`, payload)
+      .pipe(map((post) => this.normalizePost(post)));
   }
 
   public updatePostStatus(
@@ -155,41 +76,11 @@ export class PostsApiService {
   }
 
   public deletePost(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`).pipe(
-      tap(() => {
-        this.postByIdCache.delete(id);
-        this.invalidateListCaches();
-      }),
-    );
+    return this.http.delete<void>(`${this.apiBaseUrl}/posts/${id}`);
   }
 
   public clearCache(): void {
-    this.invalidateListCaches();
-    this.postByIdCache.clear();
-    this.postByIdInFlight.clear();
-  }
-
-  private getListCacheKey(query?: PostsListQuery): string {
-    const params = this.buildQueryParams(query).toString();
-
-    return params || ALL_POSTS_CACHE_KEY;
-  }
-
-  private findPostInListCaches(id: string): Post | undefined {
-    for (const result of this.listQueryCache.values()) {
-      const match = result.posts.find((post) => post.id === id);
-
-      if (match) {
-        return match;
-      }
-    }
-
-    return undefined;
-  }
-
-  private invalidateListCaches(): void {
-    this.listQueryCache.clear();
-    this.listQueryInFlight.clear();
+    // No-op: caching was intentionally removed to keep the service simple.
   }
 
   private buildQueryParams(query?: PostsListQuery): HttpParams {

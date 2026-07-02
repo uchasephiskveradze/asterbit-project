@@ -153,12 +153,13 @@ export class PostsListStore {
             }),
           );
         }),
+        tap((result) => {
+          this.posts.set(result.posts);
+          this.totalItems.set(result.totalItems);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((result) => {
-        this.posts.set(result.posts);
-        this.totalItems.set(result.totalItems);
-      });
+      .subscribe();
   }
 
   public loadPosts(force = false): void {

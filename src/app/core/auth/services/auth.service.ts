@@ -2,8 +2,6 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
-import { navigateSafely } from '../../router/navigate.util';
-
 import { AuthApiService } from './auth-api.service';
 import { AuthSession } from '../models/auth-session.model';
 import { User } from '../models/user.model';
@@ -44,7 +42,7 @@ export class AuthService {
   public logout(): void {
     this.session.set(null);
     this.storage.clear();
-    navigateSafely(this.router, ['/login']);
+    void this.router.navigate(['/login']);
   }
 
   public getToken(): string | null {

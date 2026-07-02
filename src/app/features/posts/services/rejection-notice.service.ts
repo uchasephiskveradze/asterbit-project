@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Post } from '../models/post.model';
@@ -39,8 +39,9 @@ export class RejectionNoticeService {
           return filterUnseenForBadge(rejectedPosts, state).length;
         }),
         catchError(() => of(0)),
+        tap((count) => this.badgeCount.set(count)),
       )
-      .subscribe((count) => this.badgeCount.set(count));
+      .subscribe();
   }
 
   public getUnseenForModal(): Observable<Post[]> {

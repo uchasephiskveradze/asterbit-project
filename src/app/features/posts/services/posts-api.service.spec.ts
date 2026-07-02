@@ -56,21 +56,15 @@ describe('PostsApiService', () => {
 
   afterEach(() => {
     httpMock.verify();
-    service.clearCache();
   });
 
-  it('should cache the posts list after the first request', async () => {
+  it('should request the posts list', async () => {
     const firstPromise = firstValueFrom(service.getPosts());
     httpMock.expectOne('/api/posts').flush(mockPosts);
-    await firstPromise;
-
-    const secondPromise = firstValueFrom(service.getPosts());
-    httpMock.expectNone('/api/posts');
-
-    await expect(secondPromise).resolves.toEqual(mockListResult());
+    await expect(firstPromise).resolves.toEqual(mockListResult());
   });
 
-  it('should bypass the cache when force is true', async () => {
+  it('should ignore force and still request the posts list', async () => {
     const firstPromise = firstValueFrom(service.getPosts());
     httpMock.expectOne('/api/posts').flush(mockPosts);
     await firstPromise;

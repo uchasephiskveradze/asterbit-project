@@ -1,10 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { catchError, finalize, of } from 'rxjs';
-
-import { navigateSafely } from '../../../core/router/navigate.util';
+import { NavigationExtras, Router } from '@angular/router';
+import { catchError, finalize, of, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostFormValue } from '../components/post-form/types/post-form.types';
@@ -58,17 +56,18 @@ export class PostUpsertStore {
           this.error.set('errors.posts.loadOne');
           return of(null);
         }),
+        tap((post) => {
+          if (!post) {
+            this.notFound.set(true);
+            this.post.set(null);
+            return;
+          }
+
+          this.post.set(post);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((post) => {
-        if (!post) {
-          this.notFound.set(true);
-          this.post.set(null);
-          return;
-        }
-
-        this.post.set(post);
-      });
+      .subscribe();
   }
 
   public createPost(value: PostFormValue): void {
@@ -87,11 +86,11 @@ export class PostUpsertStore {
 
     this.persist(() => this.api.createPost(payload), (post) => {
       if (this.auth.isAdmin()) {
-        navigateSafely(this.router, ['/posts', post.id]);
+        this.navigate(['/posts', post.id]);
         return;
       }
 
-      navigateSafely(this.router, ['/posts/my'], {
+      this.navigate(['/posts/my'], {
         queryParams: { tab: 'under-review' },
       });
     });
@@ -139,13 +138,13 @@ export class PostUpsertStore {
       () => this.api.updatePost(id, payload),
       (post) => {
         if (redirectToUnderReview) {
-          navigateSafely(this.router, ['/posts/my'], {
+          this.navigate(['/posts/my'], {
             queryParams: { tab: 'under-review' },
           });
           return;
         }
 
-        navigateSafely(this.router, ['/posts', post.id]);
+        this.navigate(['/posts', post.id]);
       },
     );
   }
@@ -164,12 +163,17 @@ export class PostUpsertStore {
           return of(null);
         }),
         finalize(() => this.saving.set(false)),
+        tap((post) => {
+          if (post) {
+            onSuccess(post);
+          }
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((post) => {
-        if (post) {
-          onSuccess(post);
-        }
-      });
+      .subscribe();
+  }
+
+  private navigate(commands: unknown[], extras?: NavigationExtras): void {
+    void this.router.navigate(commands, extras);
   }
 }

@@ -2,6 +2,7 @@ import { Component, computed, DestroyRef, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { tap } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
@@ -50,10 +51,11 @@ export class MyPostsPage {
     this.store.initializeTab(this.route.snapshot.queryParamMap.get('tab'));
 
     this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        this.store.setTabFromQuery(params.get('tab'));
-      });
+      .pipe(
+        tap((params) => this.store.setTabFromQuery(params.get('tab'))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
 
     effect(() => {
       this.auth.currentUser();

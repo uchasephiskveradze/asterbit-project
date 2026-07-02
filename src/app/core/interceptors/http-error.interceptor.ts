@@ -13,8 +13,6 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
         auth.logout();
       }
 
-      console.error(`HTTP ${error.status} for ${req.method} ${req.urlWithParams}`, error);
-
       return throwError(() => error);
     }),
   );

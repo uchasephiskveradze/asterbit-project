@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, tap } from 'rxjs';
 
 import { Post } from '../../features/posts/models/post.model';
 import { RejectionNoticeService } from '../../features/posts/services/rejection-notice.service';
@@ -41,9 +41,10 @@ export class MainLayoutComponent {
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        tap(() => this.tryShowRejectionNotice()),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => this.tryShowRejectionNotice());
+      .subscribe();
   }
 
   public dismissRejectionNotice(): void {
@@ -112,11 +113,14 @@ export class MainLayoutComponent {
 
     this.rejectionNotice
       .getUnseenForModal()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((posts) => {
-        if (posts.length > 0) {
-          this.rejectionNoticePosts.set(posts);
-        }
-      });
+      .pipe(
+        tap((posts) => {
+          if (posts.length > 0) {
+            this.rejectionNoticePosts.set(posts);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }
