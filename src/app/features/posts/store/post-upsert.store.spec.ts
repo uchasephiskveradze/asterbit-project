@@ -22,7 +22,7 @@ describe('PostUpsertStore', () => {
     rejectionReason: 'Needs more detail',
   };
 
-  let store: PostUpsertStore;
+  let store: InstanceType<typeof PostUpsertStore>;
   let api: { updatePost: ReturnType<typeof vi.fn> };
   let router: { navigate: ReturnType<typeof vi.fn> };
 

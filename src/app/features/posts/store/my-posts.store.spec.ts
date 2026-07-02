@@ -26,7 +26,7 @@ describe('MyPostsStore', () => {
     status: POST_STATUS.approved,
   };
 
-  let store: MyPostsStore;
+  let store: InstanceType<typeof MyPostsStore>;
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {

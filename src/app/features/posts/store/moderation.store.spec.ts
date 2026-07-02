@@ -17,7 +17,7 @@ describe('ModerationStore', () => {
     status: POST_STATUS.pending,
   };
 
-  let store: ModerationStore;
+  let store: InstanceType<typeof ModerationStore>;
   let api: {
     getPosts: ReturnType<typeof vi.fn>;
     updatePostStatus: ReturnType<typeof vi.fn>;

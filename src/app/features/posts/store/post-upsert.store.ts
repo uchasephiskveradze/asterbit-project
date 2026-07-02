@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { inject } from '@angular/core';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { NavigationExtras, Router } from '@angular/router';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { catchError, finalize, of, pipe, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostFormValue } from '../components/post-form/types/post-form.types';
@@ -14,166 +15,162 @@ import { POST_PENDING_REASON } from '../models/post-revision.model';
 import { POST_STATUS } from '../models/post-status.model';
 import { UpdatePostDto } from '../models/update-post.dto';
 
-@Injectable()
-export class PostUpsertStore {
-  private readonly api = inject(PostsApiService);
-  private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
+type PostUpsertState = {
+  saving: boolean;
+  notFound: boolean;
+  error: string | null;
+  post: Post | null;
+};
 
-  public readonly saving = signal(false);
-  public readonly notFound = signal(false);
-  public readonly error = signal<string | null>(null);
-  public readonly post = signal<Post | null>(null);
+export const PostUpsertStore = signalStore(
+  withState<PostUpsertState>({
+    saving: false,
+    notFound: false,
+    error: null,
+    post: null,
+  }),
+  withMethods((store, api = inject(PostsApiService), auth = inject(AuthService), router = inject(Router)) => {
+    const reloadPostRx = rxMethod<string>(
+      pipe(
+        tap(() => patchState(store, { error: null, notFound: false })),
+        switchMap((id) =>
+          api.getPostById(id, { force: true }).pipe(
+            catchError(() => {
+              patchState(store, { error: 'errors.posts.loadOne' });
+              return of(null);
+            }),
+            tap((post) => {
+              if (!post) {
+                patchState(store, { notFound: true, post: null });
+                return;
+              }
 
-  public applyResolverResult(result: PostResolverResult): void {
-    this.notFound.set(result.notFound);
+              patchState(store, { post });
+            }),
+          ),
+        ),
+      ),
+    );
 
-    if (result.error) {
-      this.error.set(result.error);
-      this.post.set(null);
-      return;
-    }
+    const persistRx = rxMethod<{
+      request: () => ReturnType<PostsApiService['createPost']>;
+      onSuccess: (post: Post) => void;
+    }>(
+      pipe(
+        tap(() => patchState(store, { saving: true, error: null })),
+        tap(() => {}),
+        switchMap(({ request, onSuccess }) =>
+          request().pipe(
+            catchError((err: HttpErrorResponse) => {
+              patchState(store, { error: 'errors.posts.save' });
+              return of(null);
+            }),
+            finalize(() => patchState(store, { saving: false })),
+            tap((post) => {
+              if (post) {
+                onSuccess(post);
+              }
+            }),
+          ),
+        ),
+      ),
+    );
 
-    if (result.notFound || !result.post) {
-      this.error.set(null);
-      this.post.set(null);
-      return;
-    }
-
-    this.error.set(null);
-    this.post.set(result.post);
-  }
-
-  public reloadPost(id: string): void {
-    this.error.set(null);
-    this.notFound.set(false);
-
-    this.api
-      .getPostById(id, { force: true })
-      .pipe(
-        catchError(() => {
-          this.error.set('errors.posts.loadOne');
-          return of(null);
-        }),
-        tap((post) => {
-          if (!post) {
-            this.notFound.set(true);
-            this.post.set(null);
-            return;
-          }
-
-          this.post.set(post);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
-  public createPost(value: PostFormValue): void {
-    const user = this.auth.currentUser();
-    if (!user) {
-      return;
-    }
-
-    const payload: CreatePostDto = {
-      ...value,
-      author: value.author,
-      status: this.auth.isAdmin() ? POST_STATUS.approved : POST_STATUS.pending,
-      submittedBy: user.id,
-      pendingReason: this.auth.isAdmin() ? undefined : POST_PENDING_REASON.new,
-    };
-
-    this.persist(() => this.api.createPost(payload), (post) => {
-      if (this.auth.isAdmin()) {
-        this.navigate(['/posts', post.id]);
-        return;
-      }
-
-      this.navigate(['/posts/my'], {
-        queryParams: { tab: 'under-review' },
-      });
-    });
-  }
-
-  public updatePost(id: string, value: PostFormValue): void {
-    const user = this.auth.currentUser();
-    const existingPost = this.post();
-
-    if (!user) {
-      return;
-    }
-
-    const payload: UpdatePostDto = { ...value };
-    const isOwnerApprovedResubmit =
-      !this.auth.isAdmin() &&
-      existingPost?.submittedBy === user.id &&
-      existingPost.status === POST_STATUS.approved;
-    const isOwnerRejectedResubmit =
-      !this.auth.isAdmin() &&
-      existingPost?.submittedBy === user.id &&
-      existingPost.status === POST_STATUS.rejected;
-
-    if (isOwnerApprovedResubmit) {
-      payload.status = POST_STATUS.pending;
-      payload.pendingReason = POST_PENDING_REASON.edited;
-      payload.previousVersion = {
-        title: existingPost.title,
-        author: existingPost.author,
-        description: existingPost.description,
-        content: existingPost.content,
-        capturedAt: new Date().toISOString(),
-      };
-    } else if (isOwnerRejectedResubmit) {
-      payload.status = POST_STATUS.pending;
-      payload.pendingReason = POST_PENDING_REASON.new;
-      payload.rejectionReason = null;
-      payload.rejectedAt = null;
-      payload.previousVersion = null;
-    }
-
-    const redirectToUnderReview = isOwnerApprovedResubmit || isOwnerRejectedResubmit;
-
-    this.persist(
-      () => this.api.updatePost(id, payload),
-      (post) => {
-        if (redirectToUnderReview) {
-          this.navigate(['/posts/my'], {
-            queryParams: { tab: 'under-review' },
-          });
+    return {
+      applyResolverResult(result: PostResolverResult): void {
+        patchState(store, {
+          notFound: result.notFound,
+          error: result.error || null,
+          post: result.error || result.notFound || !result.post ? null : result.post,
+        });
+      },
+      reloadPost(id: string): void {
+        reloadPostRx(id);
+      },
+      createPost(value: PostFormValue): void {
+        const user = auth.currentUser();
+        if (!user) {
           return;
         }
 
-        this.navigate(['/posts', post.id]);
+        const payload: CreatePostDto = {
+          ...value,
+          author: value.author,
+          status: auth.isAdmin() ? POST_STATUS.approved : POST_STATUS.pending,
+          submittedBy: user.id,
+          pendingReason: auth.isAdmin() ? undefined : POST_PENDING_REASON.new,
+        };
+
+        persistRx({
+          request: () => api.createPost(payload),
+          onSuccess: (post) => {
+            if (auth.isAdmin()) {
+              navigate(router, ['/posts', post.id]);
+              return;
+            }
+
+            navigate(router, ['/posts/my'], {
+              queryParams: { tab: 'under-review' },
+            });
+          },
+        });
       },
-    );
-  }
+      updatePost(id: string, value: PostFormValue): void {
+        const user = auth.currentUser();
+        const existingPost = store.post();
 
-  private persist(
-    request: () => ReturnType<PostsApiService['createPost']>,
-    onSuccess: (post: Post) => void,
-  ): void {
-    this.saving.set(true);
-    this.error.set(null);
+        if (!user) {
+          return;
+        }
 
-    request()
-      .pipe(
-        catchError((err: HttpErrorResponse) => {
-          this.error.set('errors.posts.save');
-          return of(null);
-        }),
-        finalize(() => this.saving.set(false)),
-        tap((post) => {
-          if (post) {
-            onSuccess(post);
-          }
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
+        const payload: UpdatePostDto = { ...value };
+        const isOwnerApprovedResubmit =
+          !auth.isAdmin() &&
+          existingPost?.submittedBy === user.id &&
+          existingPost.status === POST_STATUS.approved;
+        const isOwnerRejectedResubmit =
+          !auth.isAdmin() &&
+          existingPost?.submittedBy === user.id &&
+          existingPost.status === POST_STATUS.rejected;
 
-  private navigate(commands: unknown[], extras?: NavigationExtras): void {
-    void this.router.navigate(commands, extras);
-  }
+        if (isOwnerApprovedResubmit) {
+          payload.status = POST_STATUS.pending;
+          payload.pendingReason = POST_PENDING_REASON.edited;
+          payload.previousVersion = {
+            title: existingPost.title,
+            author: existingPost.author,
+            description: existingPost.description,
+            content: existingPost.content,
+            capturedAt: new Date().toISOString(),
+          };
+        } else if (isOwnerRejectedResubmit) {
+          payload.status = POST_STATUS.pending;
+          payload.pendingReason = POST_PENDING_REASON.new;
+          payload.rejectionReason = null;
+          payload.rejectedAt = null;
+          payload.previousVersion = null;
+        }
+
+        const redirectToUnderReview = isOwnerApprovedResubmit || isOwnerRejectedResubmit;
+
+        persistRx({
+          request: () => api.updatePost(id, payload),
+          onSuccess: (post) => {
+            if (redirectToUnderReview) {
+              navigate(router, ['/posts/my'], {
+                queryParams: { tab: 'under-review' },
+              });
+              return;
+            }
+
+            navigate(router, ['/posts', post.id]);
+          },
+        });
+      },
+    };
+  }),
+);
+
+function navigate(router: Router, commands: unknown[], extras?: NavigationExtras): void {
+  void router.navigate(commands, extras);
 }

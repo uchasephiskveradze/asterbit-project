@@ -1,122 +1,134 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, EMPTY, finalize, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { inject } from '@angular/core';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { catchError, EMPTY, finalize, Observable, of, pipe, switchMap, tap } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { Post } from '../models/post.model';
 import { POST_STATUS, PostStatus } from '../models/post-status.model';
 import { PostResolverResult } from '../models/post-resolver-result.model';
 
-@Injectable()
-export class PostDetailsStore {
-  private readonly api = inject(PostsApiService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly loadRequest$ = new Subject<{ id: string; force?: boolean }>();
+type PostDetailsState = {
+  loading: boolean;
+  deleting: boolean;
+  moderating: boolean;
+  error: string | null;
+  notFound: boolean;
+  post: Post | null;
+  _lastId: string | null;
+};
 
-  private lastId: string | null = null;
-
-  public readonly loading = signal(false);
-  public readonly deleting = signal(false);
-  public readonly moderating = signal(false);
-  public readonly error = signal<string | null>(null);
-  public readonly notFound = signal(false);
-  public readonly post = signal<Post | null>(null);
-
-  public constructor() {
-    this.loadRequest$
-      .pipe(
-        tap(({ id }) => {
-          this.lastId = id;
-          this.loading.set(true);
-          this.error.set(null);
-          this.notFound.set(false);
-          this.post.set(null);
-        }),
+export const PostDetailsStore = signalStore(
+  withState<PostDetailsState>({
+    loading: false,
+    deleting: false,
+    moderating: false,
+    error: null,
+    notFound: false,
+    post: null,
+    _lastId: null,
+  }),
+  withMethods((store, api = inject(PostsApiService)) => {
+    const loadPostRx = rxMethod<{ id: string; force?: boolean }>(
+      pipe(
+        tap(({ id }) =>
+          patchState(store, {
+            _lastId: id,
+            loading: true,
+            error: null,
+            notFound: false,
+            post: null,
+          }),
+        ),
         switchMap(({ id, force }) =>
-          this.api.getPostById(id, force ? { force: true } : undefined).pipe(
+          api.getPostById(id, force ? { force: true } : undefined).pipe(
             catchError((err: HttpErrorResponse) => {
               if (err.status === 404) {
-                this.notFound.set(true);
+                patchState(store, { notFound: true });
                 return of(null);
               }
 
-              this.error.set('errors.posts.loadOne');
+              patchState(store, { error: 'errors.posts.loadOne' });
               return of(null);
             }),
-            finalize(() => this.loading.set(false)),
+            finalize(() => patchState(store, { loading: false })),
           ),
         ),
         tap((post) => {
           if (post) {
-            this.post.set(post);
+            patchState(store, { post });
           }
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
-  public loadPost(id: string, options?: { force?: boolean }): void {
-    this.loadRequest$.next({ id, force: options?.force });
-  }
-
-  public applyResolverResult(id: string, result: PostResolverResult): void {
-    this.lastId = id;
-    this.loading.set(false);
-    this.error.set(result.error);
-    this.notFound.set(result.notFound);
-    this.post.set(result.post);
-  }
-
-  public retry(): void {
-    if (this.lastId) {
-      this.loadPost(this.lastId, { force: true });
-    }
-  }
-
-  public deletePost(id: string): Observable<void> {
-    this.deleting.set(true);
-    this.error.set(null);
-
-    return this.api.deletePost(id).pipe(
-      catchError(() => {
-        this.error.set('errors.posts.delete');
-        return EMPTY;
-      }),
-      finalize(() => this.deleting.set(false)),
+      ),
     );
-  }
 
-  public moderatePost(
-    status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected,
-    rejectionReason?: string,
-  ): void {
-    const post = this.post();
-    if (!post || this.moderating()) {
-      return;
-    }
-
-    this.moderating.set(true);
-    this.error.set(null);
-
-    this.api
-      .updatePostStatus(post.id, status, {
-        rejectionReason: status === POST_STATUS.rejected ? rejectionReason : undefined,
-      })
-      .pipe(
-        catchError(() => {
-          this.error.set('errors.posts.updateStatus');
-          return of(null);
-        }),
-        finalize(() => this.moderating.set(false)),
+    const moderatePostRx = rxMethod<{
+      postId: string;
+      status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected;
+      rejectionReason?: string;
+    }>(
+      pipe(
+        tap(() => patchState(store, { moderating: true, error: null })),
+        switchMap(({ postId, status, rejectionReason }) =>
+          api.updatePostStatus(postId, status, {
+            rejectionReason: status === POST_STATUS.rejected ? rejectionReason : undefined,
+          }).pipe(
+            catchError(() => {
+              patchState(store, { error: 'errors.posts.updateStatus' });
+              return of(null);
+            }),
+            finalize(() => patchState(store, { moderating: false })),
+          ),
+        ),
         tap((updated) => {
           if (updated) {
-            this.post.set(updated);
+            patchState(store, { post: updated });
           }
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-}
+      ),
+    );
+
+    return {
+      loadPost(id: string, options?: { force?: boolean }): void {
+        loadPostRx({ id, force: options?.force });
+      },
+      applyResolverResult(id: string, result: PostResolverResult): void {
+        patchState(store, {
+          _lastId: id,
+          loading: false,
+          error: result.error,
+          notFound: result.notFound,
+          post: result.post,
+        });
+      },
+      retry(): void {
+        const lastId = store._lastId();
+        if (lastId) {
+          loadPostRx({ id: lastId, force: true });
+        }
+      },
+      deletePost(id: string): Observable<void> {
+        patchState(store, { deleting: true, error: null });
+        return api.deletePost(id).pipe(
+          catchError(() => {
+            patchState(store, { error: 'errors.posts.delete' });
+            return EMPTY;
+          }),
+          finalize(() => patchState(store, { deleting: false })),
+        );
+      },
+      moderatePost(
+        status: typeof POST_STATUS.approved | typeof POST_STATUS.rejected,
+        rejectionReason?: string,
+      ): void {
+        const post = store.post();
+        if (!post || store.moderating()) {
+          return;
+        }
+
+        moderatePostRx({ postId: post.id, status, rejectionReason });
+      },
+    };
+  }),
+);

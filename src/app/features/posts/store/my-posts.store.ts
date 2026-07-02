@@ -1,6 +1,7 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { catchError, finalize, of, pipe, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { PostsApiService } from '../services/posts-api.service';
@@ -12,112 +13,117 @@ import {
   MyPostsTab,
 } from '../models/post-status.model';
 
-@Injectable()
-export class MyPostsStore {
-  private readonly api = inject(PostsApiService);
-  private readonly auth = inject(AuthService);
-  private readonly destroyRef = inject(DestroyRef);
+type MyPostsState = {
+  loading: boolean;
+  error: string | null;
+  posts: Post[];
+  activeTab: MyPostsTab;
+  _loadGeneration: number;
+};
 
-  private loadGeneration = 0;
+export const MyPostsStore = signalStore(
+  withState<MyPostsState>({
+    loading: false,
+    error: null,
+    posts: [],
+    activeTab: 'under-review',
+    _loadGeneration: 0,
+  }),
+  withComputed((store, auth = inject(AuthService)) => ({
+    filteredPosts: computed(() => {
+      const user = auth.currentUser();
 
-  public readonly loading = signal(false);
-  public readonly error = signal<string | null>(null);
-  public readonly posts = signal<Post[]>([]);
-  public readonly activeTab = signal<MyPostsTab>('under-review');
+      if (!user) {
+        return [];
+      }
 
-  public readonly filteredPosts = computed(() => {
-    const user = this.auth.currentUser();
+      const owned = store.posts().filter((post) => post.submittedBy === user.id);
 
-    if (!user) {
-      return [];
-    }
+      if (store.activeTab() !== 'rejected') {
+        return owned;
+      }
 
-    const owned = this.posts().filter((post) => post.submittedBy === user.id);
-
-    if (this.activeTab() !== 'rejected') {
-      return owned;
-    }
-
-    return [...owned].sort((left, right) => {
-      const leftTime = Date.parse(left.rejectedAt ?? left.createdAt);
-      const rightTime = Date.parse(right.rejectedAt ?? right.createdAt);
-
-      return rightTime - leftTime;
-    });
-  });
-
-  public initializeTab(tab: string | null): void {
-    const resolvedTab = isMyPostsTab(tab) ? tab : 'under-review';
-    this.activeTab.set(resolvedTab);
-    this.loadPosts();
-  }
-
-  public setTab(tab: MyPostsTab): void {
-    if (this.activeTab() === tab) {
-      return;
-    }
-
-    this.activeTab.set(tab);
-    this.loadPosts();
-  }
-
-  public setTabFromQuery(tab: string | null): void {
-    if (!isMyPostsTab(tab) || this.activeTab() === tab) {
-      return;
-    }
-
-    this.activeTab.set(tab);
-    this.loadPosts();
-  }
-
-  public loadPosts(force = false): void {
-    const generation = ++this.loadGeneration;
-
-    this.loading.set(true);
-    this.error.set(null);
-
-    this.api
-      .getPosts({ force, query: this.buildListQuery() })
-      .pipe(
-        catchError(() => {
-          if (generation !== this.loadGeneration) {
-            return of({ posts: [], totalItems: 0 });
-          }
-
-          this.error.set('errors.posts.myPostsLoad');
-          return of({ posts: [], totalItems: 0 });
+      return [...owned].sort((left, right) => {
+        const leftTime = Date.parse(left.rejectedAt ?? left.createdAt);
+        const rightTime = Date.parse(right.rejectedAt ?? right.createdAt);
+        return rightTime - leftTime;
+      });
+    }),
+  })),
+  withMethods((store, api = inject(PostsApiService)) => {
+    const loadPostsRx = rxMethod<boolean>(
+      pipe(
+        tap(() =>
+          patchState(store, (state) => ({
+            loading: true,
+            error: null,
+            _loadGeneration: state._loadGeneration + 1,
+          })),
+        ),
+        switchMap((force) => {
+          const generation = store._loadGeneration();
+          return api.getPosts({ force, query: buildMyPostsListQuery(store.activeTab()) }).pipe(
+            catchError(() => {
+              if (generation === store._loadGeneration()) {
+                patchState(store, { error: 'errors.posts.myPostsLoad' });
+              }
+              return of({ posts: [], totalItems: 0 });
+            }),
+            finalize(() => {
+              if (generation === store._loadGeneration()) {
+                patchState(store, { loading: false });
+              }
+            }),
+            tap((result) => {
+              if (generation === store._loadGeneration()) {
+                patchState(store, { posts: result.posts });
+              }
+            }),
+          );
         }),
-        finalize(() => {
-          if (generation === this.loadGeneration) {
-            this.loading.set(false);
-          }
-        }),
-        tap((result) => {
-          if (generation !== this.loadGeneration) {
-            return;
-          }
+      ),
+    );
 
-          this.posts.set(result.posts);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
+    return {
+      initializeTab(tab: string | null): void {
+        patchState(store, { activeTab: isMyPostsTab(tab) ? tab : 'under-review' });
+        loadPostsRx(false);
+      },
+      setTab(tab: MyPostsTab): void {
+        if (store.activeTab() === tab) {
+          return;
+        }
 
-  public retry(): void {
-    this.loadPosts(true);
-  }
+        patchState(store, { activeTab: tab });
+        loadPostsRx(false);
+      },
+      setTabFromQuery(tab: string | null): void {
+        if (!isMyPostsTab(tab) || store.activeTab() === tab) {
+          return;
+        }
 
-  private buildListQuery(): PostsListQuery {
-    const query: PostsListQuery = {
-      status: MY_POSTS_TAB_STATUS[this.activeTab()],
+        patchState(store, { activeTab: tab });
+        loadPostsRx(false);
+      },
+      loadPosts(force = false): void {
+        loadPostsRx(force);
+      },
+      retry(): void {
+        loadPostsRx(true);
+      },
     };
+  }),
+);
 
-    if (this.activeTab() === 'rejected') {
-      query.sort = 'rejectedAt';
-      query.order = 'desc';
-    }
+function buildMyPostsListQuery(activeTab: MyPostsTab): PostsListQuery {
+  const query: PostsListQuery = {
+    status: MY_POSTS_TAB_STATUS[activeTab],
+  };
 
-    return query;
+  if (activeTab === 'rejected') {
+    query.sort = 'rejectedAt';
+    query.order = 'desc';
   }
+
+  return query;
 }

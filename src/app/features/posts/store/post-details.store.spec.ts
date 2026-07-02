@@ -17,7 +17,7 @@ describe('PostDetailsStore', () => {
     status: 'pending',
   };
 
-  let store: PostDetailsStore;
+  let store: InstanceType<typeof PostDetailsStore>;
   let api: {
     updatePostStatus: ReturnType<typeof vi.fn>;
     getPostById: ReturnType<typeof vi.fn>;

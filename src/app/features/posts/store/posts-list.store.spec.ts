@@ -18,7 +18,7 @@ describe('PostsListStore', () => {
     status: POST_STATUS.approved,
   };
 
-  let store: PostsListStore;
+  let store: InstanceType<typeof PostsListStore>;
   let api: { getPosts: ReturnType<typeof vi.fn> };
 
   const listResult = { posts: [approvedPost], totalItems: 1 };

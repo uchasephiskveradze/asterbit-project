@@ -1,17 +1,14 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { computed, inject } from '@angular/core';
 import {
-  catchError,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  finalize,
-  of,
-  startWith,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withProps,
+  withState,
+} from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { catchError, debounceTime, distinctUntilChanged, finalize, of, pipe, switchMap, tap } from 'rxjs';
 
 import { PostsApiService } from '../services/posts-api.service';
 import { PostsViewStorageService } from '../services/posts-view-storage.service';
@@ -24,233 +21,240 @@ import { POSTS_PAGE_SIZE, PostDateSort } from './posts-list.types';
 
 const emptyListResult = (): PostsListResult => ({ posts: [], totalItems: 0 });
 
-@Injectable()
-export class PostsListStore {
-  private readonly api = inject(PostsApiService);
-  private readonly viewStorage = inject(PostsViewStorageService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly searchInput$ = new Subject<string>();
-  private readonly sortOrder$ = new Subject<PostDateSort>();
-  private readonly page$ = new Subject<number>();
-  private readonly refresh$ = new Subject<boolean>();
+type PostsListState = {
+  loading: boolean;
+  filtering: boolean;
+  error: string | null;
+  posts: Post[];
+  totalItems: number;
+  searchInput: string;
+  searchQuery: string;
+  sortOrder: PostDateSort;
+  viewMode: PostsListViewMode;
+  currentPage: number;
+  visibleCount: number;
+  initialized: boolean;
+};
 
-  public readonly pageSize = POSTS_PAGE_SIZE;
+const initialState = (viewMode: PostsListViewMode): PostsListState => ({
+  loading: false,
+  filtering: false,
+  error: null,
+  posts: [],
+  totalItems: 0,
+  searchInput: '',
+  searchQuery: '',
+  sortOrder: 'desc',
+  viewMode,
+  currentPage: 1,
+  visibleCount: POSTS_PAGE_SIZE,
+  initialized: false,
+});
 
-  public readonly loading = signal(false);
-  public readonly filtering = signal(false);
-  public readonly error = signal<string | null>(null);
-  public readonly posts = signal<Post[]>([]);
-  public readonly totalItems = signal(0);
-  public readonly searchInput = signal('');
-  public readonly searchQuery = signal('');
-  public readonly sortOrder = signal<PostDateSort>('desc');
-  public readonly viewMode = signal<PostsListViewMode>(this.viewStorage.read());
-  public readonly currentPage = signal(1);
-  public readonly visibleCount = signal(POSTS_PAGE_SIZE);
+export const PostsListStore = signalStore(
+  withState(() => initialState(inject(PostsViewStorageService).read())),
+  withProps(() => ({ pageSize: POSTS_PAGE_SIZE })),
+  withComputed((store) => ({
+    filteredPosts: computed(() => store.posts()),
+    isPaginationMode: computed(() => store.viewMode() === 'pagination'),
+    isInfiniteScrollMode: computed(() => store.viewMode() === 'infinite-scroll'),
+    totalPages: computed(() => Math.max(1, Math.ceil(store.totalItems() / store.pageSize))),
+    displayedPosts: computed(() => store.posts()),
+    hasMorePosts: computed(
+      () => store.viewMode() === 'infinite-scroll' && store.posts().length < store.totalItems(),
+    ),
+    rangeStart: computed(() => {
+      if (store.totalItems() === 0) {
+        return 0;
+      }
 
-  private readonly initialized = signal(false);
+      if (store.viewMode() === 'pagination') {
+        return (store.currentPage() - 1) * store.pageSize + 1;
+      }
 
-  public readonly filteredPosts = computed(() => this.posts());
+      return 1;
+    }),
+    rangeEnd: computed(() => {
+      if (store.viewMode() === 'pagination') {
+        return Math.min(store.currentPage() * store.pageSize, store.totalItems());
+      }
 
-  public readonly isPaginationMode = computed(() => this.viewMode() === 'pagination');
-
-  public readonly isInfiniteScrollMode = computed(() => this.viewMode() === 'infinite-scroll');
-
-  public readonly totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.totalItems() / this.pageSize)),
-  );
-
-  public readonly displayedPosts = computed(() => this.posts());
-
-  public readonly hasMorePosts = computed(
-    () => this.isInfiniteScrollMode() && this.posts().length < this.totalItems(),
-  );
-
-  public readonly rangeStart = computed(() => {
-    if (this.totalItems() === 0) {
-      return 0;
-    }
-
-    if (this.isPaginationMode()) {
-      return (this.currentPage() - 1) * this.pageSize + 1;
-    }
-
-    return 1;
-  });
-
-  public readonly rangeEnd = computed(() => {
-    if (this.isPaginationMode()) {
-      return Math.min(this.currentPage() * this.pageSize, this.totalItems());
-    }
-
-    return Math.min(this.posts().length, this.totalItems());
-  });
-
-  public readonly isEmpty = computed(
-    () => !this.loading() && !this.error() && this.posts().length === 0 && !this.hasActiveFilters(),
-  );
-
-  public readonly isEmptySearch = computed(
-    () =>
-      !this.loading() &&
-      !this.filtering() &&
-      !this.error() &&
-      this.hasActiveFilters() &&
-      this.posts().length === 0,
-  );
-
-  public constructor() {
-    combineLatest([
-      this.searchInput$.pipe(debounceTime(400), distinctUntilChanged(), startWith(this.searchInput())),
-      this.sortOrder$.pipe(startWith(this.sortOrder())),
-      this.page$.pipe(startWith(this.currentPage())),
-    ])
-      .pipe(
-        tap(([query, sort, page]) => {
-          const queryChanged = query !== this.searchQuery();
-          const sortChanged = sort !== this.sortOrder();
-          const pageChanged = page !== this.currentPage();
-
-          if (queryChanged || sortChanged) {
-            this.searchQuery.set(query);
-            this.sortOrder.set(sort);
-            this.currentPage.set(1);
-            this.visibleCount.set(this.pageSize);
-            this.refresh$.next(false);
-            return;
-          }
-
-          this.currentPage.set(page);
-
-          if (pageChanged) {
-            this.refresh$.next(false);
-          }
+      return Math.min(store.posts().length, store.totalItems());
+    }),
+    isEmpty: computed(
+      () =>
+        !store.loading() &&
+        !store.error() &&
+        store.posts().length === 0 &&
+        !hasActiveFilters(store.searchQuery()),
+    ),
+    isEmptySearch: computed(
+      () =>
+        !store.loading() &&
+        !store.filtering() &&
+        !store.error() &&
+        hasActiveFilters(store.searchQuery()) &&
+        store.posts().length === 0,
+    ),
+  })),
+  withMethods((store, api = inject(PostsApiService), viewStorage = inject(PostsViewStorageService)) => {
+    const loadPostsRx = rxMethod<boolean>(
+      pipe(
+        tap(() => {
+          patchState(store, {
+            loading: !store.initialized(),
+            filtering: store.initialized(),
+            error: null,
+          });
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-
-    this.refresh$
-      .pipe(
-        switchMap((force) => {
-          if (this.initialized()) {
-            this.filtering.set(true);
-          } else {
-            this.loading.set(true);
-          }
-
-          this.error.set(null);
-
-          return this.api.getPosts({ force, query: this.buildListQuery() }).pipe(
+        switchMap((force) =>
+          api.getPosts({ force, query: buildListQuery(store) }).pipe(
             catchError(() => {
-              this.error.set('errors.posts.load');
+              patchState(store, { error: 'errors.posts.load' });
               return of(emptyListResult());
             }),
             finalize(() => {
-              this.loading.set(false);
-              this.filtering.set(false);
-              this.initialized.set(true);
+              patchState(store, {
+                loading: false,
+                filtering: false,
+                initialized: true,
+              });
             }),
-          );
-        }),
+          ),
+        ),
         tap((result) => {
-          this.posts.set(result.posts);
-          this.totalItems.set(result.totalItems);
+          patchState(store, {
+            posts: result.posts,
+            totalItems: result.totalItems,
+          });
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
+      ),
+    );
 
-  public loadPosts(force = false): void {
-    this.refresh$.next(force);
-  }
+    const applySearchRx = rxMethod<string>(
+      pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        tap((query) => {
+          if (query === store.searchQuery()) {
+            patchState(store, { filtering: false });
+            return;
+          }
 
-  public setSearchInput(query: string): void {
-    this.searchInput.set(query);
+          patchState(store, {
+            searchQuery: query,
+            currentPage: 1,
+            visibleCount: store.pageSize,
+          });
+          loadPostsRx(false);
+        }),
+      ),
+    );
 
-    if (query === this.searchQuery()) {
-      this.filtering.set(false);
-      return;
-    }
+    return {
+      loadPosts(force = false): void {
+        loadPostsRx(force);
+      },
+      setSearchInput(query: string): void {
+        patchState(store, { searchInput: query });
 
-    this.filtering.set(true);
-    this.searchInput$.next(query);
-  }
+        if (query === store.searchQuery()) {
+          patchState(store, { filtering: false });
+          return;
+        }
 
-  public setSortOrder(order: PostDateSort): void {
-    if (this.sortOrder() === order) {
-      return;
-    }
+        patchState(store, { filtering: true });
+        applySearchRx(query);
+      },
+      setSortOrder(order: PostDateSort): void {
+        if (store.sortOrder() === order) {
+          return;
+        }
 
-    this.filtering.set(true);
-    this.sortOrder$.next(order);
-  }
+        patchState(store, {
+          filtering: true,
+          sortOrder: order,
+          currentPage: 1,
+          visibleCount: store.pageSize,
+        });
+        loadPostsRx(false);
+      },
+      setViewMode(mode: PostsListViewMode): void {
+        if (store.viewMode() === mode) {
+          return;
+        }
 
-  public setViewMode(mode: PostsListViewMode): void {
-    if (this.viewMode() === mode) {
-      return;
-    }
+        viewStorage.write(mode);
+        patchState(store, {
+          viewMode: mode,
+          currentPage: 1,
+          visibleCount: store.pageSize,
+        });
+        loadPostsRx(false);
+      },
+      setPage(page: number): void {
+        const nextPage = Math.min(Math.max(1, page), store.totalPages());
 
-    this.viewMode.set(mode);
-    this.viewStorage.write(mode);
-    this.currentPage.set(1);
-    this.visibleCount.set(this.pageSize);
-    this.refresh$.next(false);
-  }
+        if (nextPage === store.currentPage()) {
+          return;
+        }
 
-  public setPage(page: number): void {
-    const nextPage = Math.min(Math.max(1, page), this.totalPages());
+        patchState(store, { currentPage: nextPage });
+        loadPostsRx(false);
+      },
+      loadMore(): void {
+        if (!store.hasMorePosts()) {
+          return;
+        }
 
-    if (nextPage === this.currentPage()) {
-      return;
-    }
-
-    this.page$.next(nextPage);
-  }
-
-  public loadMore(): void {
-    if (!this.hasMorePosts()) {
-      return;
-    }
-
-    this.visibleCount.update((count) => Math.min(count + this.pageSize, this.totalItems()));
-    this.refresh$.next(false);
-  }
-
-  public retry(): void {
-    this.loadPosts(true);
-  }
-
-  private buildListQuery(): PostsListQuery {
-    const query = this.searchQuery().trim();
-    const base: PostsListQuery = {
-      status: POST_STATUS.approved,
-      titleLike: query || undefined,
-      sort: 'createdAt',
-      order: this.sortOrder(),
+        patchState(store, {
+          visibleCount: Math.min(store.visibleCount() + store.pageSize, store.totalItems()),
+        });
+        loadPostsRx(false);
+      },
+      retry(): void {
+        loadPostsRx(true);
+      },
     };
+  }),
+);
 
-    if (this.isPaginationMode()) {
-      return {
-        ...base,
-        page: this.currentPage(),
-        limit: this.pageSize,
-      };
-    }
+function buildListQuery(store: {
+  currentPage: () => number;
+  isInfiniteScrollMode: () => boolean;
+  isPaginationMode: () => boolean;
+  pageSize: number;
+  searchQuery: () => string;
+  sortOrder: () => PostDateSort;
+  visibleCount: () => number;
+}): PostsListQuery {
+  const query = store.searchQuery().trim();
+  const base: PostsListQuery = {
+    status: POST_STATUS.approved,
+    titleLike: query || undefined,
+    sort: 'createdAt',
+    order: store.sortOrder(),
+  };
 
-    if (this.isInfiniteScrollMode()) {
-      return {
-        ...base,
-        page: 1,
-        limit: this.visibleCount(),
-      };
-    }
-
-    return base;
+  if (store.isPaginationMode()) {
+    return {
+      ...base,
+      page: store.currentPage(),
+      limit: store.pageSize,
+    };
   }
 
-  private hasActiveFilters(): boolean {
-    return this.searchQuery().trim().length > 0;
+  if (store.isInfiniteScrollMode()) {
+    return {
+      ...base,
+      page: 1,
+      limit: store.visibleCount(),
+    };
   }
+
+  return base;
+}
+
+function hasActiveFilters(searchQuery: string): boolean {
+  return searchQuery.trim().length > 0;
 }
